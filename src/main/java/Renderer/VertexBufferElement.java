@@ -1,4 +1,4 @@
-package Renderer.OpenGL;
+package Renderer;
 
 import static org.lwjgl.opengl.GL30.*;
 

@@ -7,6 +7,9 @@
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/OpenGL/VAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/OpenGL/VAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/OpenGL/VertexBufferElement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/VertexBufferElement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/OpenGL/VertexBufferLayout.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/OpenGL/VertexBufferLayout.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

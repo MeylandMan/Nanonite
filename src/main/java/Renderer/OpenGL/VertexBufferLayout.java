@@ -1,5 +1,7 @@
 package Renderer.OpenGL;
 
+import Renderer.VertexBufferElement;
+
 import java.util.ArrayList;
 
 import static org.lwjgl.opengl.GL30.*;

@@ -1,7 +1,6 @@
 package Renderer.OpenGL;
 
-import Renderer.OpenGL.VBO;
-import Renderer.OpenGL.VertexBufferLayout;
+import Renderer.VertexBufferElement;
 
 import java.util.ArrayList;
 
