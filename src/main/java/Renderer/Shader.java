@@ -1,7 +1,7 @@
 package Renderer;
 
-import org.lwjgl.opengl.GL15;
 
+import static org.lwjgl.opengl.GL15.*;
 public class Shader {
     private int m_ID;
 
@@ -21,6 +21,7 @@ public class Shader {
     }
 
     public static int createShaderFromData(String data, int temp, String path) {
+
         return 0;
     }
 }

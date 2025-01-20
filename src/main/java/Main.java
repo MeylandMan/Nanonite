@@ -53,7 +53,7 @@ public class Main {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
-        window = glfwCreateWindow(1280, 720, "Minecraft Clone", NULL, NULL);
+        window = glfwCreateWindow(600, 600, "Minecraft Clone", NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
 
@@ -90,8 +90,6 @@ public class Main {
         // Make the window visible
         glfwShowWindow(window);
 
-        vbo.Init(vertices);
-        vbo.UnBind();
     }
 
     private void loop() {
@@ -105,11 +103,24 @@ public class Main {
         */
         GL.createCapabilities();
 
+        //vbo.Init(vertices);
+        //vbo.UnBind();
+
         while ( !glfwWindowShouldClose(window) ) {
             glClearColor(1.f, 1.f, 1.f, 0.f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
+            glBegin(GL_TRIANGLES);
+            glColor3f(1.0f, 0.0f, 0.0f); // Rouge
+            glVertex2f(-0.6f, -0.4f); // Coin inférieur gauche
+            glColor3f(0.0f, 1.0f, 0.0f); // Vert
+            glVertex2f(0.6f, -0.4f); // Coin inférieur droit
+            glColor3f(0.0f, 0.0f, 1.0f); // Bleu
+            glVertex2f(0.0f, 0.6f); // Coin supérieur
+            glEnd();
+
             glfwSwapBuffers(window); // swap the color buffers
+
 
 
             // Poll for window events. The key callback above will only be
