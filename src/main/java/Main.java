@@ -19,10 +19,10 @@ public class Main {
     // The window handle
     private long window;
     float[] vertices = {
-            // POSITION         // COLORS
+            // POSITION     // COLORS
             -0.5f, -0.5f, 0.0f, 1.f, 0.f, 0.f,
-            0.5f, -0.5f, 0.0f,  0.f, 1.f, 0.f,
-            0.0f,  0.5f, 0.0f,  0.f, 0.f, 1.f
+            0.5f, -0.5f,  0.0f,  0.f, 1.f, 0.f,
+            0.0f,  0.5f,  0.0f, 0.f, 0.f, 1.f
     };
 
     VBO vbo = new VBO();
@@ -124,6 +124,7 @@ public class Main {
             vao.Bind();
 
             glDrawArrays(GL_TRIANGLES, 0, 3);
+
             vao.UnBind();
 
             glfwSwapBuffers(window); // swap the color buffers

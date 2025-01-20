@@ -25,13 +25,13 @@ public class VertexBufferLayout {
                 m_Elements.get(m_Elements.size() - 1).type = GL_FLOAT;
                 m_Elements.get(m_Elements.size() - 1).count = count;
                 m_Elements.get(m_Elements.size() - 1).normalized = false;
-                m_Stride = Float.BYTES;
+                m_Stride += VertexBufferElement.GetSizeOfType(GL_FLOAT) * count;
                 break;
             case 1: // Int
                 m_Elements.get(m_Elements.size() - 1).type = GL_UNSIGNED_INT;
                 m_Elements.get(m_Elements.size() - 1).count = count;
                 m_Elements.get(m_Elements.size() - 1).normalized = false;
-                m_Stride += VertexBufferElement.GetSizeOfType(GL_INT) * count;
+                m_Stride += VertexBufferElement.GetSizeOfType(GL_UNSIGNED_INT) * count;
                 break;
             case 2: // Byte
                 m_Elements.get(m_Elements.size() - 1).type = GL_UNSIGNED_BYTE;
