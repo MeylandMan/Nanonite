@@ -3,7 +3,9 @@ import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
-import Renderer.OpenGL.VBO;
+import Renderer.OpenGL.*;
+import Renderer.Shader;
+
 import java.nio.*;
 
 import static org.lwjgl.glfw.Callbacks.*;
@@ -17,12 +19,15 @@ public class Main {
     // The window handle
     private long window;
     float[] vertices = {
-            -0.5f, -0.5f, 0.0f,
-            0.5f, -0.5f, 0.0f,
-            0.0f,  0.5f, 0.0f
+            // POSITION         // COLORS
+            -0.5f, -0.5f, 0.0f, 1.f, 0.f, 0.f,
+            0.5f, -0.5f, 0.0f,  0.f, 1.f, 0.f,
+            0.0f,  0.5f, 0.0f,  0.f, 0.f, 1.f
     };
 
     VBO vbo = new VBO();
+    Shader shader = new Shader();
+    VAO vao;
 
     public void run() {
         System.out.println("Hello LWJGL " + Version.getVersion() + "!");
@@ -103,30 +108,33 @@ public class Main {
         */
         GL.createCapabilities();
 
-        //vbo.Init(vertices);
-        //vbo.UnBind();
+        shader.CreateShader("shaders/Opengl/Default.vert", "shaders/Opengl/Default.frag");
+        vbo.Init(vertices);
+        vao = new VAO();
+        VertexBufferLayout layout = new VertexBufferLayout();
+        layout.Add(0, 3);
+        layout.Add(0, 3);
+        vao.AddBuffer(vbo, layout);
 
         while ( !glfwWindowShouldClose(window) ) {
-            glClearColor(1.f, 1.f, 1.f, 0.f);
+            glClearColor(0.f, 0.f, 0.f, 0.f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
-            glBegin(GL_TRIANGLES);
-            glColor3f(1.0f, 0.0f, 0.0f); // Rouge
-            glVertex2f(-0.6f, -0.4f); // Coin inférieur gauche
-            glColor3f(0.0f, 1.0f, 0.0f); // Vert
-            glVertex2f(0.6f, -0.4f); // Coin inférieur droit
-            glColor3f(0.0f, 0.0f, 1.0f); // Bleu
-            glVertex2f(0.0f, 0.6f); // Coin supérieur
-            glEnd();
+            shader.Bind();
+            vao.Bind();
+
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+            vao.UnBind();
 
             glfwSwapBuffers(window); // swap the color buffers
-
-
+            shader.UnBind();
 
             // Poll for window events. The key callback above will only be
             // invoked during this call.
             glfwPollEvents();
         }
+        vbo.Delete();
+        shader.Clear();
     }
 
     public static void main(String[] args) {

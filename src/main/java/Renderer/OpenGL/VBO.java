@@ -10,6 +10,7 @@ public class VBO {
         m_ID = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, m_ID);
         glBufferData(GL_ARRAY_BUFFER, data, GL_STATIC_DRAW);
+        UnBind();
     }
 
     public void Delete() {
@@ -22,5 +23,9 @@ public class VBO {
 
     public void UnBind() {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+
+    public int getID() {
+        return m_ID;
     }
 }

@@ -6,7 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shaders/Opengl/Default.frag" beforeDir="false" afterPath="$PROJECT_DIR$/shaders/Opengl/Default.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shaders/Opengl/Default.vert" beforeDir="false" afterPath="$PROJECT_DIR$/shaders/Opengl/Default.vert" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/OpenGL/VBO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/OpenGL/VBO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/Shader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/Shader.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
