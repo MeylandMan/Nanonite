@@ -19,16 +19,23 @@ public class Main {
     // The window handle
     private long window;
     float[] vertices = {
-            // POSITION     // COLORS
-            -0.5f, -0.5f, 0.0f, 1.f, 0.f, 0.f,
-            0.5f, -0.5f,  0.0f,  0.f, 1.f, 0.f,
-            0.0f,  0.5f,  0.0f, 0.f, 0.f, 1.f
+            // POSITION             // COLORS
+            -0.5f, -0.5f, 0.0f,  1.f, 0.f, 0.f,
+            -0.5f,  0.5f, 0.0f,  0.f, 1.f, 0.f,
+
+            0.5f,   0.5f, 0.0f,  0.f, 0.f, 1.f,
+            0.5f,  -0.5f, 0.0f,  1.f, 1.f, 1.f
+    };
+
+    int[] indices = {
+      1, 2, 0,
+      0, 2, 3
     };
 
     VBO vbo = new VBO();
     Shader shader = new Shader();
     VAO vao;
-
+    EBO ebo = new EBO();
     public void run() {
         System.out.println("Hello LWJGL " + Version.getVersion() + "!");
 
@@ -116,15 +123,19 @@ public class Main {
         layout.Add(0, 3);
         vao.AddBuffer(vbo, layout);
 
+        ebo.Init(indices);
+
         while ( !glfwWindowShouldClose(window) ) {
             glClearColor(0.f, 0.f, 0.f, 0.f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
             shader.Bind();
             vao.Bind();
+            ebo.Bind();
 
-            glDrawArrays(GL_TRIANGLES, 0, 3);
+            glDrawElements(GL_TRIANGLES, indices.length,GL_UNSIGNED_INT, 0);
 
+            ebo.UnBind();
             vao.UnBind();
 
             glfwSwapBuffers(window); // swap the color buffers
