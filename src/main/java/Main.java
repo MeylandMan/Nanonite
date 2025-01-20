@@ -3,11 +3,12 @@ import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
+import Renderer.OpenGL.VBO;
 import java.nio.*;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
@@ -15,6 +16,13 @@ public class Main {
 
     // The window handle
     private long window;
+    float[] vertices = {
+            -0.5f, -0.5f, 0.0f,
+            0.5f, -0.5f, 0.0f,
+            0.0f,  0.5f, 0.0f
+    };
+
+    VBO vbo = new VBO();
 
     public void run() {
         System.out.println("Hello LWJGL " + Version.getVersion() + "!");
@@ -45,8 +53,7 @@ public class Main {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
-        // Create the window
-        window = glfwCreateWindow(300, 300, "Hello World!", NULL, NULL);
+        window = glfwCreateWindow(1280, 720, "Minecraft Clone", NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
 
@@ -82,25 +89,28 @@ public class Main {
 
         // Make the window visible
         glfwShowWindow(window);
+
+        vbo.Init(vertices);
+        vbo.UnBind();
     }
 
     private void loop() {
-        // This line is critical for LWJGL's interoperation with GLFW's
-        // OpenGL context, or any context that is managed externally.
-        // LWJGL detects the context that is current in the current thread,
-        // creates the GLCapabilities instance and makes the OpenGL
-        // bindings available for use.
+
+        /*
+         This line is critical for LWJGL's interoperation with GLFW's
+         OpenGL context, or any context that is managed externally.
+         LWJGL detects the context that is current in the current thread,
+         creates the GLCapabilities instance and makes the OpenGL
+         bindings available for use.
+        */
         GL.createCapabilities();
 
-        // Set the clear color
-        glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
-
-        // Run the rendering loop until the user has attempted to close
-        // the window or has pressed the ESCAPE key.
         while ( !glfwWindowShouldClose(window) ) {
+            glClearColor(1.f, 1.f, 1.f, 0.f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
             glfwSwapBuffers(window); // swap the color buffers
+
 
             // Poll for window events. The key callback above will only be
             // invoked during this call.
@@ -109,6 +119,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
+
         new Main().run();
     }
 
