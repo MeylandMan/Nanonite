@@ -41,7 +41,9 @@ public class App {
     VAO vao;
     EBO ebo = new EBO();
 
-    void App(int width, int height, String title) {
+
+    public App(int width, int height, String title) {
+
         this.m_Width = width;
         m_Width = max(640, m_Width); // Max Width is 640
 
@@ -50,7 +52,7 @@ public class App {
 
         this.m_Title = title;
     }
-    
+
     public void run() {
         System.out.println("Hello LWJGL " + Version.getVersion() + "!");
 
@@ -60,6 +62,12 @@ public class App {
         // Free the window callbacks and destroy the window
         glfwFreeCallbacks(window);
         glfwDestroyWindow(window);
+
+        // Delete the buffers and shader we don't need anymore
+        vao.Delete();
+        ebo.Delete();
+        vbo.Delete();
+        shader.Clear();
 
         // Terminate GLFW and free the error callback
         glfwTerminate();
@@ -160,7 +168,6 @@ public class App {
             // invoked during this call.
             glfwPollEvents();
         }
-        vbo.Delete();
-        shader.Clear();
+
     }
 }
