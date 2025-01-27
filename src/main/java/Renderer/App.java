@@ -1,14 +1,14 @@
-package Renderer.OpenGL;
+package Renderer;
 
+import Renderer.OpenGL.EBO;
+import Renderer.OpenGL.VAO;
+import Renderer.OpenGL.VBO;
+import Renderer.OpenGL.VertexBufferLayout;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 import static java.lang.Math.*;
-
-import Renderer.Shader;
-import Renderer.Renderer;
-import Renderer.API_CONTEXT;
 
 import java.nio.*;
 
@@ -26,7 +26,6 @@ public class App {
     private int m_Height;
     private String m_Title;
 
-    public API_CONTEXT api_context;
     public Renderer renderer;
     public Input input;
     float[] vertices = {
@@ -99,7 +98,6 @@ public class App {
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
         renderer = new Renderer();
-        api_context = new API_CONTEXT();
         input = new Input();
 
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.

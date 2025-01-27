@@ -1,16 +1,14 @@
 package Renderer.OpenGLES;
 
-import Renderer.OpenGLES.VBO;
-import Renderer.OpenGLES.VertexBufferLayout;
 import Renderer.VertexBufferElement;
 import java.util.ArrayList;
 
 import static org.lwjgl.opengles.GLES30.*;
 
-public class VAO {
+public class VAO_ES {
     private int m_ID;
 
-    public VAO() {
+    public VAO_ES() {
         m_ID = glGenVertexArrays();
     }
 
@@ -18,7 +16,7 @@ public class VAO {
         glDeleteVertexArrays(m_ID);
     }
 
-    public void AddBuffer(VBO vbo, VertexBufferLayout layout) {
+    public void AddBuffer(VBO_ES vbo, VertexBufferLayout_ES layout) {
 
         Bind();
         vbo.Bind();

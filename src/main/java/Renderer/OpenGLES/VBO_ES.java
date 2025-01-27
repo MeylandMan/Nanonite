@@ -5,7 +5,7 @@ import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengles.GLES20.*;
 
-public class VBO {
+public class VBO_ES {
     private int m_ID;
 
     public void Init(float[] data) {

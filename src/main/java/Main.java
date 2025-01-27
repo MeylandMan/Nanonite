@@ -1,4 +1,4 @@
-import Renderer.OpenGL.App;
+import Renderer.App;
 
 public class Main {
 

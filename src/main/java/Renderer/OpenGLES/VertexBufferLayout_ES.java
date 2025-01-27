@@ -6,11 +6,11 @@ import java.util.ArrayList;
 
 import static org.lwjgl.opengles.GLES20.*;
 
-public class VertexBufferLayout {
+public class VertexBufferLayout_ES {
     private ArrayList<VertexBufferElement> m_Elements;
     private int m_Stride;
 
-    public VertexBufferLayout() {
+    public VertexBufferLayout_ES() {
         this.m_Elements = new ArrayList<VertexBufferElement>();
         this.m_Stride = 0;
     }

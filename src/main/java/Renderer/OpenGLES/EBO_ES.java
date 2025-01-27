@@ -2,7 +2,7 @@ package Renderer.OpenGLES;
 
 import static org.lwjgl.opengles.GLES30.*;
 
-public class EBO {
+public class EBO_ES {
     private int m_ID;
 
     public void Init(int[] data) {

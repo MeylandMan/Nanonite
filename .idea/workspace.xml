@@ -4,7 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="" />
+    <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/API_CONTEXT.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/API_CONTEXT.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/OpenGL/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/OpenGLES/EBO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/OpenGLES/EBO_ES.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/OpenGLES/VAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/OpenGLES/VAO_ES.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/OpenGLES/VBO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/OpenGLES/VBO_ES.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/OpenGLES/VertexBufferLayout.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/OpenGLES/VertexBufferLayout_ES.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/Renderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/Renderer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/SpriteMesh.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/SpriteMesh.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -71,6 +82,9 @@
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="Renderer.OpenGLES" />
     </key>
   </component>
   <component name="RunManager">
