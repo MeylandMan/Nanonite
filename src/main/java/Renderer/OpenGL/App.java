@@ -7,6 +7,8 @@ import org.lwjgl.system.*;
 import static java.lang.Math.*;
 
 import Renderer.Shader;
+import Renderer.Renderer;
+import Renderer.API_CONTEXT;
 
 import java.nio.*;
 
@@ -16,12 +18,17 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
+import Core.Input.Input;
+
 public class App {
     private long window;
     private int m_Width;
     private int m_Height;
     private String m_Title;
 
+    public API_CONTEXT api_context;
+    public Renderer renderer;
+    public Input input;
     float[] vertices = {
             // POSITION             // COLORS
             -0.5f, -0.5f, 0.0f,  1.f, 0.f, 0.f,
@@ -91,11 +98,13 @@ public class App {
         window = glfwCreateWindow(m_Width, m_Height, m_Title, NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
+        renderer = new Renderer();
+        api_context = new API_CONTEXT();
+        input = new Input();
 
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
         glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-            if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
-                glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
+            input.KeyCallBack(window, key, scancode, action, mods);
         });
 
         // Get the thread stack and push a new frame

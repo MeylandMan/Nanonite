@@ -1,15 +1,15 @@
 package Renderer;
 
-enum API {
-    OPENGL,
-    OPENGL_ES;
-}
+import Renderer.API_CONTEXT;
 
 public class Renderer {
 
     API m_Api;
+    public API getAPI() {
+        return m_Api;
+    }
     public void Init(API _api) {
-        
+        this.m_Api = _api;
     }
     public void Draw() {
 
