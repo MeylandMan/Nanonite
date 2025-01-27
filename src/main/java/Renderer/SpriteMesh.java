@@ -38,7 +38,7 @@ public class SpriteMesh {
     public void Draw(Renderer renderer) {
         renderer.DrawSprite(this);
     }
-    public void deleteMesh(Renderer renderer) {
+    public void DeleteMesh(Renderer renderer) {
         renderer.DeleteMesh(this);
     }
 

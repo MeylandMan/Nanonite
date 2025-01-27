@@ -5,15 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/shaders/Opengl ES/Default.frag" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/shaders/Opengl ES/Default.vert" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/API_CONTEXT.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/API_CONTEXT.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/OpenGL/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/OpenGLES/EBO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/OpenGLES/EBO_ES.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/OpenGLES/VAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/OpenGLES/VAO_ES.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/OpenGLES/VBO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/OpenGLES/VBO_ES.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/OpenGLES/VertexBufferLayout.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/OpenGLES/VertexBufferLayout_ES.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/App.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/Renderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/Renderer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/Shader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/Shader.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/SpriteMesh.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/SpriteMesh.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -61,22 +59,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.MInecraft-Clone [:Main.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.OGL [:Main.main()].executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Client/Documents/GitHub/MInecraft-Clone/OGL/lib/lwjgl-javadoc.jar&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.Download Sources.executor": "Run",
+    "Gradle.MInecraft-Clone [:Main.main()].executor": "Run",
+    "Gradle.OGL [:Main.main()].executor": "Run",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Client/Documents/GitHub/MInecraft-Clone/shaders/Opengl ES",
+    "project.structure.last.edited": "Libraries",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\shaders\Opengl ES" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\shaders\Opengl" />
     </key>

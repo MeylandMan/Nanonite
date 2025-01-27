@@ -1,15 +1,10 @@
 package Renderer;
 
-import Renderer.OpenGL.EBO;
-import Renderer.OpenGL.VAO;
-import Renderer.OpenGL.VBO;
-import Renderer.OpenGL.VertexBufferLayout;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
-import static java.lang.Math.*;
-
+import Core.Input.Input;
 import java.nio.*;
 
 import static org.lwjgl.glfw.Callbacks.*;
@@ -17,36 +12,21 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
-
-import Core.Input.Input;
+import static java.lang.Math.*;
+import static Renderer.API_CONTEXT.*;
 
 public class App {
     private long window;
     private int m_Width;
     private int m_Height;
-    private String m_Title;
+    private final String m_Title;
 
     public Renderer renderer;
     public Input input;
-    float[] vertices = {
-            // POSITION             // COLORS
-            -0.5f, -0.5f, 0.0f,  1.f, 0.f, 0.f,
-            -0.5f,  0.5f, 0.0f,  0.f, 1.f, 0.f,
-
-            0.5f,   0.5f, 0.0f,  0.f, 0.f, 1.f,
-            0.5f,  -0.5f, 0.0f,  1.f, 1.f, 1.f
-    };
-
-    int[] indices = {
-            1, 2, 0,
-            0, 2, 3
-    };
-
-    VBO vbo = new VBO();
+    SpriteMesh sprite;
     Shader shader = new Shader();
-    VAO vao;
-    EBO ebo = new EBO();
 
+    API api_context = API.OPENGL;
 
     public App(int width, int height, String title) {
 
@@ -70,9 +50,7 @@ public class App {
         glfwDestroyWindow(window);
 
         // Delete the buffers and shader we don't need anymore
-        vao.Delete();
-        ebo.Delete();
-        vbo.Delete();
+        sprite.DeleteMesh(renderer);
         shader.Clear();
 
         // Terminate GLFW and free the error callback
@@ -97,12 +75,14 @@ public class App {
         window = glfwCreateWindow(m_Width, m_Height, m_Title, NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
-        renderer = new Renderer();
+        renderer = new Renderer(api_context);
         input = new Input();
 
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
         glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-            input.KeyCallBack(window, key, scancode, action, mods);
+            //input.KeyCallBack(window, key, scancode, action, mods);
+            if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
+                glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
         });
 
         // Get the thread stack and push a new frame
@@ -145,28 +125,25 @@ public class App {
         */
         GL.createCapabilities();
 
-        shader.CreateShader("shaders/Opengl/Default.vert", "shaders/Opengl/Default.frag");
-        vbo.Init(vertices);
-        vao = new VAO();
-        VertexBufferLayout layout = new VertexBufferLayout();
-        layout.Add(0, 3);
-        layout.Add(0, 3);
-        vao.AddBuffer(vbo, layout);
+        String vertexShader = "";
+        String fragmentShader = "";
 
-        ebo.Init(indices);
+        if(api_context == API.OPENGL){
+            vertexShader = "shaders/Opengl/Default.vert";
+            fragmentShader = "shaders/Opengl/Default.frag";
+        } else if(api_context == API.OPENGL_ES) {
+            vertexShader = "shaders/Opengl ES/Default.vert";
+            fragmentShader = "shaders/Opengl ES/Default.frag";
+        }
+        shader.CreateShader(api_context, vertexShader, fragmentShader);
+        sprite = new SpriteMesh(renderer);
 
         while ( !glfwWindowShouldClose(window) ) {
             glClearColor(0.f, 0.f, 0.f, 0.f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
             shader.Bind();
-            vao.Bind();
-            ebo.Bind();
-
-            glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
-
-            ebo.UnBind();
-            vao.UnBind();
+            sprite.Draw(renderer);
 
             glfwSwapBuffers(window); // swap the color buffers
             shader.UnBind();

@@ -5,35 +5,62 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-import static org.lwjgl.opengl.GL20.*;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengles.GLES20;
+
+import static Renderer.API_CONTEXT.*;
 
 public class Shader {
     private int m_ID;
-
+    API api;
     public void Bind() {
-        glUseProgram(m_ID);
+        if(api == API.OPENGL)
+            GL20.glUseProgram(m_ID);
+        else if(api == API.OPENGL_ES)
+            GLES20.glUseProgram(m_ID);
     }
 
     public void UnBind() {
-        glUseProgram(0);
+        if(api == API.OPENGL)
+            GL20.glUseProgram(0);
+        else if(api == API.OPENGL_ES)
+            GLES20.glUseProgram(0);
     }
 
     public void Clear() {
-        glDeleteProgram(m_ID);
+        if(api == API.OPENGL)
+            GL20.glDeleteProgram(m_ID);
+        else if(api == API.OPENGL_ES)
+            GLES20.glDeleteProgram(m_ID);
     }
 
-    public void CreateShader(String vertexFile, String fragmentFile) {
-        int vertexShaderId = loadShader(vertexFile, GL_VERTEX_SHADER);
-        int fragmentShaderId = loadShader(fragmentFile, GL_FRAGMENT_SHADER);
+    public void CreateShader(API api, String vertexFile, String fragmentFile) {
+        this.api = api;
+        if(api == API.OPENGL) {
+            int vertexShaderId = loadShader(vertexFile, GL20.GL_VERTEX_SHADER);
+            int fragmentShaderId = loadShader(fragmentFile, GL20.GL_FRAGMENT_SHADER);
 
-        m_ID = glCreateProgram();
-        glAttachShader(m_ID, vertexShaderId);
-        glAttachShader(m_ID, fragmentShaderId);
-        glLinkProgram(m_ID);
-        glValidateProgram(m_ID);
+            m_ID = GL20.glCreateProgram();
+            GL20.glAttachShader(m_ID, vertexShaderId);
+            GL20.glAttachShader(m_ID, fragmentShaderId);
+            GL20.glLinkProgram(m_ID);
+            GL20.glValidateProgram(m_ID);
 
-        glDeleteShader(vertexShaderId);
-        glDeleteShader(fragmentShaderId);
+            GL20.glDeleteShader(vertexShaderId);
+            GL20.glDeleteShader(fragmentShaderId);
+        } else if(api == API.OPENGL_ES) {
+            int vertexShaderId = loadShader(vertexFile, GLES20.GL_VERTEX_SHADER);
+            int fragmentShaderId = loadShader(fragmentFile, GLES20.GL_FRAGMENT_SHADER);
+
+            m_ID = GLES20.glCreateProgram();
+            GLES20.glAttachShader(m_ID, vertexShaderId);
+            GLES20.glAttachShader(m_ID, fragmentShaderId);
+            GLES20.glLinkProgram(m_ID);
+            GLES20.glValidateProgram(m_ID);
+
+            GLES20.glDeleteShader(vertexShaderId);
+            GLES20.glDeleteShader(fragmentShaderId);
+        }
     }
 
     private int loadShader(String file, int type) {
@@ -48,17 +75,30 @@ public class Shader {
             throw new RuntimeException("Impossible de lire le fichier shader: " + file);
         }
 
-        int shaderId = glCreateShader(type);
-        glShaderSource(shaderId, shaderSource);
-        glCompileShader(shaderId);
+        int shaderId = 0;
+        if(api == API.OPENGL) {
+            shaderId = GL20.glCreateShader(type);
+            GL20.glShaderSource(shaderId, shaderSource);
+            GL20.glCompileShader(shaderId);
 
-        // Vérifier les erreurs de compilation
-        if (glGetShaderi(shaderId, GL_COMPILE_STATUS) == GL_FALSE) {
-            String infoLog = glGetShaderInfoLog(shaderId, 1024);
-            System.err.println("Error compiling the shader: " + infoLog);
-            throw new RuntimeException("Error compiling the shader: " + file);
+            // Vérifier les erreurs de compilation
+            if (GL20.glGetShaderi(shaderId, GL20.GL_COMPILE_STATUS) == GL20.GL_FALSE) {
+                String infoLog = GL20.glGetShaderInfoLog(shaderId, 1024);
+                System.err.println("Error compiling the shader: " + infoLog);
+                throw new RuntimeException("Error compiling the shader: " + file);
+            }
+        } else if(api == API.OPENGL_ES) {
+            shaderId = GLES20.glCreateShader(type);
+            GLES20.glShaderSource(shaderId, shaderSource);
+            GLES20.glCompileShader(shaderId);
+
+            // Vérifier les erreurs de compilation
+            if (GLES20.glGetShaderi(shaderId, GLES20.GL_COMPILE_STATUS) == GLES20.GL_FALSE) {
+                String infoLog = GLES20.glGetShaderInfoLog(shaderId, 1024);
+                System.err.println("Error compiling the shader: " + infoLog);
+                throw new RuntimeException("Error compiling the shader: " + file);
+            }
         }
-
         return shaderId;
     }
 
