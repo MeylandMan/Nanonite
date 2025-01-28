@@ -94,6 +94,5 @@ public class Renderer {
                 break;
 
         }
-
     }
 }

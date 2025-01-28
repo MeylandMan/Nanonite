@@ -5,22 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/API_CONTEXT.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/API_CONTEXT.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/OpenGL/EBO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/EBO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/OpenGL/VAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/VAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/OpenGL/VBO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/VBO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/OpenGL/VertexBufferLayout.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/VertexBufferLayout.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/OpenGLES/EBO_ES.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/OpenGLES/VAO_ES.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/OpenGLES/VBO_ES.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/OpenGLES/VertexBufferLayout_ES.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/lwjgl-opengles-javadoc.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/lwjgl-opengles-natives-linux-arm32.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/lwjgl-opengles-natives-linux-arm64.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/lwjgl-opengles-natives-linux-ppc64le.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/lwjgl-opengles-natives-linux-riscv64.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/lwjgl-opengles-natives-linux.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/lwjgl-opengles-natives-macos-arm64.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/lwjgl-opengles-natives-macos.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/lwjgl-opengles-natives-windows-x86.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/lwjgl-opengles-natives-windows.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/lwjgl-opengles-sources.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/lwjgl-opengles.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/lwjgl-release-3.3.6-custom.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/lwjgl-release-custom-zip.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/Renderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/Renderer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/Shader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/Shader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/SpriteMesh.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/SpriteMesh.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,28 +71,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
-    &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.MInecraft-Clone [:Main.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.MInecraft-Clone.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.OGL [:Main.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Java Scratch.MC 0.0.0.1.executor&quot;: &quot;Run&quot;,
-    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
-    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
-    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Client/Documents/GitHub/MInecraft-Clone/build.gradle.kts&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.34827587&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Downloaded.Files.Path.Enabled": "false",
+    "Gradle.Download Sources.executor": "Run",
+    "Gradle.MInecraft-Clone [:Main.main()].executor": "Run",
+    "Gradle.MInecraft-Clone.executor": "Run",
+    "Gradle.OGL [:Main.main()].executor": "Run",
+    "Java Scratch.MC 0.0.0.1.executor": "Run",
+    "Repository.Attach.Annotations": "false",
+    "Repository.Attach.JavaDocs": "false",
+    "Repository.Attach.Sources": "false",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Client/Documents/GitHub/MInecraft-Clone/build.gradle.kts",
+    "project.structure.last.edited": "Libraries",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.34827587",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\shaders\Opengl ES" />
