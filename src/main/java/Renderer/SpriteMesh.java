@@ -1,20 +1,10 @@
 package Renderer;
 
-import Renderer.OpenGL.*;
-import Renderer.OpenGLES.*;
-import Renderer.Renderer;
-
 public class SpriteMesh {
     // OpenGL Context
     public VAO m_Vao;
     public VBO m_Vbo;
     public EBO m_Ebo;
-
-    // OpenGL ES Context
-    public VAO_ES m_ESVao;
-    public VBO_ES m_ESVbo;
-    public EBO_ES m_ESEbo;
-
 
     // Datas
     float[] vertices = {

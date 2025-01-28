@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengles.GLES20;
 
 import static Renderer.API_CONTEXT.*;
 
@@ -16,50 +15,36 @@ public class Shader {
     public void Bind() {
         if(api == API.OPENGL)
             GL20.glUseProgram(m_ID);
-        else if(api == API.OPENGL_ES)
-            GLES20.glUseProgram(m_ID);
     }
 
     public void UnBind() {
         if(api == API.OPENGL)
             GL20.glUseProgram(0);
-        else if(api == API.OPENGL_ES)
-            GLES20.glUseProgram(0);
     }
 
     public void Clear() {
         if(api == API.OPENGL)
             GL20.glDeleteProgram(m_ID);
-        else if(api == API.OPENGL_ES)
-            GLES20.glDeleteProgram(m_ID);
     }
 
     public void CreateShader(API api, String vertexFile, String fragmentFile) {
         this.api = api;
-        if(api == API.OPENGL) {
-            int vertexShaderId = loadShader(vertexFile, GL20.GL_VERTEX_SHADER);
-            int fragmentShaderId = loadShader(fragmentFile, GL20.GL_FRAGMENT_SHADER);
+        int vertexShaderId = 0;
+        int fragmentShaderId = 0;
+        switch(api) {
+            case API.OPENGL:
+                vertexShaderId = loadShader(vertexFile, GL20.GL_VERTEX_SHADER);
+                fragmentShaderId = loadShader(fragmentFile, GL20.GL_FRAGMENT_SHADER);
 
-            m_ID = GL20.glCreateProgram();
-            GL20.glAttachShader(m_ID, vertexShaderId);
-            GL20.glAttachShader(m_ID, fragmentShaderId);
-            GL20.glLinkProgram(m_ID);
-            GL20.glValidateProgram(m_ID);
+                m_ID = GL20.glCreateProgram();
+                GL20.glAttachShader(m_ID, vertexShaderId);
+                GL20.glAttachShader(m_ID, fragmentShaderId);
+                GL20.glLinkProgram(m_ID);
+                GL20.glValidateProgram(m_ID);
 
-            GL20.glDeleteShader(vertexShaderId);
-            GL20.glDeleteShader(fragmentShaderId);
-        } else if(api == API.OPENGL_ES) {
-            int vertexShaderId = loadShader(vertexFile, GLES20.GL_VERTEX_SHADER);
-            int fragmentShaderId = loadShader(fragmentFile, GLES20.GL_FRAGMENT_SHADER);
-
-            m_ID = GLES20.glCreateProgram();
-            GLES20.glAttachShader(m_ID, vertexShaderId);
-            GLES20.glAttachShader(m_ID, fragmentShaderId);
-            GLES20.glLinkProgram(m_ID);
-            GLES20.glValidateProgram(m_ID);
-
-            GLES20.glDeleteShader(vertexShaderId);
-            GLES20.glDeleteShader(fragmentShaderId);
+                GL20.glDeleteShader(vertexShaderId);
+                GL20.glDeleteShader(fragmentShaderId);
+                break;
         }
     }
 
@@ -84,17 +69,6 @@ public class Shader {
             // Vérifier les erreurs de compilation
             if (GL20.glGetShaderi(shaderId, GL20.GL_COMPILE_STATUS) == GL20.GL_FALSE) {
                 String infoLog = GL20.glGetShaderInfoLog(shaderId, 1024);
-                System.err.println("Error compiling the shader: " + infoLog);
-                throw new RuntimeException("Error compiling the shader: " + file);
-            }
-        } else if(api == API.OPENGL_ES) {
-            shaderId = GLES20.glCreateShader(type);
-            GLES20.glShaderSource(shaderId, shaderSource);
-            GLES20.glCompileShader(shaderId);
-
-            // Vérifier les erreurs de compilation
-            if (GLES20.glGetShaderi(shaderId, GLES20.GL_COMPILE_STATUS) == GLES20.GL_FALSE) {
-                String infoLog = GLES20.glGetShaderInfoLog(shaderId, 1024);
                 System.err.println("Error compiling the shader: " + infoLog);
                 throw new RuntimeException("Error compiling the shader: " + file);
             }

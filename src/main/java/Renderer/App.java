@@ -9,7 +9,6 @@ import java.nio.*;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import static java.lang.Math.*;
@@ -123,24 +122,16 @@ public class App {
          creates the GLCapabilities instance and makes the OpenGL
          bindings available for use.
         */
-        GL.createCapabilities();
-
-        String vertexShader = "";
-        String fragmentShader = "";
 
         if(api_context == API.OPENGL){
-            vertexShader = "shaders/Opengl/Default.vert";
-            fragmentShader = "shaders/Opengl/Default.frag";
-        } else if(api_context == API.OPENGL_ES) {
-            vertexShader = "shaders/Opengl ES/Default.vert";
-            fragmentShader = "shaders/Opengl ES/Default.frag";
+            GL.createCapabilities();
+            shader.CreateShader(api_context, "shaders/Opengl/Default.vert", "shaders/Opengl/Default.frag");
         }
-        shader.CreateShader(api_context, vertexShader, fragmentShader);
+
         sprite = new SpriteMesh(renderer);
 
         while ( !glfwWindowShouldClose(window) ) {
-            glClearColor(0.f, 0.f, 0.f, 0.f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
+            renderer.ClearColor();
 
             shader.Bind();
             sprite.Draw(renderer);

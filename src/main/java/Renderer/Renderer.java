@@ -1,11 +1,6 @@
 package Renderer;
 
-
-import Renderer.OpenGL.*;
-import Renderer.OpenGLES.*;
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengles.GLES20;
 
 import static Renderer.API_CONTEXT.*;
 
@@ -25,7 +20,15 @@ public class Renderer {
 
     }
     public void ClearColor() {
-
+        switch (m_Api) {
+            case API.OPENGL:
+                GL20.glClearColor(0.f, 0.f, 0.f, 0.f);
+                GL20.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+                break;
+            default:
+                System.out.println("Error API: The current API is not supported...");
+                break;
+        }
     }
     public void ClearRender() {
 
@@ -51,21 +54,6 @@ public class Renderer {
                 spriteMesh.m_Ebo.Init(spriteMesh.indices);
 
                 break;
-            case API.OPENGL_ES:
-                // Instantiate them
-                spriteMesh.m_ESVao = new VAO_ES();
-                spriteMesh.m_ESVbo = new VBO_ES();
-                spriteMesh.m_ESEbo = new EBO_ES();
-                VertexBufferLayout_ES Layout = new VertexBufferLayout_ES();
-
-                // Initialize them
-                spriteMesh.m_ESVbo.Init(spriteMesh.vertices);
-                Layout.Add(0, 3);
-                Layout.Add(0, 3);
-                spriteMesh.m_ESVao.AddBuffer(spriteMesh.m_ESVbo, Layout);
-
-                spriteMesh.m_ESEbo.Init(spriteMesh.indices);
-                break;
             default:
                 System.out.println("Error API: The current API is not supported...");
                 break;
@@ -82,12 +70,6 @@ public class Renderer {
                 spriteMesh.m_Vao.Delete();
                 spriteMesh.m_Vbo.Delete();
                 spriteMesh.m_Ebo.Delete();
-                break;
-            case API.OPENGL_ES:
-                // Delete them
-                spriteMesh.m_ESVao.Delete();
-                spriteMesh.m_ESVbo.Delete();
-                spriteMesh.m_ESEbo.Delete();
                 break;
             default:
                 System.out.println("Error API: The current API is not supported...");
@@ -106,15 +88,6 @@ public class Renderer {
 
                 spriteMesh.m_Vao.UnBind();
                 spriteMesh.m_Ebo.UnBind();
-                break;
-            case API.OPENGL_ES:
-                spriteMesh.m_ESVao.Bind();
-                spriteMesh.m_ESEbo.Bind();
-
-                GLES20.glDrawElements(GLES20.GL_TRIANGLES, spriteMesh.indices.length, GLES20.GL_UNSIGNED_INT, 0);
-
-                spriteMesh.m_ESVao.UnBind();
-                spriteMesh.m_ESEbo.UnBind();
                 break;
             default:
                 System.out.println("Error API: The current API is not supported...");
