@@ -6,22 +6,16 @@
   <component name="ChangeListManager">
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-opengles-javadoc.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-opengles-natives-linux-arm32.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-opengles-natives-linux-arm64.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-opengles-natives-linux-ppc64le.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-opengles-natives-linux-riscv64.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-opengles-natives-linux.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-opengles-natives-macos-arm64.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-opengles-natives-macos.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-opengles-natives-windows-x86.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-opengles-natives-windows.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-opengles-sources.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-opengles.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-release-3.3.6-custom.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-release-custom-zip.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/shaders/Opengl ES/Default.frag" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/shaders/Opengl ES/Default.vert" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/shaders/Opengl/Default.frag" beforeDir="false" afterPath="$PROJECT_DIR$/shaders/Opengl/Default.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shaders/Opengl/Default.vert" beforeDir="false" afterPath="$PROJECT_DIR$/shaders/Opengl/Default.vert" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/API_CONTEXT.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/App.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/Renderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/Renderer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/Shader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/Shader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Renderer/SpriteMesh.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Renderer/Model/SpriteMesh.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -104,6 +98,7 @@
       <recent name="" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="Renderer" />
       <recent name="Renderer.OpenGLES" />
     </key>
   </component>

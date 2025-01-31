@@ -1,5 +1,8 @@
 package Renderer;
 
+import Renderer.Model.*;
+import org.joml.AxisAngle4f;
+import org.joml.*;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
@@ -7,12 +10,12 @@ import org.lwjgl.system.*;
 import Core.Input.Input;
 import java.nio.*;
 
+import static java.lang.Math.toRadians;
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
-import static java.lang.Math.*;
-import static Renderer.API_CONTEXT.*;
+
 
 public class App {
     private long window;
@@ -22,19 +25,12 @@ public class App {
 
     public Renderer renderer;
     public Input input;
-    SpriteMesh sprite;
+    CubeMesh cube;
     Shader shader = new Shader();
 
-    API api_context = API.OPENGL;
-
     public App(int width, int height, String title) {
-
         this.m_Width = width;
-        m_Width = max(640, m_Width); // Max Width is 640
-
         this.m_Height = height;
-        m_Height = max(480, m_Height); // Max Width is 480
-
         this.m_Title = title;
     }
 
@@ -49,7 +45,7 @@ public class App {
         glfwDestroyWindow(window);
 
         // Delete the buffers and shader we don't need anymore
-        sprite.DeleteMesh(renderer);
+        cube.Delete();
         shader.Clear();
 
         // Terminate GLFW and free the error callback
@@ -74,7 +70,7 @@ public class App {
         window = glfwCreateWindow(m_Width, m_Height, m_Title, NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
-        renderer = new Renderer(api_context);
+        renderer = new Renderer();
         input = new Input();
 
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
@@ -122,19 +118,29 @@ public class App {
          creates the GLCapabilities instance and makes the OpenGL
          bindings available for use.
         */
+        GL.createCapabilities();
+        shader.CreateShader("shaders/Opengl/Default.vert", "shaders/Opengl/Default.frag");
 
-        if(api_context == API.OPENGL){
-            GL.createCapabilities();
-            shader.CreateShader(api_context, "shaders/Opengl/Default.vert", "shaders/Opengl/Default.frag");
-        }
-
-        sprite = new SpriteMesh(renderer);
+        cube = new CubeMesh();
 
         while ( !glfwWindowShouldClose(window) ) {
             renderer.ClearColor();
 
             shader.Bind();
-            sprite.Draw(renderer);
+            Matrix4f Model = new Matrix4f();
+            Model = Model.translate(cube.position);
+            Matrix4f view = new Matrix4f();
+            view.lookAt(new Vector3f(0.f, 0.f, -1.f), new Vector3f(0.f, 0.f, 0.f), new Vector3f(0.0f, 0.0f, 1.0f));
+            Matrix4f Projection = new Matrix4f();
+            float fov = 72.0f;
+
+            Projection.perspective(toRadians(fov),m_Width/m_Height, 0.01f, 100.f);
+
+            shader.UniformMatrix4x4("u_Model", Model);
+            shader.UniformMatrix4x4("u_View", new Matrix4f().identity());
+            shader.UniformMatrix4x4("u_Proj", Projection);
+
+            renderer.Draw(cube);
 
             glfwSwapBuffers(window); // swap the color buffers
             shader.UnBind();

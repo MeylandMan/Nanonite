@@ -1,51 +1,42 @@
 package Renderer;
 
 
+import org.joml.*;
+import org.lwjgl.BufferUtils;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.FloatBuffer;
 
-import org.lwjgl.opengl.GL20;
-
-import static Renderer.API_CONTEXT.*;
+import static org.lwjgl.opengl.GL20.*;
 
 public class Shader {
     private int m_ID;
-    API api;
     public void Bind() {
-        if(api == API.OPENGL)
-            GL20.glUseProgram(m_ID);
+        glUseProgram(m_ID);
     }
 
     public void UnBind() {
-        if(api == API.OPENGL)
-            GL20.glUseProgram(0);
+        glUseProgram(0);
     }
 
     public void Clear() {
-        if(api == API.OPENGL)
-            GL20.glDeleteProgram(m_ID);
+        glDeleteProgram(m_ID);
     }
 
-    public void CreateShader(API api, String vertexFile, String fragmentFile) {
-        this.api = api;
-        int vertexShaderId = 0;
-        int fragmentShaderId = 0;
-        switch(api) {
-            case API.OPENGL:
-                vertexShaderId = loadShader(vertexFile, GL20.GL_VERTEX_SHADER);
-                fragmentShaderId = loadShader(fragmentFile, GL20.GL_FRAGMENT_SHADER);
+    public void CreateShader(String vertexFile, String fragmentFile) {
+        int vertexShaderId = loadShader(vertexFile, GL_VERTEX_SHADER);
+        int fragmentShaderId = loadShader(fragmentFile, GL_FRAGMENT_SHADER);
 
-                m_ID = GL20.glCreateProgram();
-                GL20.glAttachShader(m_ID, vertexShaderId);
-                GL20.glAttachShader(m_ID, fragmentShaderId);
-                GL20.glLinkProgram(m_ID);
-                GL20.glValidateProgram(m_ID);
+        m_ID = glCreateProgram();
+        glAttachShader(m_ID, vertexShaderId);
+        glAttachShader(m_ID, fragmentShaderId);
+        glLinkProgram(m_ID);
+        glValidateProgram(m_ID);
 
-                GL20.glDeleteShader(vertexShaderId);
-                GL20.glDeleteShader(fragmentShaderId);
-                break;
-        }
+        glDeleteShader(vertexShaderId);
+        glDeleteShader(fragmentShaderId);
     }
 
     private int loadShader(String file, int type) {
@@ -60,23 +51,112 @@ public class Shader {
             throw new RuntimeException("Impossible de lire le fichier shader: " + file);
         }
 
-        int shaderId = 0;
-        if(api == API.OPENGL) {
-            shaderId = GL20.glCreateShader(type);
-            GL20.glShaderSource(shaderId, shaderSource);
-            GL20.glCompileShader(shaderId);
 
-            // Vérifier les erreurs de compilation
-            if (GL20.glGetShaderi(shaderId, GL20.GL_COMPILE_STATUS) == GL20.GL_FALSE) {
-                String infoLog = GL20.glGetShaderInfoLog(shaderId, 1024);
-                System.err.println("Error compiling the shader: " + infoLog);
-                throw new RuntimeException("Error compiling the shader: " + file);
-            }
+        int shaderId = glCreateShader(type);
+        glShaderSource(shaderId, shaderSource);
+        glCompileShader(shaderId);
+
+        // Vérifier les erreurs de compilation
+        if (glGetShaderi(shaderId, GL_COMPILE_STATUS) == GL_FALSE) {
+            String infoLog = glGetShaderInfoLog(shaderId, 1024);
+            System.err.println("Error compiling the shader: " + infoLog);
+            throw new RuntimeException("Error compiling the shader: " + file);
         }
         return shaderId;
     }
-
     public int getID() {
         return m_ID;
     }
+    public int getUniform(String name) {
+        int uniform = glGetUniformLocation(m_ID, name);
+
+        return uniform;
+    }
+
+    public void Uniform1f(String name, float x) {
+        int location = getUniform(name);
+        glUniform1f(location, x);
+    }
+    public void Uniform2f(String name, float x, float y) {
+        int location = getUniform(name);
+        glUniform2f(location, x, y);
+    }
+    public void Uniform2f(String name, Vector2f vector) {
+        int location = getUniform(name);
+        glUniform2f(location, vector.x, vector.y);
+    }
+
+    public void Uniform3f(String name, float x, float y, float z) {
+        int location = getUniform(name);
+        glUniform3f(location, x, y, z);
+    }
+    public void Uniform3f(String name, Vector3f vector) {
+        int location = getUniform(name);
+        glUniform3f(location, vector.x, vector.y, vector.z);
+    }
+
+    public void Uniform4f(String name, float x, float y, float z, float w) {
+        int location = getUniform(name);
+        glUniform4f(location, x, y, z, w);
+    }
+    public void Uniform4f(String name, Vector4f vector) {
+        int location = getUniform(name);
+        glUniform4f(location, vector.x, vector.y, vector.z, vector.w);
+    }
+
+    public void Uniform1i(String name, int x) {
+        int location = getUniform(name);
+        glUniform1i(location, x);
+    }
+    public void Uniform2i(String name, int x, int y) {
+        int location = getUniform(name);
+        glUniform2i (location, x, y);
+    }
+    public void Uniform2i(String name, Vector2i vector) {
+        int location = getUniform(name);
+        glUniform2i(location, vector.x, vector.y);
+    }
+
+    public void Uniform3i(String name, int x, int y, int z) {
+        int location = getUniform(name);
+        glUniform3i(location, x, y, z);
+    }
+    public void Uniform3i(String name, Vector3i vector) {
+        int location = getUniform(name);
+        glUniform3i(location, vector.x, vector.y, vector.z);
+    }
+
+    public void Uniform4i(String name, int x, int y, int z, int w) {
+        int location = getUniform(name);
+        glUniform4i(location, x, y, z, w);
+    }
+    public void Uniform4i(String name, Vector4i vector) {
+        int location = getUniform(name);
+        glUniform4i(location, vector.x, vector.y, vector.z, vector.w);
+    }
+
+    public void UniformMatrix2x2(String name, Matrix2f matrix) {
+        int location = getUniform(name);
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(4);
+        matrix.get(buffer);
+
+        glUniformMatrix2fv(location, true, buffer);
+    }
+    public void UniformMatrix3x3(String name, Matrix3f matrix) {
+        int location = getUniform(name);
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(9);
+        matrix.get(buffer);
+
+        glUniformMatrix3fv(location, true, buffer);
+    }
+    public void UniformMatrix4x4(String name, Matrix4f matrix) {
+        int location = getUniform(name);
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
+        matrix.get(buffer);
+
+        glUniformMatrix4fv(location, true, buffer);
+    }
+
 }
+
+
