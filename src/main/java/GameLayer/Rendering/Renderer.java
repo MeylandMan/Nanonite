@@ -1,9 +1,9 @@
-package Renderer;
+package GameLayer.Rendering;
 
 import static org.lwjgl.opengl.GL20.*;
 
-import Renderer.Model.CubeMesh;
-import Renderer.Model.SpriteMesh;
+import GameLayer.Rendering.Model.CubeMesh;
+import GameLayer.Rendering.Model.SpriteMesh;
 
 
 public class Renderer {

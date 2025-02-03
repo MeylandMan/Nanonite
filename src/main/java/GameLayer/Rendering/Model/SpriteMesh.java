@@ -1,9 +1,9 @@
-package Renderer.Model;
+package GameLayer.Rendering.Model;
 
-import Renderer.EBO;
-import Renderer.VAO;
-import Renderer.VBO;
-import Renderer.VertexBufferLayout;
+import GameLayer.Rendering.EBO;
+import GameLayer.Rendering.VAO;
+import GameLayer.Rendering.VBO;
+import GameLayer.Rendering.VertexBufferLayout;
 
 import static org.lwjgl.opengl.GL11.*;
 

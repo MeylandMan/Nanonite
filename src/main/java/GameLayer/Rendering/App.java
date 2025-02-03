@@ -1,7 +1,6 @@
-package Renderer;
+package GameLayer.Rendering;
 
-import Renderer.Model.*;
-import org.joml.AxisAngle4f;
+import GameLayer.Rendering.Model.CubeMesh;
 import org.joml.*;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
@@ -10,7 +9,6 @@ import org.lwjgl.system.*;
 import Core.Input.Input;
 import java.nio.*;
 
-import static java.lang.Math.toRadians;
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryStack.*;
@@ -134,7 +132,7 @@ public class App {
             Matrix4f Projection = new Matrix4f();
             float fov = 72.0f;
 
-            Projection.perspective(toRadians(fov),m_Width/m_Height, 0.01f, 100.f);
+            Projection.perspective(72.f,m_Width/m_Height, 0.01f, 100.f);
 
             shader.UniformMatrix4x4("u_Model", Model);
             shader.UniformMatrix4x4("u_View", new Matrix4f().identity());

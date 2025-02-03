@@ -1,4 +1,4 @@
-import Renderer.App;
+import GameLayer.Rendering.App;
 
 public class Main {
 

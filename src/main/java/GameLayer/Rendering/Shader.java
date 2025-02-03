@@ -1,4 +1,4 @@
-package Renderer;
+package GameLayer.Rendering;
 
 
 import org.joml.*;

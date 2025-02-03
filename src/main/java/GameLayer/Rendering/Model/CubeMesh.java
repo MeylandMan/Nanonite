@@ -1,6 +1,10 @@
-package Renderer.Model;
+package GameLayer.Rendering.Model;
 
-import Renderer.*;
+import GameLayer.Rendering.EBO;
+import GameLayer.Rendering.VAO;
+import GameLayer.Rendering.VBO;
+import GameLayer.Rendering.VertexBufferLayout;
+import Rendering.*;
 import org.joml.*;
 
 import static org.lwjgl.opengl.GL20.*;
