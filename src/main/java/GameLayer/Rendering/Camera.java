@@ -1,8 +1,8 @@
 package GameLayer.Rendering;
 
 import org.joml.*;
-
-import java.util.ArrayList;
+import java.lang.Math;
+import java.util.Vector;
 
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 enum Camera_Movement {
@@ -23,7 +23,7 @@ public class Camera {
 
     // camera Attributes
     public Vector3f Position;
-    public Vector3f Front;
+    public Vector3f Front = new Vector3f(0.0f, 0.0f, -1.0f);
     public Vector3f Up;
     public Vector3f Right;
     public Vector3f WorldUp;
@@ -31,17 +31,54 @@ public class Camera {
     public float Yaw;
     public float Pitch;
     // camera options
-    public float MovementSpeed;
-    public float MouseSensitivity;
-    public float Zoom;
+    public float MovementSpeed = SPEED;
+    public float MouseSensitivity = SENSITIVITY;
+    public float Zoom = ZOOM;
 
     // Camera constructor
     public Camera() {
+        Position = new Vector3f(0.0f);
+        WorldUp = new Vector3f(0.0f);
+        Yaw = YAW;
+        Pitch = PITCH;
+        updateCameraVectors();
+    }
+    public Camera(Vector3f position) {
+        Position = position;
+        WorldUp = new Vector3f(0.0f);
+        Yaw = YAW;
+        Pitch = PITCH;
+        updateCameraVectors();
+    }
+    public Camera(Vector3f position, Vector3f up) {
+        Position = position;
+        WorldUp = up;
+        Yaw = YAW;
+        Pitch = PITCH;
+        updateCameraVectors();
+    }
+    public Camera(Vector3f position, Vector3f up, float yaw) {
+        Position = position;
+        WorldUp = up;
+        Yaw = yaw;
+        Pitch = PITCH;
+        updateCameraVectors();
+    }
 
+    public Camera(Vector3f position, Vector3f up, float yaw, float pitch) {
+        Position = position;
+        WorldUp = up;
+        Yaw = yaw;
+        Pitch = pitch;
+        updateCameraVectors();
     }
     //Camera constructor with scalar values
-    public Camera() {
-
+    public Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) {
+        Position = new Vector3f(posX, posY, posZ);
+        WorldUp = new Vector3f(upX, upY, upZ);
+        Yaw = yaw;
+        Pitch = pitch;
+        updateCameraVectors();
     }
 
     // returns the view matrix calculated using Euler Angles and the LookAt Matrix
@@ -55,7 +92,7 @@ public class Camera {
     }
 
     // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-    void ProcessKeyboard(Camera_Movement direction, float deltaTime)
+    public void ProcessKeyboard(Camera_Movement direction, float deltaTime)
     {
         float velocity = MovementSpeed * deltaTime;
         Vector3fc[] temp = {
@@ -80,5 +117,49 @@ public class Camera {
                 break;
         }
 
+    }
+
+    // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
+    public void ProcessMouseMovement(float xoffset, float yoffset, boolean constrainPitch)
+    {
+        xoffset *= MouseSensitivity;
+        yoffset *= MouseSensitivity;
+
+        Yaw += xoffset;
+        Pitch += yoffset;
+
+        // make sure that when pitch is out of bounds, screen doesn't get flipped
+        if (constrainPitch)
+            Pitch = Math.clamp(Pitch, -89.0f, 89.0f);
+
+        // update Front, Right and Up Vectors using the updated Euler angles
+        updateCameraVectors();
+    }
+
+    // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
+    public void ProcessMouseScroll(float yoffset)
+    {
+        Zoom -= (float)yoffset;
+        Zoom = Math.clamp(Zoom, 1.0f, 45.0f);
+    }
+
+    // calculates the front vector from the Camera's (updated) Euler Angles
+    private void updateCameraVectors()
+    {
+        // calculate the new Front vector
+        Vector3f front = new Vector3f();
+        front.x = (float)(Math.cos(Math.toRadians(Yaw)) * Math.cos(Math.toRadians(Pitch)));
+        front.y = (float)Math.sin(Math.toRadians(Pitch));
+        front.z = (float)(Math.sin(Math.toRadians(Yaw)) * Math.cos(Math.toRadians(Pitch)));
+        Front = front.normalize();
+
+        // also re-calculate the Right and Up vector
+        Vector3f FWCross = new Vector3f();
+        Vector3f RFCross = new Vector3f();
+
+        FWCross.cross(Front, WorldUp);
+        RFCross.cross(Right, Front);
+        Right = FWCross.normalize();  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
+        Up = RFCross.normalize();
     }
 }
