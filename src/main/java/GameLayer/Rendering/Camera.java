@@ -2,18 +2,19 @@ package GameLayer.Rendering;
 
 import org.joml.*;
 import java.lang.Math;
-import java.util.Vector;
 
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
-enum Camera_Movement {
-    FORWARD,
-    BACKWARD,
-    LEFT,
-    RIGHT
-};
+
 
 
 public class Camera {
+    public enum Camera_Movement {
+        FORWARD,
+        BACKWARD,
+        LEFT,
+        RIGHT
+    }
+
     // Default camera values
     public static final float YAW = -90.0f;
     public static final float PITCH = 0.0f;
@@ -24,9 +25,9 @@ public class Camera {
     // camera Attributes
     public Vector3f Position;
     public Vector3f Front = new Vector3f(0.0f, 0.0f, -1.0f);
-    public Vector3f Up;
-    public Vector3f Right;
-    public Vector3f WorldUp;
+    private Vector3f Up = new Vector3f();
+    private Vector3f Right = new Vector3f();
+    private final Vector3f WorldUp;
     // euler Angles
     public float Yaw;
     public float Pitch;
@@ -37,47 +38,48 @@ public class Camera {
 
     // Camera constructor
     public Camera() {
-        Position = new Vector3f(0.0f);
-        WorldUp = new Vector3f(0.0f);
-        Yaw = YAW;
-        Pitch = PITCH;
+        this.Position = new Vector3f();
+        this.WorldUp = new Vector3f(0.f, 1.f, 0.f);
+        this.Yaw = YAW;
+        this.Pitch = PITCH;
         updateCameraVectors();
     }
     public Camera(Vector3f position) {
-        Position = position;
-        WorldUp = new Vector3f(0.0f);
-        Yaw = YAW;
-        Pitch = PITCH;
+        this.Position = position;
+        this.WorldUp = new Vector3f(0.f, 1.f, 0.f);
+        this.Yaw = YAW;
+        this.Pitch = PITCH;
         updateCameraVectors();
     }
+
     public Camera(Vector3f position, Vector3f up) {
-        Position = position;
-        WorldUp = up;
-        Yaw = YAW;
-        Pitch = PITCH;
+        this. Position = position;
+        this.WorldUp = up;
+        this.Yaw = YAW;
+        this.Pitch = PITCH;
         updateCameraVectors();
     }
     public Camera(Vector3f position, Vector3f up, float yaw) {
-        Position = position;
-        WorldUp = up;
-        Yaw = yaw;
-        Pitch = PITCH;
+        this.Position = position;
+        this.WorldUp = up;
+        this.Yaw = yaw;
+        this.Pitch = PITCH;
         updateCameraVectors();
     }
 
     public Camera(Vector3f position, Vector3f up, float yaw, float pitch) {
-        Position = position;
-        WorldUp = up;
-        Yaw = yaw;
-        Pitch = pitch;
+        this.Position = position;
+        this.WorldUp = up;
+        this.Yaw = yaw;
+        this.Pitch = pitch;
         updateCameraVectors();
     }
     //Camera constructor with scalar values
     public Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) {
-        Position = new Vector3f(posX, posY, posZ);
-        WorldUp = new Vector3f(upX, upY, upZ);
-        Yaw = yaw;
-        Pitch = pitch;
+        this.Position = new Vector3f(posX, posY, posZ);
+        this.WorldUp = new Vector3f(upX, upY, upZ);
+        this.Yaw = yaw;
+        this.Pitch = pitch;
         updateCameraVectors();
     }
 
@@ -85,9 +87,8 @@ public class Camera {
     public Matrix4f GetViewMatrix()
     {
         Matrix4f mat4 = new Matrix4f();
-        Vector3fc temp = new Vector3f();
-        temp.add(Position, Front);
-
+        Vector3f temp = new Vector3f().add(Position, Front);
+        //System.out.println("Front : " + Front + "\nPosition : " + Position + "\nResult : " + temp);
         return mat4.lookAt(Position, temp, Up);
     }
 
@@ -120,13 +121,13 @@ public class Camera {
     }
 
     // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
-    public void ProcessMouseMovement(float xoffset, float yoffset, boolean constrainPitch)
+    public void ProcessMouseMovement(float x_offset, float y_offset, boolean constrainPitch)
     {
-        xoffset *= MouseSensitivity;
-        yoffset *= MouseSensitivity;
+        x_offset *= MouseSensitivity;
+        y_offset *= MouseSensitivity;
 
-        Yaw += xoffset;
-        Pitch += yoffset;
+        Yaw += x_offset;
+        Pitch += y_offset;
 
         // make sure that when pitch is out of bounds, screen doesn't get flipped
         if (constrainPitch)
@@ -136,10 +137,10 @@ public class Camera {
         updateCameraVectors();
     }
 
-    // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
-    public void ProcessMouseScroll(float yoffset)
+
+    public void ProcessMouseScroll(float y_offset)
     {
-        Zoom -= (float)yoffset;
+        Zoom -= y_offset;
         Zoom = Math.clamp(Zoom, 1.0f, 45.0f);
     }
 
@@ -151,15 +152,13 @@ public class Camera {
         front.x = (float)(Math.cos(Math.toRadians(Yaw)) * Math.cos(Math.toRadians(Pitch)));
         front.y = (float)Math.sin(Math.toRadians(Pitch));
         front.z = (float)(Math.sin(Math.toRadians(Yaw)) * Math.cos(Math.toRadians(Pitch)));
-        Front = front.normalize();
+        front.normalize(Front);
 
         // also re-calculate the Right and Up vector
-        Vector3f FWCross = new Vector3f();
-        Vector3f RFCross = new Vector3f();
+        //Right = Front.cross(WorldUp).normalize();
+        Right.cross(Right, Front).normalize();
+        Up.cross(Right, Front).normalize();
 
-        FWCross.cross(Front, WorldUp);
-        RFCross.cross(Right, Front);
-        Right = FWCross.normalize();  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
-        Up = RFCross.normalize();
+        int x = 0;
     }
 }

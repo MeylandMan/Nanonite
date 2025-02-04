@@ -68,9 +68,7 @@ public class Shader {
         return m_ID;
     }
     public int getUniform(String name) {
-        int uniform = glGetUniformLocation(m_ID, name);
-
-        return uniform;
+        return glGetUniformLocation(m_ID, name);
     }
 
     public void Uniform1f(String name, float x) {
@@ -137,25 +135,21 @@ public class Shader {
 
     public void UniformMatrix2x2(String name, Matrix2f matrix) {
         int location = getUniform(name);
-        FloatBuffer buffer = BufferUtils.createFloatBuffer(4);
-        matrix.get(buffer);
-
-        glUniformMatrix2fv(location, true, buffer);
+        assert(location != -1);
+        glUniformMatrix2fv(location, false, matrix.get(new float[4]));
     }
     public void UniformMatrix3x3(String name, Matrix3f matrix) {
         int location = getUniform(name);
-        FloatBuffer buffer = BufferUtils.createFloatBuffer(9);
-        matrix.get(buffer);
-
-        glUniformMatrix3fv(location, true, buffer);
+        assert(location != -1);
+        glUniformMatrix3fv(location, false, matrix.get(new float[9]));
     }
     public void UniformMatrix4x4(String name, Matrix4f matrix) {
         int location = getUniform(name);
-        FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
-        matrix.get(buffer);
-
-        glUniformMatrix4fv(location, true, buffer);
+        assert(location != -1);
+        glUniformMatrix4fv(location, false, matrix.get(new float[16]));
     }
+
+
 
 }
 

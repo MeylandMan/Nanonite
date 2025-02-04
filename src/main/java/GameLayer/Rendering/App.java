@@ -7,10 +7,12 @@ import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 import Core.Input.Input;
-import java.nio.*;
+import java.lang.Math;
+import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
@@ -20,16 +22,35 @@ public class App {
     private int m_Width;
     private int m_Height;
     private final String m_Title;
-
+    boolean firstMouse = true;
+    float lastX;
+    float lastY;
     public Renderer renderer;
     public Input input;
     CubeMesh cube;
     Shader shader = new Shader();
+    Camera camera = new Camera(new Vector3f(0.f, 0.f, 3.f));
 
     public App(int width, int height, String title) {
         this.m_Width = width;
         this.m_Height = height;
         this.m_Title = title;
+
+        this.lastX = (float)m_Width/2;
+        this.lastY = (float)m_Height/2;
+    }
+
+    private void ProcessInput(long window) {
+        if (Input.is_locked) {
+            if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+                camera.ProcessKeyboard(Camera.Camera_Movement.FORWARD, 0.0f);
+            if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+                camera.ProcessKeyboard(Camera.Camera_Movement.BACKWARD, 0.0f);
+            if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+                camera.ProcessKeyboard(Camera.Camera_Movement.LEFT, 0.0f);
+            if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+                camera.ProcessKeyboard(Camera.Camera_Movement.RIGHT, 0.0f);
+        }
     }
 
     public void run() {
@@ -69,14 +90,41 @@ public class App {
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
         renderer = new Renderer();
-        input = new Input();
+        input = new Input(camera);
 
-        // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-        glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-            //input.KeyCallBack(window, key, scancode, action, mods);
-            if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
-                glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
+
+        glfwSetFramebufferSizeCallback(window, (window, width, height) -> {
+            glViewport(0, 0, width, height);
         });
+
+        glfwSetKeyCallback(window, input);
+        glfwSetCursorPosCallback(window, (long window, double xposIn, double yposIn) -> {
+            float xpos = (float)xposIn;
+            float ypos = (float)yposIn;
+
+            if (firstMouse)
+            {
+                lastX = xpos;
+                lastY = ypos;
+                firstMouse = false;
+            }
+
+            float xoffset = xpos - lastX;
+            float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+            lastX = xpos;
+            lastY = ypos;
+
+            if (Input.is_locked) {
+                camera.ProcessMouseMovement(xoffset, yoffset, true);
+            }
+
+        });
+
+        glfwSetScrollCallback(window, (long window, double _, double yoffset) -> {
+            camera.ProcessMouseScroll((float)yoffset);
+        });
+
 
         // Get the thread stack and push a new frame
         try ( MemoryStack stack = stackPush() ) {
@@ -96,6 +144,7 @@ public class App {
                     (vidmode.height() - pHeight.get(0)) / 2
             );
         } // the stack frame is popped automatically
+
 
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
@@ -117,35 +166,55 @@ public class App {
          bindings available for use.
         */
         GL.createCapabilities();
+
+        // Depth render
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+
+
         shader.CreateShader("shaders/Opengl/Default.vert", "shaders/Opengl/Default.frag");
 
         cube = new CubeMesh();
 
         while ( !glfwWindowShouldClose(window) ) {
+            ProcessInput(window);
+            if (Input.is_locked)
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            else
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
             renderer.ClearColor();
 
-            shader.Bind();
-            Matrix4f Model = new Matrix4f();
-            Model = Model.translate(cube.position);
-            Matrix4f view = new Matrix4f();
-            view.lookAt(new Vector3f(0.f, 0.f, -1.f), new Vector3f(0.f, 0.f, 0.f), new Vector3f(0.0f, 0.0f, 1.0f));
-            Matrix4f Projection = new Matrix4f();
-            float fov = 72.0f;
+            IntBuffer width = stackMallocInt(1);
+            IntBuffer height = stackMallocInt(1);
 
-            Projection.perspective(72.f,m_Width/m_Height, 0.01f, 100.f);
+            m_Width = width.get(0);
+            m_Height = height.get(0);
+
+            glfwGetFramebufferSize(window, width, height);
+
+
+            shader.Bind();
+            Matrix4f Model = new Matrix4f().identity()
+                    .translate(new Vector3f(1.0f, 1.0f, 1.0f))     // Translation
+                    .rotateX((float) Math.toRadians(cube.rotation.x))       // Rotation X
+                    .rotateY((float) Math.toRadians(cube.rotation.y))       // Rotation Y
+                    .rotateZ((float) Math.toRadians(cube.rotation.z))       // Rotation Z
+                    .scale(new Vector3f(1.0f, 1.0f, 1.0f));        // Scale
+
+
+            Matrix4f Projection = new Matrix4f().identity()
+                    .perspective((float)Math.toRadians(72.0), (float)(m_Width/Math.max(m_Height, 1)), 0.001f, 100.f);
 
             shader.UniformMatrix4x4("u_Model", Model);
-            shader.UniformMatrix4x4("u_View", new Matrix4f().identity());
+            shader.UniformMatrix4x4("u_View", camera.GetViewMatrix());
             shader.UniformMatrix4x4("u_Proj", Projection);
 
             renderer.Draw(cube);
 
-            glfwSwapBuffers(window); // swap the color buffers
-            shader.UnBind();
-
-            // Poll for window events. The key callback above will only be
-            // invoked during this call.
+            glfwSwapBuffers(window);
             glfwPollEvents();
+
         }
 
     }

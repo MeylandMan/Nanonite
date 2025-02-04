@@ -5,13 +5,13 @@ layout (location = 1) in vec2 in_TexCoords;
 
 out vec2 v_TexCoord;
 
-mat4 u_Model;
-mat4 u_View;
-mat4 u_Proj;
+uniform mat4 u_Model;
+uniform mat4 u_View;
+uniform mat4 u_Proj;
 
 void main()
 {
     v_TexCoord = in_TexCoords;
-    mat4 MATRIX_VIEW_PROJECTION = u_Model * u_View * u_Proj;
-    gl_Position = MATRIX_VIEW_PROJECTION * vec4(in_Position, 1.0);
+    mat4 MATRIX_VIEW_PROJECTION = u_Proj * u_View * u_Model;
+    gl_Position = u_View * vec4(in_Position, 1.0);
 }

@@ -1,49 +1,45 @@
 package GameLayer.Rendering.Model;
 
-import GameLayer.Rendering.EBO;
-import GameLayer.Rendering.VAO;
-import GameLayer.Rendering.VBO;
-import GameLayer.Rendering.VertexBufferLayout;
-import Rendering.*;
+import GameLayer.Rendering.*;
 import org.joml.*;
 
 import static org.lwjgl.opengl.GL20.*;
 public class CubeMesh {
     public Vector3f position = new Vector3f();
     public Vector3f rotation = new Vector3f();
-    public Vector3f scale = new Vector3f();
+    public Vector3f scale = new Vector3f(0.0f);
     // Datas
     float[] vertices = {
         // POSITION			    TEXTURES COORDS		Normals
         -0.5f, -0.5f, -0.5f,	0.0f, 0.0f,	        0.f, 0.f, 0.f,
-         0.5f, -0.5f, -0.5f,	1.0f, 0.0f,	        0.f, 0.f, 0.f, // FRONT
-         0.5f,  0.5f, -0.5f,	1.0f, 1.0f,	        0.f, 0.f, 0.f,
-        -0.5f,  0.5f, -0.5f,	0.0f, 1.0f,	        0.f, 0.f, 0.f,
+         0.5f, -0.5f, -0.5f,	0.5f, 0.0f,	        0.f, 0.f, 0.f, // FRONT
+         0.5f,  0.5f, -0.5f,	0.5f, 0.5f,	        0.f, 0.f, 0.f,
+        -0.5f,  0.5f, -0.5f,	0.0f, 0.5f,	        0.f, 0.f, 0.f,
 
-        -0.5f, -0.5f,  0.5f,	1.0f, 0.0f,	        0.f, 0.f, 0.f,
+        -0.5f, -0.5f,  0.5f,	0.5f, 0.0f,	        0.f, 0.f, 0.f,
          0.5f, -0.5f,  0.5f,	0.0f, 0.0f,	        0.f, 0.f, 0.f, // BACK
-         0.5f,  0.5f,  0.5f,	0.0f, 1.0f,	        0.f, 0.f, 0.f,
-        -0.5f,  0.5f,  0.5f,	1.0f, 1.0f,	        0.f, 0.f, 0.f,
+         0.5f,  0.5f,  0.5f,	0.0f, 0.5f,	        0.f, 0.f, 0.f,
+        -0.5f,  0.5f,  0.5f,	0.5f, 0.5f,	        0.f, 0.f, 0.f,
 
-        -0.5f, -0.5f, -0.5f,	1.0f, 0.0f,	        0.f, 0.f, 0.f,
-        -0.5f,  0.5f, -0.5f,	1.0f, 1.0f,	        0.f, 0.f, 0.f, // LEFT
-        -0.5f,  0.5f,  0.5f,	0.0f, 1.0f,	        0.f, 0.f, 0.f,
+        -0.5f, -0.5f, -0.5f,	0.5f, 0.0f,	        0.f, 0.f, 0.f,
+        -0.5f,  0.5f, -0.5f,	0.5f, 0.5f,	        0.f, 0.f, 0.f, // LEFT
+        -0.5f,  0.5f,  0.5f,	0.0f, 0.5f,	        0.f, 0.f, 0.f,
         -0.5f, -0.5f,  0.5f,	0.0f, 0.0f,	        0.f, 0.f, 0.f,
 
          0.5f, -0.5f, -0.5f,	0.0f, 0.0f,	        0.f, 0.f, 0.f,
-         0.5f,  0.5f, -0.5f,	0.0f, 1.0f,	        0.f, 0.f, 0.f, // RIGHT
-         0.5f,  0.5f,  0.5f,	1.0f, 1.0f,	        0.f, 0.f, 0.f,
-         0.5f, -0.5f,  0.5f,	1.0f, 0.0f,	        0.f, 0.f, 0.f,
+         0.5f,  0.5f, -0.5f,	0.0f, 0.5f,	        0.f, 0.f, 0.f, // RIGHT
+         0.5f,  0.5f,  0.5f,	0.5f, 0.5f,	        0.f, 0.f, 0.f,
+         0.5f, -0.5f,  0.5f,	0.5f, 0.0f,	        0.f, 0.f, 0.f,
 
         -0.5f, -0.5f, -0.5f,	0.0f, 0.0f,	        0.f, 0.f, 0.f,
-         0.5f, -0.5f, -0.5f,	1.0f, 0.0f,	        0.f, 0.f, 0.f, // DOWN
-         0.5f, -0.5f,  0.5f,	1.0f, 1.0f,	        0.f, 0.f, 0.f,
-        -0.5f, -0.5f,  0.5f,	0.0f, 1.0f,	        0.f, 0.f, 0.f,
+         0.5f, -0.5f, -0.5f,	0.5f, 0.0f,	        0.f, 0.f, 0.f, // DOWN
+         0.5f, -0.5f,  0.5f,	0.5f, 0.5f,	        0.f, 0.f, 0.f,
+        -0.5f, -0.5f,  0.5f,	0.0f, 0.5f,	        0.f, 0.f, 0.f,
 
         0.5f,  0.5f, -0.5f,	    0.0f, 0.0f,	        0.f, 0.f, 0.f,
-        -0.5f,  0.5f, -0.5f,	1.0f, 0.0f,	        0.f, 0.f, 0.f, // UP
-        -0.5f,  0.5f,  0.5f,	1.0f, 1.0f,	        0.f, 0.f, 0.f,
-        0.5f,  0.5f,  0.5f,	    0.0f, 1.0f,	        0.f, 0.f, 0.f,
+        -0.5f,  0.5f, -0.5f,	0.5f, 0.0f,	        0.f, 0.f, 0.f, // UP
+        -0.5f,  0.5f,  0.5f,	0.5f, 0.5f,	        0.f, 0.f, 0.f,
+        0.5f,  0.5f,  0.5f,	    0.0f, 0.5f,	        0.f, 0.f, 0.f,
     };
     int[] indices = {
         // front and back
