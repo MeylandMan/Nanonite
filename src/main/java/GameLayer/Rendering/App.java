@@ -167,7 +167,7 @@ public class App {
         */
         GL.createCapabilities();
 
-        cube = new CubeMesh(new Vector3f(0.f, 0.f, -3.f));
+        cube = new CubeMesh(new Vector3f(0.f, 0.f, -2.f));
         // Depth render
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
@@ -177,6 +177,7 @@ public class App {
 
         while ( !glfwWindowShouldClose(window) ) {
             ProcessInput(window);
+            glfwPollEvents();
             if (Input.is_locked)
                 glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             else
@@ -199,14 +200,12 @@ public class App {
             shader.Bind();
             Matrix4f Model = new Matrix4f().identity()
                     .translate(new Vector3f(cube.position))                 // Translation
-                    .rotateX((float) Math.toRadians(cube.rotation.x))       // Rotation X
-                    .rotateY((float) Math.toRadians(cube.rotation.y))       // Rotation Y
-                    .rotateZ((float) Math.toRadians(cube.rotation.z))       // Rotation Z
+                    .rotateXYZ(cube.rotation)                               // Rotation
                     .scale(new Vector3f(cube.scale));                       // Scale
 
 
             Matrix4f Projection = new Matrix4f().identity()
-                    .perspective((float)Math.toRadians(72.0), (float)(m_Width/Math.max(m_Height, 1)), 0.001f, 100.f);
+                    .perspective((float)Math.toRadians(camera.Zoom), 1, 0.1f, 100.f);
 
             shader.UniformMatrix4x4("u_Model", Model);
             shader.UniformMatrix4x4("u_View", camera.GetViewMatrix());
@@ -215,7 +214,6 @@ public class App {
             renderer.Draw(cube);
 
             glfwSwapBuffers(window);
-            glfwPollEvents();
 
         }
 

@@ -25,8 +25,8 @@ public class Camera {
     // camera Attributes
     public Vector3f Position;
     private Vector3f Front = new Vector3f(0.0f, 0.0f, -1.0f);
-    private Vector3f Up = new Vector3f();
-    private Vector3f Right = new Vector3f();
+    private final Vector3f Up = new Vector3f();
+    private final Vector3f Right = new Vector3f();
     private final Vector3f WorldUp;
     // euler Angles
     public float Yaw;
@@ -39,6 +39,7 @@ public class Camera {
     // Camera constructor
     public Camera() {
         this.Position = new Vector3f();
+        this.Front = new Vector3f();
         this.WorldUp = new Vector3f(0.f, 1.f, 0.f);
         this.Yaw = YAW;
         this.Pitch = PITCH;

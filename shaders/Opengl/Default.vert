@@ -11,7 +11,8 @@ uniform mat4 u_Proj;
 
 void main()
 {
+    mat4 temp = mat4(1.0);
     v_TexCoord = in_TexCoords;
     mat4 MATRIX_VIEW_PROJECTION = u_Proj * u_View * u_Model;
-    gl_Position = u_Model * vec4(in_Position, 1.0);
+    gl_Position = u_Proj * u_View * u_Model * vec4(in_Position, 1.0);
 }

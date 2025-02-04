@@ -71,7 +71,7 @@ public class CubeMesh {
     public CubeMesh() {
         this.position = new Vector3f();
         this.rotation = new Vector3f();
-        this.scale = new Vector3f();
+        this.scale = new Vector3f(1.0f);
         setupMesh();
         setupNormal();
     }
@@ -79,7 +79,7 @@ public class CubeMesh {
     public CubeMesh(Vector3f position) {
         this.position = new Vector3f(position);
         this.rotation = new Vector3f();
-        this.scale = new Vector3f();
+        this.scale = new Vector3f(1.0f);
         setupMesh();
         setupNormal();
     }
@@ -87,7 +87,7 @@ public class CubeMesh {
     public CubeMesh(Vector3f position, Vector3f rotation) {
         this.position = new Vector3f(position);
         this.rotation = new Vector3f(rotation);
-        this.scale = new Vector3f();
+        this.scale = new Vector3f(1.0f);
         setupMesh();
         setupNormal();
     }
