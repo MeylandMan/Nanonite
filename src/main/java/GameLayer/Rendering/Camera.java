@@ -16,15 +16,15 @@ public class Camera {
     }
 
     // Default camera values
-    public static final float YAW = -90.0f;
-    public static final float PITCH = 0.0f;
-    public static final float SPEED = 5.f;
-    public static final float SENSITIVITY = 0.1f;
-    public static final float ZOOM = 45.0f;
+    private static final float YAW = -90.0f;
+    private static final float PITCH = 0.0f;
+    private static final float SPEED = 5.f;
+    private static final float SENSITIVITY = 0.1f;
+    private static final float ZOOM = 45.0f;
 
     // camera Attributes
     public Vector3f Position;
-    public Vector3f Front = new Vector3f(0.0f, 0.0f, -1.0f);
+    private Vector3f Front = new Vector3f(0.0f, 0.0f, -1.0f);
     private Vector3f Up = new Vector3f();
     private Vector3f Right = new Vector3f();
     private final Vector3f WorldUp;
@@ -54,14 +54,14 @@ public class Camera {
 
     public Camera(Vector3f position, Vector3f up) {
         this. Position = position;
-        this.WorldUp = up;
+        this.WorldUp = new Vector3f(up);
         this.Yaw = YAW;
         this.Pitch = PITCH;
         updateCameraVectors();
     }
     public Camera(Vector3f position, Vector3f up, float yaw) {
         this.Position = position;
-        this.WorldUp = up;
+        this.WorldUp = new Vector3f(up);
         this.Yaw = yaw;
         this.Pitch = PITCH;
         updateCameraVectors();
@@ -69,7 +69,7 @@ public class Camera {
 
     public Camera(Vector3f position, Vector3f up, float yaw, float pitch) {
         this.Position = position;
-        this.WorldUp = up;
+        this.WorldUp = new Vector3f(up);
         this.Yaw = yaw;
         this.Pitch = pitch;
         updateCameraVectors();
@@ -86,10 +86,7 @@ public class Camera {
     // returns the view matrix calculated using Euler Angles and the LookAt Matrix
     public Matrix4f GetViewMatrix()
     {
-        Matrix4f mat4 = new Matrix4f();
-        Vector3f temp = new Vector3f().add(Position, Front);
-        //System.out.println("Front : " + Front + "\nPosition : " + Position + "\nResult : " + temp);
-        return mat4.lookAt(Position, temp, Up);
+        return new Matrix4f().lookAt(Position, new Vector3f(Position).add(Front), Up);
     }
 
     // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
@@ -147,18 +144,22 @@ public class Camera {
     // calculates the front vector from the Camera's (updated) Euler Angles
     private void updateCameraVectors()
     {
-        // calculate the new Front vector
-        Vector3f front = new Vector3f();
-        front.x = (float)(Math.cos(Math.toRadians(Yaw)) * Math.cos(Math.toRadians(Pitch)));
-        front.y = (float)Math.sin(Math.toRadians(Pitch));
-        front.z = (float)(Math.sin(Math.toRadians(Yaw)) * Math.cos(Math.toRadians(Pitch)));
-        front.normalize(Front);
+        float yawRad = (float) Math.toRadians(Yaw);
+        float pitchRad = (float) Math.toRadians(Pitch);
+
+        Front.set(
+                (float) (Math.cos(yawRad) * Math.cos(pitchRad)),
+                (float) Math.sin(pitchRad),
+                (float) (Math.sin(yawRad) * Math.cos(pitchRad))
+        ).normalize();
 
         // also re-calculate the Right and Up vector
-        //Right = Front.cross(WorldUp).normalize();
-        Right.cross(Right, Front).normalize();
-        Up.cross(Right, Front).normalize();
-
-        int x = 0;
+        Right.set(WorldUp).cross(Front).normalize();
+        Up.set(Front).cross(Right).normalize();
     }
+
+    // Getters
+    public Vector3f getFront() { return Front; }
+    public Vector3f getRight() { return Right; }
+    public Vector3f getUp() { return Up; }
 }

@@ -2,12 +2,13 @@ package GameLayer.Rendering.Model;
 
 import GameLayer.Rendering.*;
 import org.joml.*;
+import org.lwjgl.opengl.GL;
 
-import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL30.*;
 public class CubeMesh {
-    public Vector3f position = new Vector3f();
-    public Vector3f rotation = new Vector3f();
-    public Vector3f scale = new Vector3f(0.0f);
+    public Vector3f position;
+    public Vector3f rotation;
+    public Vector3f scale;
     // Datas
     float[] vertices = {
         // POSITION			    TEXTURES COORDS		Normals
@@ -68,9 +69,37 @@ public class CubeMesh {
     EBO m_Ebo;
 
     public CubeMesh() {
+        this.position = new Vector3f();
+        this.rotation = new Vector3f();
+        this.scale = new Vector3f();
         setupMesh();
         setupNormal();
     }
+
+    public CubeMesh(Vector3f position) {
+        this.position = new Vector3f(position);
+        this.rotation = new Vector3f();
+        this.scale = new Vector3f();
+        setupMesh();
+        setupNormal();
+    }
+
+    public CubeMesh(Vector3f position, Vector3f rotation) {
+        this.position = new Vector3f(position);
+        this.rotation = new Vector3f(rotation);
+        this.scale = new Vector3f();
+        setupMesh();
+        setupNormal();
+    }
+
+    public CubeMesh(Vector3f position, Vector3f rotation, Vector3f scale) {
+        this.position = new Vector3f(position);
+        this.rotation = new Vector3f(rotation);
+        this.scale = new Vector3f(scale);
+        setupMesh();
+        setupNormal();
+    }
+
     public void Draw() {
         m_Vao.Bind();
         m_Ebo.Bind();
@@ -90,10 +119,14 @@ public class CubeMesh {
 
 
     void setupMesh() {
-        // Instantiate them
+        if (!GL.getCapabilities().OpenGL30) {
+            throw new IllegalStateException("OpenGL 3.0 non disponible !");
+        }
+
         m_Vao = new VAO();
         m_Vbo = new VBO();
         m_Ebo = new EBO();
+
         VertexBufferLayout layout = new VertexBufferLayout();
 
         // Initialize them

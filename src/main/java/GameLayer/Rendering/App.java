@@ -19,8 +19,8 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 public class App {
     private long window;
-    private int m_Width;
-    private int m_Height;
+    private int m_Width = 0;
+    private int m_Height = 0;
     private final String m_Title;
     boolean firstMouse = true;
     float lastX;
@@ -32,8 +32,6 @@ public class App {
     Camera camera = new Camera(new Vector3f(0.f, 0.f, 3.f));
 
     public App(int width, int height, String title) {
-        this.m_Width = width;
-        this.m_Height = height;
         this.m_Title = title;
 
         this.lastX = (float)m_Width/2;
@@ -86,7 +84,7 @@ public class App {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
-        window = glfwCreateWindow(m_Width, m_Height, m_Title, NULL, NULL);
+        window = glfwCreateWindow(600, 600, m_Title, NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
         renderer = new Renderer();
@@ -94,7 +92,9 @@ public class App {
 
 
         glfwSetFramebufferSizeCallback(window, (window, width, height) -> {
-            glViewport(0, 0, width, height);
+            m_Width = width;
+            m_Height = height;
+            glViewport(0, 0, m_Width, m_Height);
         });
 
         glfwSetKeyCallback(window, input);
@@ -125,7 +125,6 @@ public class App {
             camera.ProcessMouseScroll((float)yoffset);
         });
 
-
         // Get the thread stack and push a new frame
         try ( MemoryStack stack = stackPush() ) {
             IntBuffer pWidth = stack.mallocInt(1); // int*
@@ -138,12 +137,13 @@ public class App {
             GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
             // Center the window
+            assert(vidmode != null);
             glfwSetWindowPos(
                     window,
                     (vidmode.width() - pWidth.get(0)) / 2,
                     (vidmode.height() - pHeight.get(0)) / 2
             );
-        } // the stack frame is popped automatically
+        }
 
 
         // Make the OpenGL context current
@@ -167,14 +167,13 @@ public class App {
         */
         GL.createCapabilities();
 
+        cube = new CubeMesh(new Vector3f(0.f, 0.f, -3.f));
         // Depth render
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
 
 
         shader.CreateShader("shaders/Opengl/Default.vert", "shaders/Opengl/Default.frag");
-
-        cube = new CubeMesh();
 
         while ( !glfwWindowShouldClose(window) ) {
             ProcessInput(window);
@@ -184,23 +183,26 @@ public class App {
                 glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
             renderer.ClearColor();
+            IntBuffer pWidth;
+            IntBuffer pHeight;
+            try ( MemoryStack stack = stackPush() ) {
+                pWidth = stack.mallocInt(1); // int*
+                pHeight = stack.mallocInt(1); // int*
 
-            IntBuffer width = stackMallocInt(1);
-            IntBuffer height = stackMallocInt(1);
+                // Get the window size passed to glfwCreateWindow
+                glfwGetFramebufferSize(window, pWidth, pHeight);
+            }
 
-            m_Width = width.get(0);
-            m_Height = height.get(0);
 
-            glfwGetFramebufferSize(window, width, height);
 
 
             shader.Bind();
             Matrix4f Model = new Matrix4f().identity()
-                    .translate(new Vector3f(1.0f, 1.0f, 1.0f))     // Translation
+                    .translate(new Vector3f(cube.position))                 // Translation
                     .rotateX((float) Math.toRadians(cube.rotation.x))       // Rotation X
                     .rotateY((float) Math.toRadians(cube.rotation.y))       // Rotation Y
                     .rotateZ((float) Math.toRadians(cube.rotation.z))       // Rotation Z
-                    .scale(new Vector3f(1.0f, 1.0f, 1.0f));        // Scale
+                    .scale(new Vector3f(cube.scale));                       // Scale
 
 
             Matrix4f Projection = new Matrix4f().identity()

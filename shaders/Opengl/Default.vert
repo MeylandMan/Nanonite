@@ -13,5 +13,5 @@ void main()
 {
     v_TexCoord = in_TexCoords;
     mat4 MATRIX_VIEW_PROJECTION = u_Proj * u_View * u_Model;
-    gl_Position = u_View * vec4(in_Position, 1.0);
+    gl_Position = u_Model * vec4(in_Position, 1.0);
 }
