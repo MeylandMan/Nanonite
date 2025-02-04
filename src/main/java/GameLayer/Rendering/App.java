@@ -30,7 +30,8 @@ public class App {
     CubeMesh cube;
     Shader shader = new Shader();
     Camera camera = new Camera(new Vector3f(0.f, 0.f, 3.f));
-
+    float delta;
+    float lastFrame;
     public App(int width, int height, String title) {
         this.m_Title = title;
 
@@ -41,13 +42,13 @@ public class App {
     private void ProcessInput(long window) {
         if (Input.is_locked) {
             if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-                camera.ProcessKeyboard(Camera.Camera_Movement.FORWARD, 0.0f);
+                camera.ProcessKeyboard(Camera.Camera_Movement.FORWARD, delta);
             if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-                camera.ProcessKeyboard(Camera.Camera_Movement.BACKWARD, 0.0f);
+                camera.ProcessKeyboard(Camera.Camera_Movement.BACKWARD, delta);
             if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-                camera.ProcessKeyboard(Camera.Camera_Movement.LEFT, 0.0f);
+                camera.ProcessKeyboard(Camera.Camera_Movement.LEFT, delta);
             if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-                camera.ProcessKeyboard(Camera.Camera_Movement.RIGHT, 0.0f);
+                camera.ProcessKeyboard(Camera.Camera_Movement.RIGHT, delta);
         }
     }
 
@@ -84,7 +85,7 @@ public class App {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
-        window = glfwCreateWindow(600, 600, m_Title, NULL, NULL);
+        window = glfwCreateWindow(1280, 720, m_Title, NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
         renderer = new Renderer();
@@ -125,14 +126,19 @@ public class App {
             camera.ProcessMouseScroll((float)yoffset);
         });
 
+
+        IntBuffer pWidth;
+        IntBuffer pHeight;
         // Get the thread stack and push a new frame
         try ( MemoryStack stack = stackPush() ) {
-            IntBuffer pWidth = stack.mallocInt(1); // int*
-            IntBuffer pHeight = stack.mallocInt(1); // int*
+            pWidth = stack.mallocInt(1); // int*
+            pHeight = stack.mallocInt(1); // int*
 
             // Get the window size passed to glfwCreateWindow
             glfwGetWindowSize(window, pWidth, pHeight);
 
+            m_Width = pWidth.get(0);
+            m_Height = pHeight.get(0);
             // Get the resolution of the primary monitor
             GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
@@ -177,25 +183,28 @@ public class App {
 
         while ( !glfwWindowShouldClose(window) ) {
             ProcessInput(window);
-            glfwPollEvents();
             if (Input.is_locked)
                 glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             else
                 glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
             renderer.ClearColor();
+
+            /*
             IntBuffer pWidth;
             IntBuffer pHeight;
             try ( MemoryStack stack = stackPush() ) {
                 pWidth = stack.mallocInt(1); // int*
                 pHeight = stack.mallocInt(1); // int*
 
-                // Get the window size passed to glfwCreateWindow
+
                 glfwGetFramebufferSize(window, pWidth, pHeight);
             }
+            */
 
-
-
+            float currentFrame = (float)(glfwGetTime());
+            delta = currentFrame - lastFrame;
+            lastFrame = currentFrame;
 
             shader.Bind();
             Matrix4f Model = new Matrix4f().identity()
@@ -203,9 +212,9 @@ public class App {
                     .rotateXYZ(cube.rotation)                               // Rotation
                     .scale(new Vector3f(cube.scale));                       // Scale
 
-
+            float ratio = (float)m_Width / (float)Math.max(m_Height, 1);
             Matrix4f Projection = new Matrix4f().identity()
-                    .perspective((float)Math.toRadians(camera.Zoom), 1, 0.1f, 100.f);
+                    .perspective((float)Math.toRadians(camera.Zoom), ratio, 0.1f, 100.f);
 
             shader.UniformMatrix4x4("u_Model", Model);
             shader.UniformMatrix4x4("u_View", camera.GetViewMatrix());
@@ -214,7 +223,7 @@ public class App {
             renderer.Draw(cube);
 
             glfwSwapBuffers(window);
-
+            glfwPollEvents();
         }
 
     }

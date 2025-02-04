@@ -91,32 +91,21 @@ public class Camera {
     }
 
     // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-    public void ProcessKeyboard(Camera_Movement direction, float deltaTime)
+
+    void ProcessKeyboard(Camera_Movement direction, float deltaTime)
     {
         float velocity = MovementSpeed * deltaTime;
-        Vector3fc[] temp = {
-                new Vector3f(),
-                new Vector3f()
-        };
-
-        temp[0].mul(velocity,Front);
-        temp[1].mul(velocity,Right);
-        switch(direction) {
-            case Camera_Movement.FORWARD:
-                Position = temp[0].add(temp[0], Position);
-                break;
-            case Camera_Movement.BACKWARD:
-                Position = temp[0].sub(temp[0], Position);
-                break;
-            case Camera_Movement.LEFT:
-                Position = temp[1].sub(temp[1], Position);
-                break;
-            case Camera_Movement.RIGHT:
-                Position = temp[1].add(temp[1], Position);
-                break;
-        }
-
+        if (direction == Camera_Movement.FORWARD)
+            Position.add(Front.mul(velocity));
+        if (direction == Camera_Movement.BACKWARD)
+            Position.add(Front.mul(-velocity));
+        if (direction == Camera_Movement.LEFT)
+            Position.add(Right.mul(velocity));
+        if (direction == Camera_Movement.RIGHT)
+            Position.add(Right.mul(-velocity));
+        updateCameraVectors();
     }
+
 
     // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
     public void ProcessMouseMovement(float x_offset, float y_offset, boolean constrainPitch)
