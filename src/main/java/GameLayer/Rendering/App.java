@@ -29,7 +29,7 @@ public class App {
     public Input input;
     CubeMesh cube;
     Shader shader = new Shader();
-    Camera camera = new Camera(new Vector3f(0.f, 0.f, 3.f));
+    Camera camera = new Camera(new Vector3f(0.f, 0.f, -3.f));
     float delta;
     float lastFrame;
     public App(int width, int height, String title) {
@@ -174,7 +174,7 @@ public class App {
         */
         GL.createCapabilities();
 
-        cube = new CubeMesh(new Vector3f(0.f, 0.f, -2.f));
+        cube = new CubeMesh(new Vector3f(0.f, 0.f, 0.f));
         // Depth render
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);

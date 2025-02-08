@@ -5,52 +5,47 @@ import java.util.ArrayList;
 import static org.lwjgl.opengl.GL30.*;
 
 public class VertexBufferLayout {
-    private ArrayList<VertexBufferElement> m_Elements;
-    private int m_Stride;
+    private final ArrayList<VertexBufferElement> elements;
+    private int stride;
 
     public VertexBufferLayout() {
-        this.m_Elements = new ArrayList<VertexBufferElement>();
-        this.m_Stride = 0;
+        this.elements = new ArrayList<>();
+        this.stride = 0;
     }
 
-    public <T> void push(int count) {
-        throw new UnsupportedOperationException("Template specialization is not supported in Java");
+    // Ajoute un élément FLOAT
+    public void Add(int count) {
+        elements.add(new VertexBufferElement(GL_FLOAT, count, false));
+        stride += VertexBufferElement.GetSizeOfType(GL_FLOAT) * count;
     }
 
-    public void Add(int type, int count) {
-        m_Elements.add(new VertexBufferElement());
 
-        switch(type) {
-            case 0: // Float
-                m_Elements.getLast().type = GL_FLOAT;
-                m_Elements.getLast().count = count;
-                m_Elements.getLast().normalized = false;
-                m_Stride += VertexBufferElement.GetSizeOfType(GL_FLOAT) * count;
-                break;
-            case 1: // Int
-                m_Elements.getLast().type = GL_UNSIGNED_INT;
-                m_Elements.getLast().count = count;
-                m_Elements.getLast().normalized = false;
-                m_Stride += VertexBufferElement.GetSizeOfType(GL_UNSIGNED_INT) * count;
-                break;
-            case 2: // Byte
-                m_Elements.getLast().type = GL_UNSIGNED_BYTE;
-                m_Elements.getLast().count = count;
-                m_Elements.getLast().normalized = true;
-                m_Stride += VertexBufferElement.GetSizeOfType(GL_UNSIGNED_BYTE) * count;
-                break;
-        }
+    /* USELESS FOR NOW
+
+    public void pushUnsignedInt(int count) {
+        elements.add(new VertexBufferElement(GL_UNSIGNED_INT, count, false));
+        stride += VertexBufferElement.GetSizeOfType(GL_UNSIGNED_INT) * count;
     }
 
-    public void Clear() {
-        m_Elements.clear();
+    // Ajoute un élément UNSIGNED BYTE
+    public void pushUnsignedByte(int count) {
+        elements.add(new VertexBufferElement(GL_UNSIGNED_BYTE, count, true));
+        stride += VertexBufferElement.GetSizeOfType(GL_UNSIGNED_BYTE) * count;
+    }
+
+    */
+
+
+    public void clear() {
+        elements.clear();
+        stride = 0;
     }
 
     public ArrayList<VertexBufferElement> GetElements() {
-        return new ArrayList<>(m_Elements);
+        return elements;
     }
 
     public int GetStride() {
-        return m_Stride;
+        return stride;
     }
 }

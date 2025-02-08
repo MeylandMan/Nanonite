@@ -136,9 +136,9 @@ public class CubeMesh {
 
         // Initialize them
         m_Vbo.Init(vertices);
-        layout.Add(0, 3);
-        layout.Add(1, 2);
-        layout.Add(0, 3);
+        layout.Add(3);
+        layout.Add(2);
+        layout.Add(3);
         m_Vao.AddBuffer(m_Vbo, layout);
 
         m_Ebo.Init(indices);

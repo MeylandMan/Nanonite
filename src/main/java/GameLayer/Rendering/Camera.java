@@ -16,7 +16,7 @@ public class Camera {
     }
 
     // Default camera values
-    private static final float YAW = -90.0f;
+    private static final float YAW = 90.0f;
     private static final float PITCH = 0.0f;
     private static final float SPEED = 5.f;
     private static final float SENSITIVITY = 0.1f;
@@ -24,7 +24,9 @@ public class Camera {
 
     // camera Attributes
     public Vector3f Position;
-    private Vector3f Front = new Vector3f(0.0f, 0.0f, -1.0f);
+    private Vector3f Front = new Vector3f(0.0f, 0.0f, -
+
+            1.0f);
     private final Vector3f Up = new Vector3f();
     private final Vector3f Right = new Vector3f();
     private final Vector3f WorldUp;
