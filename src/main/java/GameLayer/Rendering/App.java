@@ -5,21 +5,28 @@ import GameLayer.Rendering.Model.CubeMesh;
 import org.joml.*;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
+import org.lwjgl.nuklear.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 import Core.Input.Input;
 import java.lang.Math;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.ByteBuffer;
+import java.util.Objects;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
-
+import static org.lwjgl.nuklear.Nuklear.*;
 
 public class App {
     private long window;
+    ByteBuffer container;
+    private NkContext ctx;
+
     private int m_Width = 0;
     private int m_Height = 0;
     private final String m_Title;
@@ -28,7 +35,6 @@ public class App {
     float lastY;
     public Renderer renderer;
     public Input input;
-    Block block;
     Scene scene = new Scene();
     Shader shader = new Shader();
     Camera camera = new Camera(new Vector3f(0.f, 0.f, -3.f));
@@ -177,9 +183,14 @@ public class App {
         */
         GL.createCapabilities();
 
-        block = new Block("dirt.png");
-        block.AddToScene(scene);
-
+        /*
+        // Initialisation de Nuklear
+        ctx = NkContext.create();
+        NkUserFont defaultFont = NkUserFont.create();
+        NkAllocator allocator = NkAllocator.create();
+        nk_init(ctx, allocator, defaultFont);
+        */
+        
         // Depth render
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
@@ -198,23 +209,11 @@ public class App {
 
             renderer.ClearColor();
 
-            /*
-
-            */
-
-            IntBuffer pWidth;
-            IntBuffer pHeight;
-            try ( MemoryStack stack = stackPush() ) {
-                pWidth = stack.mallocInt(1); // int*
-                pHeight = stack.mallocInt(1); // int*
-
-
-                glfwGetFramebufferSize(window, pWidth, pHeight);
-            }
-
             float currentFrame = (float)(glfwGetTime());
             delta = currentFrame - lastFrame;
             lastFrame = currentFrame;
+
+            //onGUI();
 
             shader.Bind();
 
@@ -227,5 +226,14 @@ public class App {
             glfwPollEvents();
         }
 
+    }
+
+    private void onGUI() {
+        if (nk_begin(ctx, "Hello", NkRect.malloc().set(50, 50, 300, 200),
+                NK_WINDOW_BORDER|NK_WINDOW_MOVABLE)) {
+            nk_layout_row_dynamic(ctx, 30, 1);
+            nk_label(ctx, "Hello, Nuklear!", NK_TEXT_ALIGN_CENTERED);
+        }
+        nk_end(ctx);
     }
 }

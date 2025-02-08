@@ -11,6 +11,9 @@ public class Scene {
         objects.add(object);
     }
     public void Delete() {
+        for(_Object obj : objects) {
+            obj.Delete();
+        }
         objects.clear();
     }
 
