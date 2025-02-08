@@ -86,6 +86,7 @@ public class App {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
         window = glfwCreateWindow(1280, 720, m_Title, NULL, NULL);
+
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
         renderer = new Renderer();
@@ -178,7 +179,6 @@ public class App {
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
 
-
         shader.CreateShader("shaders/Opengl/Default.vert", "shaders/Opengl/Default.frag");
 
         while ( !glfwWindowShouldClose(window) ) {
@@ -191,6 +191,9 @@ public class App {
             renderer.ClearColor();
 
             /*
+
+            */
+
             IntBuffer pWidth;
             IntBuffer pHeight;
             try ( MemoryStack stack = stackPush() ) {
@@ -200,13 +203,13 @@ public class App {
 
                 glfwGetFramebufferSize(window, pWidth, pHeight);
             }
-            */
 
             float currentFrame = (float)(glfwGetTime());
             delta = currentFrame - lastFrame;
             lastFrame = currentFrame;
 
             shader.Bind();
+
             Matrix4f Model = new Matrix4f().identity()
                     .translate(new Vector3f(cube.position))                 // Translation
                     .rotateXYZ(cube.rotation)                               // Rotation
@@ -214,11 +217,17 @@ public class App {
 
             float ratio = (float)m_Width / (float)Math.max(m_Height, 1);
             Matrix4f Projection = new Matrix4f().identity()
-                    .perspective((float)Math.toRadians(camera.Zoom), ratio, 0.1f, 100.f);
+                    .perspective((float)Math.toRadians(camera.Zoom),
+                                 ratio,
+                                0.1f,
+                                100.f
+                    );
 
             shader.UniformMatrix4x4("u_Model", Model);
             shader.UniformMatrix4x4("u_View", camera.GetViewMatrix());
             shader.UniformMatrix4x4("u_Proj", Projection);
+
+            shader.Uniform1i("u_Texture", 0);
 
             renderer.Draw(cube);
 

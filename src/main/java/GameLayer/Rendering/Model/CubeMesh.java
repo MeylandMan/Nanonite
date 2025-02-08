@@ -9,39 +9,42 @@ public class CubeMesh {
     public Vector3f position;
     public Vector3f rotation;
     public Vector3f scale;
+    private final String texture_path = "dirt.png";
+
     // Datas
     float[] vertices = {
-        // POSITION			    TEXTURES COORDS		Normals
-        -0.5f, -0.5f, -0.5f,	0.0f, 0.0f,	        0.f, 0.f, 0.f,
-         0.5f, -0.5f, -0.5f,	0.5f, 0.0f,	        0.f, 0.f, 0.f, // FRONT
-         0.5f,  0.5f, -0.5f,	0.5f, 0.5f,	        0.f, 0.f, 0.f,
-        -0.5f,  0.5f, -0.5f,	0.0f, 0.5f,	        0.f, 0.f, 0.f,
+        // POSITION			TEXTURES COORDS		Normals
+        -0.5f, -0.5f, -0.5f,	0.0f, 0.0f,	 0.f, 0.f, 0.f,
+         0.5f, -0.5f, -0.5f,	1.0f, 0.0f,	 0.f, 0.f, 0.f, // FRONT
+         0.5f,  0.5f, -0.5f,	1.0f, 1.0f,	 0.f, 0.f, 0.f,
+        -0.5f,  0.5f, -0.5f,	0.0f, 1.0f,	 0.f, 0.f, 0.f,
 
-        -0.5f, -0.5f,  0.5f,	0.5f, 0.0f,	        0.f, 0.f, 0.f,
-         0.5f, -0.5f,  0.5f,	0.0f, 0.0f,	        0.f, 0.f, 0.f, // BACK
-         0.5f,  0.5f,  0.5f,	0.0f, 0.5f,	        0.f, 0.f, 0.f,
-        -0.5f,  0.5f,  0.5f,	0.5f, 0.5f,	        0.f, 0.f, 0.f,
+        -0.5f, -0.5f,  0.5f,	1.0f, 0.0f,	 0.f, 0.f, 0.f,
+         0.5f, -0.5f,  0.5f,	0.0f, 0.0f,	 0.f, 0.f, 0.f, // BACK
+         0.5f,  0.5f,  0.5f,	0.0f, 1.0f,	 0.f, 0.f, 0.f,
+        -0.5f,  0.5f,  0.5f,	1.0f, 1.0f,	 0.f, 0.f, 0.f,
 
-        -0.5f, -0.5f, -0.5f,	0.5f, 0.0f,	        0.f, 0.f, 0.f,
-        -0.5f,  0.5f, -0.5f,	0.5f, 0.5f,	        0.f, 0.f, 0.f, // LEFT
-        -0.5f,  0.5f,  0.5f,	0.0f, 0.5f,	        0.f, 0.f, 0.f,
-        -0.5f, -0.5f,  0.5f,	0.0f, 0.0f,	        0.f, 0.f, 0.f,
+        -0.5f, -0.5f, -0.5f,	1.0f, 0.0f,	 0.f, 0.f, 0.f,
+        -0.5f,  0.5f, -0.5f,	1.0f, 1.0f,	 0.f, 0.f, 0.f, // LEFT
+        -0.5f,  0.5f,  0.5f,	0.0f, 1.0f,	 0.f, 0.f, 0.f,
+        -0.5f, -0.5f,  0.5f,	0.0f, 0.0f,	 0.f, 0.f, 0.f,
 
-         0.5f, -0.5f, -0.5f,	0.0f, 0.0f,	        0.f, 0.f, 0.f,
-         0.5f,  0.5f, -0.5f,	0.0f, 0.5f,	        0.f, 0.f, 0.f, // RIGHT
-         0.5f,  0.5f,  0.5f,	0.5f, 0.5f,	        0.f, 0.f, 0.f,
-         0.5f, -0.5f,  0.5f,	0.5f, 0.0f,	        0.f, 0.f, 0.f,
+         0.5f, -0.5f, -0.5f,	0.0f, 0.0f,	 0.f, 0.f, 0.f,
+         0.5f,  0.5f, -0.5f,	0.0f, 1.0f,	 0.f, 0.f, 0.f, // RIGHT
+         0.5f,  0.5f,  0.5f,	1.0f, 1.0f,	 0.f, 0.f, 0.f,
+         0.5f, -0.5f,  0.5f,	1.0f, 0.0f,	 0.f, 0.f, 0.f,
 
-        -0.5f, -0.5f, -0.5f,	0.0f, 0.0f,	        0.f, 0.f, 0.f,
-         0.5f, -0.5f, -0.5f,	0.5f, 0.0f,	        0.f, 0.f, 0.f, // DOWN
-         0.5f, -0.5f,  0.5f,	0.5f, 0.5f,	        0.f, 0.f, 0.f,
-        -0.5f, -0.5f,  0.5f,	0.0f, 0.5f,	        0.f, 0.f, 0.f,
+        -0.5f, -0.5f, -0.5f,	0.0f, 0.0f,	 0.f, 0.f, 0.f,
+         0.5f, -0.5f, -0.5f,	1.0f, 0.0f,	 0.f, 0.f, 0.f, // DOWN
+         0.5f, -0.5f,  0.5f,	1.0f, 1.0f,	 0.f, 0.f, 0.f,
+        -0.5f, -0.5f,  0.5f,	0.0f, 1.0f,	 0.f, 0.f, 0.f,
 
-        0.5f,  0.5f, -0.5f,	    0.0f, 0.0f,	        0.f, 0.f, 0.f,
-        -0.5f,  0.5f, -0.5f,	0.5f, 0.0f,	        0.f, 0.f, 0.f, // UP
-        -0.5f,  0.5f,  0.5f,	0.5f, 0.5f,	        0.f, 0.f, 0.f,
-        0.5f,  0.5f,  0.5f,	    0.0f, 0.5f,	        0.f, 0.f, 0.f,
+         0.5f,  0.5f, -0.5f,	0.0f, 0.0f,	 0.f, 0.f, 0.f,
+        -0.5f,  0.5f, -0.5f,	1.0f, 0.0f,	 0.f, 0.f, 0.f, // UP
+        -0.5f,  0.5f,  0.5f,	1.0f, 1.0f,	 0.f, 0.f, 0.f,
+         0.5f,  0.5f,  0.5f,	0.0f, 1.0f,	 0.f, 0.f, 0.f
     };
+
     int[] indices = {
         // front and back
         0, 3, 2,
@@ -65,6 +68,7 @@ public class CubeMesh {
 
     // OpenGL Context
     VAO m_Vao;
+    public Texture texture;
     VBO m_Vbo;
     EBO m_Ebo;
 
@@ -101,6 +105,7 @@ public class CubeMesh {
     }
 
     public void Draw() {
+        texture.Bind();
         m_Vao.Bind();
         m_Ebo.Bind();
 
@@ -108,7 +113,6 @@ public class CubeMesh {
 
         m_Vao.UnBind();
         m_Ebo.UnBind();
-
     }
     public void Delete() {
         // Delete them
@@ -128,6 +132,7 @@ public class CubeMesh {
         m_Ebo = new EBO();
 
         VertexBufferLayout layout = new VertexBufferLayout();
+        texture = new Texture(texture_path);
 
         // Initialize them
         m_Vbo.Init(vertices);
@@ -137,6 +142,8 @@ public class CubeMesh {
         m_Vao.AddBuffer(m_Vbo, layout);
 
         m_Ebo.Init(indices);
+
+
     }
 
     // Unused for now

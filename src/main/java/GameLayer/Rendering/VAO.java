@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import static org.lwjgl.opengl.GL30.*;
 
 public class VAO {
-    private int m_ID;
+    private final int m_ID;
 
     public VAO() {
         m_ID = glGenVertexArrays();

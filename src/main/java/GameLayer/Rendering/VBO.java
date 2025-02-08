@@ -4,7 +4,7 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 
 public class VBO {
-    private int m_ID;
+    private int  m_ID;
 
     public void Init(float[] data) {
         m_ID = glGenBuffers();
