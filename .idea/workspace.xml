@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -63,7 +62,7 @@
     "Downloaded.Files.Path.Enabled": "false",
     "Gradle.Build MInecraft-Clone.executor": "Run",
     "Gradle.Download Sources.executor": "Run",
-    "Gradle.MInecraft-Clone [:Main.main()].executor": "Debug",
+    "Gradle.MInecraft-Clone [:Main.main()].executor": "Run",
     "Gradle.MInecraft-Clone.executor": "Run",
     "Gradle.OGL [:Main.main()].executor": "Run",
     "Java Scratch.MC 0.0.0.1.executor": "Run",
@@ -78,7 +77,7 @@
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.34827587",
-    "settings.editor.selected.configurable": "preferences.pluginManager"
+    "settings.editor.selected.configurable": "promo.profiler"
   }
 }]]></component>
   <component name="RecentsManager">

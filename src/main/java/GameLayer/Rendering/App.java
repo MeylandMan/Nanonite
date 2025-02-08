@@ -1,6 +1,7 @@
 package GameLayer.Rendering;
 
 import GameLayer.Block;
+import GameLayer.Chunk;
 import GameLayer.Rendering.Model.CubeMesh;
 import org.joml.*;
 import org.lwjgl.*;
@@ -35,6 +36,7 @@ public class App {
     float lastY;
     public Renderer renderer;
     public Input input;
+    Chunk chunk;
     Scene scene = new Scene();
     Shader shader = new Shader();
     Camera camera = new Camera(new Vector3f(0.f, 0.f, -3.f));
@@ -190,12 +192,17 @@ public class App {
         NkAllocator allocator = NkAllocator.create();
         nk_init(ctx, allocator, defaultFont);
         */
-        
+
         // Depth render
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
 
         shader.CreateShader("shaders/Opengl/Default.vert", "shaders/Opengl/Default.frag");
+
+        Vector3f pos = new Vector3f();
+
+        chunk = new Chunk(scene, pos);
+
 
         // Enable BackFace Culling
         glEnable(GL_CULL_FACE);
