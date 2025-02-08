@@ -187,7 +187,7 @@ public class App {
         shader.CreateShader("shaders/Opengl/Default.vert", "shaders/Opengl/Default.frag");
 
         // Enable BackFace Culling
-        //glEnable(GL_CULL_FACE);
+        glEnable(GL_CULL_FACE);
 
         while ( !glfwWindowShouldClose(window) ) {
             ProcessInput(window);
