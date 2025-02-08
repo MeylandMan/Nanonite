@@ -15,7 +15,7 @@ public class Renderer {
         mesh.Draw();
     }
     public void ClearColor() {
-        glClearColor(0.05f, 0.01f, 0.1f, 0.f);
+        glClearColor(0.53f, 0.81f, 0.92f, 0.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
     public void ClearRender() {
