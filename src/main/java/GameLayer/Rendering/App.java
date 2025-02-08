@@ -1,5 +1,6 @@
 package GameLayer.Rendering;
 
+import GameLayer.Block;
 import GameLayer.Rendering.Model.CubeMesh;
 import org.joml.*;
 import org.lwjgl.*;
@@ -32,6 +33,7 @@ public class App {
     Camera camera = new Camera(new Vector3f(0.f, 0.f, -3.f));
     float delta;
     float lastFrame;
+
     public App(int width, int height, String title) {
         this.m_Title = title;
 
@@ -174,7 +176,7 @@ public class App {
         */
         GL.createCapabilities();
 
-        cube = new CubeMesh(new Vector3f(0.f, 0.f, 0.f));
+        cube = new CubeMesh("dirt.png", new Vector3f(0.f, 0.f, 0.f));
         // Depth render
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);

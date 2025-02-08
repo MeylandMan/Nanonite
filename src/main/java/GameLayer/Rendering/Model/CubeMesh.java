@@ -9,7 +9,7 @@ public class CubeMesh {
     public Vector3f position;
     public Vector3f rotation;
     public Vector3f scale;
-    private final String texture_path = "dirt.png";
+    private final String texture_path;
 
     // Datas
     float[] vertices = {
@@ -73,6 +73,7 @@ public class CubeMesh {
     EBO m_Ebo;
 
     public CubeMesh() {
+        this.texture_path = "dirt.png";
         this.position = new Vector3f();
         this.rotation = new Vector3f();
         this.scale = new Vector3f(1.0f);
@@ -80,7 +81,17 @@ public class CubeMesh {
         setupNormal();
     }
 
-    public CubeMesh(Vector3f position) {
+    public CubeMesh(String texture) {
+        this.texture_path = texture;
+        this.position = new Vector3f();
+        this.rotation = new Vector3f();
+        this.scale = new Vector3f(1.0f);
+        setupMesh();
+        setupNormal();
+    }
+
+    public CubeMesh(String texture, Vector3f position) {
+        this.texture_path = texture;
         this.position = new Vector3f(position);
         this.rotation = new Vector3f();
         this.scale = new Vector3f(1.0f);
@@ -88,7 +99,8 @@ public class CubeMesh {
         setupNormal();
     }
 
-    public CubeMesh(Vector3f position, Vector3f rotation) {
+    public CubeMesh(String texture, Vector3f position, Vector3f rotation) {
+        this.texture_path = texture;
         this.position = new Vector3f(position);
         this.rotation = new Vector3f(rotation);
         this.scale = new Vector3f(1.0f);
@@ -96,7 +108,8 @@ public class CubeMesh {
         setupNormal();
     }
 
-    public CubeMesh(Vector3f position, Vector3f rotation, Vector3f scale) {
+    public CubeMesh(String texture, Vector3f position, Vector3f rotation, Vector3f scale) {
+        this.texture_path = texture;
         this.position = new Vector3f(position);
         this.rotation = new Vector3f(rotation);
         this.scale = new Vector3f(scale);

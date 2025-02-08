@@ -6,8 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shaders/Opengl/Default.vert" beforeDir="false" afterPath="$PROJECT_DIR$/shaders/Opengl/Default.vert" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Camera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Camera.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Model/CubeMesh.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Model/CubeMesh.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,6 +60,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.Minecraft Clone.executor": "Run",
     "Downloaded.Files.Path.Enabled": "false",
     "Gradle.Download Sources.executor": "Run",
     "Gradle.MInecraft-Clone [:Main.main()].executor": "Run",
@@ -84,6 +86,8 @@
       <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\shaders\Opengl ES" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\src\main\resources" />
+      <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\src\main\resources\Dirt" />
       <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\shaders\Opengl" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
@@ -146,5 +150,10 @@
         </breakpoint>
       </breakpoints>
     </breakpoint-manager>
+    <watches-manager>
+      <configuration name="GradleRunConfiguration">
+        <watch expression="layout.m_Elements" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>
