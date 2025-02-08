@@ -24,4 +24,9 @@ public class Renderer {
     public void onResize() {
 
     }
+    public void DrawScene(Scene scene, Shader shader) {
+        scene.Draw(shader);
+    }
+
+
 }

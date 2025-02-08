@@ -28,7 +28,8 @@ public class App {
     float lastY;
     public Renderer renderer;
     public Input input;
-    CubeMesh cube;
+    Block block;
+    Scene scene = new Scene();
     Shader shader = new Shader();
     Camera camera = new Camera(new Vector3f(0.f, 0.f, -3.f));
     float delta;
@@ -65,7 +66,7 @@ public class App {
         glfwDestroyWindow(window);
 
         // Delete the buffers and shader we don't need anymore
-        cube.Delete();
+        scene.Delete();
         shader.Clear();
 
         // Terminate GLFW and free the error callback
@@ -176,7 +177,9 @@ public class App {
         */
         GL.createCapabilities();
 
-        cube = new CubeMesh("dirt.png", new Vector3f(0.f, 0.f, 0.f));
+        block = new Block("dirt.png");
+        block.AddToScene(scene);
+        
         // Depth render
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
@@ -212,26 +215,10 @@ public class App {
 
             shader.Bind();
 
-            Matrix4f Model = new Matrix4f().identity()
-                    .translate(new Vector3f(cube.position))                 // Translation
-                    .rotateXYZ(cube.rotation)                               // Rotation
-                    .scale(new Vector3f(cube.scale));                       // Scale
-
-            float ratio = (float)m_Width / (float)Math.max(m_Height, 1);
-            Matrix4f Projection = new Matrix4f().identity()
-                    .perspective((float)Math.toRadians(camera.Zoom),
-                                 ratio,
-                                0.1f,
-                                100.f
-                    );
-
-            shader.UniformMatrix4x4("u_Model", Model);
             shader.UniformMatrix4x4("u_View", camera.GetViewMatrix());
-            shader.UniformMatrix4x4("u_Proj", Projection);
+            shader.UniformMatrix4x4("u_Proj", camera.GetProjectionMatrix(m_Width, m_Height));
 
-            shader.Uniform1i("u_Texture", 0);
-
-            renderer.Draw(cube);
+            renderer.DrawScene(scene, shader);
 
             glfwSwapBuffers(window);
             glfwPollEvents();

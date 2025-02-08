@@ -1,46 +1,47 @@
 package GameLayer;
 
 import GameLayer.Rendering.Model.CubeMesh;
+import GameLayer.Rendering.Scene;
 import org.joml.Vector3f;
 
-public class Object {
+public class _Object {
     private CubeMesh mesh;
     private Vector3f position;
     private Vector3f rotation;
     private Vector3f scale;
 
-    public Object() {
+    public _Object() {
 
         mesh = new CubeMesh();
         this.position = new Vector3f();
         this.rotation = new Vector3f();
-        this.scale = new Vector3f();
+        this.scale = new Vector3f(1.0f);
 
     }
-    public Object(String texture) {
+    public _Object(String texture) {
 
         mesh = new CubeMesh(texture);
         this.position = new Vector3f();
         this.rotation = new Vector3f();
-        this.scale = new Vector3f();
+        this.scale = new Vector3f(1.0f);
     }
-    public Object(String texture, Vector3f position) {
+    public _Object(String texture, Vector3f position) {
 
         mesh = new CubeMesh(texture, position);
         this.position = new Vector3f(position);
         this.rotation = new Vector3f();
-        this.scale = new Vector3f();
+        this.scale = new Vector3f(1.0f);
     }
 
-    public Object(String texture, Vector3f position, Vector3f rotation) {
+    public _Object(String texture, Vector3f position, Vector3f rotation) {
 
         mesh = new CubeMesh(texture, position, rotation);
         this.position = new Vector3f(position);
         this.rotation = new Vector3f(rotation);
-        this.scale = new Vector3f();
+        this.scale = new Vector3f(1.0f);
     }
 
-    public Object(String texture, Vector3f position, Vector3f rotation, Vector3f scale) {
+    public _Object(String texture, Vector3f position, Vector3f rotation, Vector3f scale) {
 
         mesh = new CubeMesh(texture, position, rotation, scale);
         this.position = new Vector3f(position);
@@ -73,5 +74,16 @@ public class Object {
 
     public Vector3f getScale() {
         return scale;
+    }
+
+    public void DrawMesh() {
+        mesh.Draw();
+    }
+
+    public void AddToScene(Scene scene) {
+        scene.AddObject(this);
+    }
+    public static void AddObjectToScene(_Object obj, Scene scene) {
+        scene.AddObject(obj);
     }
 }

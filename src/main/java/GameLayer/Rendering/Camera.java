@@ -92,6 +92,14 @@ public class Camera {
         return new Matrix4f().lookAt(Position, new Vector3f(Position).add(Front), Up);
     }
 
+    public Matrix4f GetProjectionMatrix(int width, int height) {
+        return new Matrix4f().identity()
+                .perspective((float)Math.toRadians(Zoom),
+                        (float)width / (float)Math.max(height, 1),
+                        0.1f,
+                        100.f
+                );
+    }
     // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
 
     void ProcessKeyboard(Camera_Movement direction, float deltaTime)

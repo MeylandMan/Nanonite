@@ -4,7 +4,7 @@ import GameLayer.Rendering.Model.CubeMesh;
 import org.joml.*;
 
 
-public class Block extends Object {
+public class Block extends _Object {
     public enum BlockType {
 
     }
