@@ -4,20 +4,24 @@ import GameLayer.Rendering.Scene;
 import GameLayer.Rendering.*;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL;
+
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
 
 public class Chunk {
 
     final static int X_DIMENSION = 16;
-    final static int Y_DIMENSION = 16;
+    final static int Y_DIMENSION = 255;
     final static int Z_DIMENSION = 16;
     private final Vector3f position;
     private final Block[][][] blocks = new Block[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
 
-    private int[] indices = {};
-    private float[] vertices = {};
+    protected int[] indices = {};
+    protected float[] vertices = {};
     String[] texture_paths = {};
 
     VAO ChunkVAO;
@@ -62,45 +66,36 @@ public class Chunk {
                                     this.position.z+z
                             ));
 
-                    if(z == 0)
-                        blocks[x][y][z].addDataToVertice(Block.Faces.FRONT);
-                    if(z == Z_DIMENSION-1)
-                        blocks[x][y][z].addDataToVertice(Block.Faces.BACK);
 
-
-
-                    if(x == 0)
-                        blocks[x][y][z].addDataToVertice(Block.Faces.RIGHT);
-                    if(x == X_DIMENSION-1)
-                        blocks[x][y][z].addDataToVertice(Block.Faces.LEFT);
-
-                    if(y == 0)
-                        blocks[x][y][z].addDataToVertice(Block.Faces.BOTTOM);
-                    if(y == 4)
-                        blocks[x][y][z].addDataToVertice(Block.Faces.TOP);
-
-                    int prev_size = vertices.length;
-                    float[] prev_v_data = vertices;
-                    vertices = new float[prev_size+blocks[x][y][z].vertices.length];
-                    System.arraycopy(prev_v_data, 0, vertices, 0, prev_v_data.length);
-
-                    for(int i = 0; i < blocks[x][y][z].vertices.length; i++) {
-                        vertices[prev_size+i] = blocks[x][y][z].vertices[i];
+                    if(z == 0){
+                        BlockData.createFaceVertices(this, blocks[x][y][z].getPosition(), Block.Faces.FRONT);
+                        BlockData.createFaceIndices(this, Block.Faces.FRONT);
                     }
 
-                    prev_size = indices.length;
-                    int[] prev_i_data = indices;
-                    indices = new int[prev_size+blocks[x][y][z].indices.length];
-                    System.arraycopy(prev_i_data, 0, indices, 0, prev_i_data.length);
+                    if(z == Z_DIMENSION-1) {
+                        BlockData.createFaceVertices(this, blocks[x][y][z].getPosition(), Block.Faces.BACK);
+                        BlockData.createFaceIndices(this, Block.Faces.BACK);
+                    }
 
-                    int last;
-                    if(indices[1] == 0)
-                        last = Block.findMax(indices);
-                    else
-                        last = Block.findMax(indices)+1;
+                    if(x == 0) {
+                        BlockData.createFaceVertices(this, blocks[x][y][z].getPosition(), Block.Faces.RIGHT);
+                        BlockData.createFaceIndices(this, Block.Faces.RIGHT);
+                    }
 
-                    for(int i = 0; i < blocks[x][y][z].indices.length; i++) {
-                        indices[prev_size+i] = blocks[x][y][z].indices[i] + last;
+                    if(x == X_DIMENSION-1) {
+                        BlockData.createFaceVertices(this, blocks[x][y][z].getPosition(), Block.Faces.LEFT);
+                        BlockData.createFaceIndices(this, Block.Faces.LEFT);
+                    }
+
+
+                    if(y == 0) {
+                        BlockData.createFaceVertices(this, blocks[x][y][z].getPosition(), Block.Faces.BOTTOM);
+                        BlockData.createFaceIndices(this, Block.Faces.BOTTOM);
+                    }
+
+                    if(y == 4) {
+                        BlockData.createFaceVertices(this, blocks[x][y][z].getPosition(), Block.Faces.TOP);
+                        BlockData.createFaceIndices(this, Block.Faces.TOP);
                     }
                 }
             }
@@ -120,6 +115,12 @@ public class Chunk {
                 .scale(new Vector3f(1.0f));                       // Scale
     }
 
+    public void Delete() {
+        texture.Delete();
+        ChunkVAO.Delete();
+        ChunkVBO.Delete();
+        ChunkEBO.Delete();
+    }
     public void DrawMesh() {
         texture.Bind();
         ChunkVAO.Bind();

@@ -21,7 +21,11 @@ public class Scene {
         for(_Object obj : objects) {
             obj.Delete();
         }
+        for(Chunk chunk : chunks) {
+            chunk.Delete();
+        }
         objects.clear();
+        chunks.clear();
     }
 
     public void Draw(Shader shader) {
@@ -38,6 +42,8 @@ public class Scene {
             chunk.DrawMesh();
         }
     }
+
+
 
     public static void Draw(Scene scene, Renderer renderer, Shader shader) {
         renderer.DrawScene(scene, shader);

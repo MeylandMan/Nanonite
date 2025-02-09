@@ -41,9 +41,6 @@ public class App {
     Camera camera = new Camera(new Vector3f(0.f, 0.f, -3.f));
     float delta;
     float lastFrame;
-    private NkContext ctx;
-    private NkUserFont default_font;
-    private NkAllocator allocator;
 
     private static final int BUFFER_INITIAL_SIZE = 4 * 1024;
     private static final int MAX_VERTEX_BUFFER  = 512 * 1024;
@@ -229,12 +226,6 @@ public class App {
         block.AddToScene(scene);
         */
 
-
-        ctx = NkContext.create();
-        allocator = NkAllocator.create();
-        default_font = NkUserFont.create();
-        //nk_init(ctx, allocator, default_font);
-
         while ( !glfwWindowShouldClose(window) ) {
             ProcessInput(window);
             if (Input.is_locked)
@@ -248,11 +239,7 @@ public class App {
             delta = currentFrame - lastFrame;
             lastFrame = currentFrame;
 
-            try (MemoryStack stack = MemoryStack.stackPush()) {
-                nk_input_begin(ctx);
-                nk_input_end(ctx);
-            }
-            onGUI();
+            //onGUI();
 
             shader.Bind();
 
@@ -268,11 +255,6 @@ public class App {
     }
 
     private void onGUI() {
-        if (nk_begin(ctx, "Demo", nk_rect(50, 50, 200, 100, NkRect.malloc()),
-                NK_WINDOW_BORDER | NK_WINDOW_MOVABLE)) {
-            nk_layout_row_dynamic(ctx, 30, 1);
-            nk_label(ctx, "Hello Nuklear", NK_TEXT_CENTERED);
-        }
-        nk_end(ctx);
+
     }
 }
