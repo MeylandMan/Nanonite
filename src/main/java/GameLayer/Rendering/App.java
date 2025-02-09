@@ -14,6 +14,7 @@ import java.lang.Math;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Objects;
 
 import static org.lwjgl.glfw.Callbacks.*;
@@ -202,7 +203,6 @@ public class App {
         Vector3f pos = new Vector3f();
 
         chunk = new Chunk(scene, pos);
-
 
         // Enable BackFace Culling
         glEnable(GL_CULL_FACE);

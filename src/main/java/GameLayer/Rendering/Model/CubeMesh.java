@@ -12,60 +12,9 @@ public class CubeMesh {
     private final String texture_path;
 
     // Datas
-    float[] vertices = {
-        // POSITION			TEXTURES COORDS		Normals
-        -0.5f, -0.5f, -0.5f,	1.0f, 0.0f,	 0.f, 0.f, 0.f,
-         0.5f, -0.5f, -0.5f,	0.0f, 0.0f,	 0.f, 0.f, 0.f, // FRONT
-         0.5f,  0.5f, -0.5f,	0.0f, 1.0f,	 0.f, 0.f, 0.f,
-        -0.5f,  0.5f, -0.5f,	1.0f, 1.0f,	 0.f, 0.f, 0.f,
+    public float[] vertices = {};
 
-        -0.5f, -0.5f,  0.5f,	0.0f, 0.0f,	 0.f, 0.f, 0.f,
-         0.5f, -0.5f,  0.5f,	1.0f, 0.0f,	 0.f, 0.f, 0.f, // BACK
-         0.5f,  0.5f,  0.5f,	1.0f, 1.0f,	 0.f, 0.f, 0.f,
-        -0.5f,  0.5f,  0.5f,	0.0f, 1.0f,	 0.f, 0.f, 0.f,
-
-        -0.5f, -0.5f, -0.5f,	0.0f, 0.0f,	 0.f, 0.f, 0.f,
-        -0.5f,  0.5f, -0.5f,	0.0f, 1.0f,	 0.f, 0.f, 0.f, // RIGHT 8 - 11
-        -0.5f,  0.5f,  0.5f,	1.0f, 1.0f,	 0.f, 0.f, 0.f,
-        -0.5f, -0.5f,  0.5f,	1.0f, 0.0f,	 0.f, 0.f, 0.f,
-
-         0.5f, -0.5f, -0.5f,	1.0f, 0.0f,	 0.f, 0.f, 0.f,
-         0.5f,  0.5f, -0.5f,	1.0f, 1.0f,	 0.f, 0.f, 0.f, // LEFT
-         0.5f,  0.5f,  0.5f,	0.0f, 1.0f,	 0.f, 0.f, 0.f,
-         0.5f, -0.5f,  0.5f,	0.0f, 0.0f,	 0.f, 0.f, 0.f,
-
-        -0.5f, -0.5f, -0.5f,	0.0f, 0.0f,	 0.f, 0.f, 0.f,
-         0.5f, -0.5f, -0.5f,	1.0f, 0.0f,	 0.f, 0.f, 0.f, // DOWN
-         0.5f, -0.5f,  0.5f,	1.0f, 1.0f,	 0.f, 0.f, 0.f,
-        -0.5f, -0.5f,  0.5f,	0.0f, 1.0f,	 0.f, 0.f, 0.f,
-
-         0.5f,  0.5f, -0.5f,	0.0f, 0.0f,	 0.f, 0.f, 0.f,
-        -0.5f,  0.5f, -0.5f,	1.0f, 0.0f,	 0.f, 0.f, 0.f, // UP
-        -0.5f,  0.5f,  0.5f,	1.0f, 1.0f,	 0.f, 0.f, 0.f,
-         0.5f,  0.5f,  0.5f,	0.0f, 1.0f,	 0.f, 0.f, 0.f
-    };
-
-    int[] indices = {
-        // front and back
-        0, 3, 2,
-        2, 1, 0,
-
-        4, 5, 6,
-        6, 7 ,4,
-
-        // right and left
-        9, 8, 11,
-        9, 11, 10,
-
-        12, 13, 14,
-        14, 15, 12,
-        // bottom and top
-        16, 17, 18,
-        18, 19, 16,
-
-        20, 21, 22,
-        22, 23, 20
-    };
+    public int[] indices = {};
 
     // OpenGL Context
     VAO m_Vao;
@@ -78,8 +27,6 @@ public class CubeMesh {
         this.position = new Vector3f();
         this.rotation = new Vector3f();
         this.scale = new Vector3f(1.0f);
-        setupMesh();
-        setupNormal();
     }
 
     public CubeMesh(String texture) {
@@ -87,8 +34,6 @@ public class CubeMesh {
         this.position = new Vector3f();
         this.rotation = new Vector3f();
         this.scale = new Vector3f(1.0f);
-        setupMesh();
-        setupNormal();
     }
 
     public CubeMesh(String texture, Vector3f position) {
@@ -96,8 +41,6 @@ public class CubeMesh {
         this.position = new Vector3f(position);
         this.rotation = new Vector3f();
         this.scale = new Vector3f(1.0f);
-        setupMesh();
-        setupNormal();
     }
 
     public CubeMesh(String texture, Vector3f position, Vector3f rotation) {
@@ -105,8 +48,6 @@ public class CubeMesh {
         this.position = new Vector3f(position);
         this.rotation = new Vector3f(rotation);
         this.scale = new Vector3f(1.0f);
-        setupMesh();
-        setupNormal();
     }
 
     public CubeMesh(String texture, Vector3f position, Vector3f rotation, Vector3f scale) {
@@ -114,8 +55,6 @@ public class CubeMesh {
         this.position = new Vector3f(position);
         this.rotation = new Vector3f(rotation);
         this.scale = new Vector3f(scale);
-        setupMesh();
-        setupNormal();
     }
 
     public void Draw() {
@@ -135,7 +74,11 @@ public class CubeMesh {
         m_Ebo.Delete();
     }
 
-
+    public void Init() {
+        int vertexs = vertices.length/8;
+        setupMesh();
+        setupNormal();
+    }
     void setupMesh() {
         if (!GL.getCapabilities().OpenGL30) {
             throw new IllegalStateException("OpenGL 3.0 non disponible !");
@@ -158,6 +101,11 @@ public class CubeMesh {
         m_Ebo.Init(indices);
 
 
+    }
+
+    public void Add(float[] vertices, int[] indices) {
+        this.vertices = vertices;
+        this.indices = indices;
     }
 
     // Unused for now

@@ -5,7 +5,7 @@ import GameLayer.Rendering.Scene;
 import org.joml.Vector3f;
 
 public class _Object {
-    private final CubeMesh mesh;
+    public final CubeMesh mesh;
     private Vector3f position;
     private Vector3f rotation;
     private Vector3f scale;
