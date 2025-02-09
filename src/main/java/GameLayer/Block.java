@@ -22,6 +22,7 @@ public class Block extends _Object {
     float[] vertices = {};
     int[] indices = {};
 
+    BlockType type;
     public enum BlockType {
         AIR,
         DIRT

@@ -17,17 +17,33 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Objects;
 
+import org.lwjgl.glfw.*;
+import org.lwjgl.nuklear.*;
+import org.lwjgl.opengl.*;
+import org.lwjgl.stb.*;
+import org.lwjgl.system.*;
+
+import java.io.*;
+import java.nio.*;
+import java.util.*;
+
+import static org.lwjgl.glfw.Callbacks.*;
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.nuklear.Nuklear.*;
+import static org.lwjgl.stb.STBTruetype.*;
+import static org.lwjgl.system.MemoryStack.*;
+import static org.lwjgl.system.MemoryUtil.*;
+
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.nuklear.Nuklear.*;
+import static org.lwjgl.stb.STBTruetype.*;
 
 public class App {
     private long window;
-    ByteBuffer container;
-    private NkContext ctx;
 
     private int m_Width = 0;
     private int m_Height = 0;
@@ -44,11 +60,45 @@ public class App {
     float delta;
     float lastFrame;
 
+    private static final int BUFFER_INITIAL_SIZE = 4 * 1024;
+
+    private static final int MAX_VERTEX_BUFFER  = 512 * 1024;
+    private static final int MAX_ELEMENT_BUFFER = 128 * 1024;
+
+    private static final NkAllocator ALLOCATOR;
+
+    private static final NkDrawVertexLayoutElement.Buffer VERTEX_LAYOUT;
+
+    static {
+        ALLOCATOR = NkAllocator.create()
+                .alloc((handle, old, size) -> nmemAllocChecked(size))
+                .mfree((handle, ptr) -> nmemFree(ptr));
+
+        VERTEX_LAYOUT = NkDrawVertexLayoutElement.create(4)
+                .position(0).attribute(NK_VERTEX_POSITION).format(NK_FORMAT_FLOAT).offset(0)
+                .position(1).attribute(NK_VERTEX_TEXCOORD).format(NK_FORMAT_FLOAT).offset(8)
+                .position(2).attribute(NK_VERTEX_COLOR).format(NK_FORMAT_R8G8B8A8).offset(16)
+                .position(3).attribute(NK_VERTEX_ATTRIBUTE_COUNT).format(NK_FORMAT_COUNT).offset(0)
+                .flip();
+    }
+
+    private NkContext ctx = NkContext.create();
+    private NkUserFont default_font = NkUserFont.create();
+
+    private NkBuffer cmds = NkBuffer.create();
+    private NkDrawNullTexture null_texture = NkDrawNullTexture.create();
+    private final ByteBuffer ttf;
     public App(int width, int height, String title) {
         this.m_Title = title;
 
         this.lastX = (float)m_Width/2;
         this.lastY = (float)m_Height/2;
+
+        try {
+            this.ttf = ioResourceToByteBuffer("demo/FiraSans.ttf", 512 * 1024);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void ProcessInput(long window) {
