@@ -2,7 +2,6 @@ package GameLayer.Rendering;
 
 import GameLayer.Block;
 import GameLayer.Chunk;
-import GameLayer.Rendering.Model.CubeMesh;
 import org.joml.*;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
@@ -10,29 +9,12 @@ import org.lwjgl.nuklear.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 import Core.Input.Input;
-import java.lang.Math;
-import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.Objects;
-
-import org.lwjgl.glfw.*;
-import org.lwjgl.nuklear.*;
-import org.lwjgl.opengl.*;
 import org.lwjgl.stb.*;
-import org.lwjgl.system.*;
-
 import java.io.*;
 import java.nio.*;
 import java.util.*;
-
-import static org.lwjgl.glfw.Callbacks.*;
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.nuklear.Nuklear.*;
-import static org.lwjgl.stb.STBTruetype.*;
-import static org.lwjgl.system.MemoryStack.*;
-import static org.lwjgl.system.MemoryUtil.*;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -59,46 +41,18 @@ public class App {
     Camera camera = new Camera(new Vector3f(0.f, 0.f, -3.f));
     float delta;
     float lastFrame;
+    private NkContext ctx;
+    private NkUserFont default_font;
+    private NkAllocator allocator;
 
     private static final int BUFFER_INITIAL_SIZE = 4 * 1024;
-
     private static final int MAX_VERTEX_BUFFER  = 512 * 1024;
     private static final int MAX_ELEMENT_BUFFER = 128 * 1024;
-
-    private static final NkAllocator ALLOCATOR;
-
-    private static final NkDrawVertexLayoutElement.Buffer VERTEX_LAYOUT;
-
-    static {
-        ALLOCATOR = NkAllocator.create()
-                .alloc((handle, old, size) -> nmemAllocChecked(size))
-                .mfree((handle, ptr) -> nmemFree(ptr));
-
-        VERTEX_LAYOUT = NkDrawVertexLayoutElement.create(4)
-                .position(0).attribute(NK_VERTEX_POSITION).format(NK_FORMAT_FLOAT).offset(0)
-                .position(1).attribute(NK_VERTEX_TEXCOORD).format(NK_FORMAT_FLOAT).offset(8)
-                .position(2).attribute(NK_VERTEX_COLOR).format(NK_FORMAT_R8G8B8A8).offset(16)
-                .position(3).attribute(NK_VERTEX_ATTRIBUTE_COUNT).format(NK_FORMAT_COUNT).offset(0)
-                .flip();
-    }
-
-    private NkContext ctx = NkContext.create();
-    private NkUserFont default_font = NkUserFont.create();
-
-    private NkBuffer cmds = NkBuffer.create();
-    private NkDrawNullTexture null_texture = NkDrawNullTexture.create();
-    private final ByteBuffer ttf;
     public App(int width, int height, String title) {
         this.m_Title = title;
 
         this.lastX = (float)m_Width/2;
         this.lastY = (float)m_Height/2;
-
-        try {
-            this.ttf = ioResourceToByteBuffer("demo/FiraSans.ttf", 512 * 1024);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private void ProcessInput(long window) {
@@ -253,9 +207,13 @@ public class App {
         Vector3f pos = new Vector3f();
 
         chunk = new Chunk(scene, pos);
-
         // Enable BackFace Culling
         glEnable(GL_CULL_FACE);
+
+        ctx = NkContext.create();
+        allocator = NkAllocator.create();
+        default_font = NkUserFont.create();
+        //nk_init(ctx, allocator, default_font);
 
         while ( !glfwWindowShouldClose(window) ) {
             ProcessInput(window);
@@ -270,7 +228,11 @@ public class App {
             delta = currentFrame - lastFrame;
             lastFrame = currentFrame;
 
-            //onGUI();
+            try (MemoryStack stack = MemoryStack.stackPush()) {
+                nk_input_begin(ctx);
+                nk_input_end(ctx);
+            }
+            onGUI();
 
             shader.Bind();
 
@@ -286,10 +248,10 @@ public class App {
     }
 
     private void onGUI() {
-        if (nk_begin(ctx, "Hello", NkRect.malloc().set(50, 50, 300, 200),
-                NK_WINDOW_BORDER|NK_WINDOW_MOVABLE)) {
+        if (nk_begin(ctx, "Demo", nk_rect(50, 50, 200, 100, NkRect.malloc()),
+                NK_WINDOW_BORDER | NK_WINDOW_MOVABLE)) {
             nk_layout_row_dynamic(ctx, 30, 1);
-            nk_label(ctx, "Hello, Nuklear!", NK_TEXT_ALIGN_CENTERED);
+            nk_label(ctx, "Hello Nuklear", NK_TEXT_CENTERED);
         }
         nk_end(ctx);
     }

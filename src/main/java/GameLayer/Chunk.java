@@ -9,7 +9,7 @@ public class Chunk {
     final static int Y_DIMENSION = 16;
     final static int Z_DIMENSION = 16;
     private final Vector3f position;
-    private final Block[][][] blocks = new Block[16][Y_DIMENSION][16];
+    private final Block[][][] blocks = new Block[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
     public Chunk(Scene scene) {
         this.position = new Vector3f();
 
@@ -46,13 +46,22 @@ public class Chunk {
                                     this.position.y+y,
                                     this.position.z+z
                             ));
+                    if(z == 0)
+                        blocks[x][y][z].addDataToVertice(Block.Faces.FRONT);
 
-                    blocks[x][y][z].addDataToVertice(Block.Faces.FRONT);
                     blocks[x][y][z].addDataToVertice(Block.Faces.BACK);
-                    blocks[x][y][z].addDataToVertice(Block.Faces.RIGHT);
-                    blocks[x][y][z].addDataToVertice(Block.Faces.LEFT);
-                    blocks[x][y][z].addDataToVertice(Block.Faces.BOTTOM);
+
+                    if(x == 0)
+                        blocks[x][y][z].addDataToVertice(Block.Faces.RIGHT);
+                    if(x == X_DIMENSION-1)
+                        blocks[x][y][z].addDataToVertice(Block.Faces.LEFT);
+
+                    if(y == 0)
+                        blocks[x][y][z].addDataToVertice(Block.Faces.BOTTOM);
                     blocks[x][y][z].addDataToVertice(Block.Faces.TOP);
+
+
+
 
                     blocks[x][y][z].createDatas();
                     blocks[x][y][z].mesh.Init();

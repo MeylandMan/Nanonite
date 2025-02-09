@@ -6,9 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Block.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Block.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hs_err_pid11848.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/hs_err_pid16608.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/hs_err_pid7764.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/hs_err_pid860.log" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Chunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Chunk.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,7 +64,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Application.Minecraft Clone.executor": "Run",
+    "Application.Minecraft Clone.executor": "Profiler#1",
     "Downloaded.Files.Path.Enabled": "false",
     "Gradle.Build MInecraft-Clone.executor": "Run",
     "Gradle.Download Sources.executor": "Run",
@@ -71,15 +75,22 @@
     "Repository.Attach.Annotations": "false",
     "Repository.Attach.JavaDocs": "false",
     "Repository.Attach.Sources": "false",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Client/Documents/GitHub/MInecraft-Clone/lib/lwjgl-openal-javadoc.jar",
+    "last_opened_file_path": "C:/Users/Client/Documents/GitHub/MInecraft-Clone",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.34827587",
-    "settings.editor.selected.configurable": "promo.profiler"
+    "settings.editor.selected.configurable": "profiler.jvm",
+    "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -108,6 +119,14 @@
       </method>
     </configuration>
   </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-125ca727e0f0-intellij.indexing.shared.core-IU-243.23654.189" />
+        <option value="bundled-js-predefined-d6986cc7102b-822845ee3bb5-JavaScript-IU-243.23654.189" />
+      </set>
+    </attachedChunks>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -116,8 +135,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1736777304250</updated>
+      <workItem from="1739111352315" duration="3437000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">

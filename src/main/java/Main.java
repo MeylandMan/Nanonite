@@ -8,5 +8,6 @@ public class Main {
         App app = new App(600, 600, "MyCraft");
         app.run();
     }
+    int x = 0;
 
 }
