@@ -226,6 +226,8 @@ public class App {
         block.AddToScene(scene);
         */
 
+        System.out.println("MAX TEXTURE YOU CAN LOAD : " + GL_MAX_TEXTURE_IMAGE_UNITS);
+
         while ( !glfwWindowShouldClose(window) ) {
             ProcessInput(window);
             if (Input.is_locked)

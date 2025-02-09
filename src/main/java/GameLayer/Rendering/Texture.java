@@ -19,7 +19,7 @@ public class Texture {
 
     public Texture(String path) {
 
-        this.m_FilePath = "src/main/resources/" + path;
+        this.m_FilePath = "src/main/resources/textures/" + path;
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
 

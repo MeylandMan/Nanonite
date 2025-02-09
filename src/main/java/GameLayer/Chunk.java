@@ -4,11 +4,7 @@ import GameLayer.Rendering.Scene;
 import GameLayer.Rendering.*;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL;
-
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -65,36 +61,36 @@ public class Chunk {
                                     this.position.y+y,
                                     this.position.z+z
                             ));
-
+                    blocks[x][y][z].type = Block.BlockType.DIRT;
 
                     if(z == 0){
-                        BlockData.createFaceVertices(this, blocks[x][y][z].getPosition(), Block.Faces.FRONT);
+                        BlockData.createFaceVertices(this, blocks[x][y][z], Block.Faces.FRONT);
                         BlockData.createFaceIndices(this, Block.Faces.FRONT);
                     }
 
                     if(z == Z_DIMENSION-1) {
-                        BlockData.createFaceVertices(this, blocks[x][y][z].getPosition(), Block.Faces.BACK);
+                        BlockData.createFaceVertices(this, blocks[x][y][z], Block.Faces.BACK);
                         BlockData.createFaceIndices(this, Block.Faces.BACK);
                     }
 
                     if(x == 0) {
-                        BlockData.createFaceVertices(this, blocks[x][y][z].getPosition(), Block.Faces.RIGHT);
+                        BlockData.createFaceVertices(this, blocks[x][y][z], Block.Faces.RIGHT);
                         BlockData.createFaceIndices(this, Block.Faces.RIGHT);
                     }
 
                     if(x == X_DIMENSION-1) {
-                        BlockData.createFaceVertices(this, blocks[x][y][z].getPosition(), Block.Faces.LEFT);
+                        BlockData.createFaceVertices(this, blocks[x][y][z], Block.Faces.LEFT);
                         BlockData.createFaceIndices(this, Block.Faces.LEFT);
                     }
 
 
                     if(y == 0) {
-                        BlockData.createFaceVertices(this, blocks[x][y][z].getPosition(), Block.Faces.BOTTOM);
+                        BlockData.createFaceVertices(this, blocks[x][y][z], Block.Faces.BOTTOM);
                         BlockData.createFaceIndices(this, Block.Faces.BOTTOM);
                     }
 
                     if(y == 4) {
-                        BlockData.createFaceVertices(this, blocks[x][y][z].getPosition(), Block.Faces.TOP);
+                        BlockData.createFaceVertices(this, blocks[x][y][z], Block.Faces.TOP);
                         BlockData.createFaceIndices(this, Block.Faces.TOP);
                     }
                 }
@@ -149,6 +145,7 @@ public class Chunk {
         layout.Add(3);
         layout.Add(2);
         layout.Add(3);
+        layout.Add(1);
         ChunkVAO.AddBuffer(ChunkVBO, layout);
 
         ChunkEBO.Init(indices);

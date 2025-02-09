@@ -6,44 +6,44 @@ import org.joml.Vector3f;
 import java.util.ArrayList;
 
 public class BlockData {
-    public static void createFaceVertices(Chunk chunk, Vector3f position, Block.Faces face) {
+    public static void createFaceVertices(Chunk chunk, Block block, Block.Faces face) {
         ArrayList<Float> vertex = new ArrayList<>();
         switch (face) {
             case Block.Faces.FRONT:
-                vertex.add(-0.5f+position.x); vertex.add(-0.5f+position.y); vertex.add(-0.5f+position.z);       vertex.add(1.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
-                vertex.add(0.5f+position.x); vertex.add(-0.5f+position.y); vertex.add(-0.5f+position.z);       vertex.add(0.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
-                vertex.add(0.5f+position.x); vertex.add(0.5f+position.y); vertex.add(-0.5f+position.z);       vertex.add(0.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
-                vertex.add(-0.5f+position.x); vertex.add(0.5f+position.y); vertex.add(-0.5f+position.z);       vertex.add(1.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
+                vertex.add(-0.5f+block.getPosition().x); vertex.add(-0.5f+block.getPosition().y); vertex.add(-0.5f+block.getPosition().z);       vertex.add(1.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f); vertex.add(block.getTextureIndex(0));
+                vertex.add(0.5f+block.getPosition().x); vertex.add(-0.5f+block.getPosition().y); vertex.add(-0.5f+block.getPosition().z);       vertex.add(0.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f); vertex.add(block.getTextureIndex(0));
+                vertex.add(0.5f+block.getPosition().x); vertex.add(0.5f+block.getPosition().y); vertex.add(-0.5f+block.getPosition().z);       vertex.add(0.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f); vertex.add(block.getTextureIndex(0));
+                vertex.add(-0.5f+block.getPosition().x); vertex.add(0.5f+block.getPosition().y); vertex.add(-0.5f+block.getPosition().z);       vertex.add(1.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f); vertex.add(block.getTextureIndex(0));
                 break;
             case Block.Faces.BACK:
-                vertex.add(-0.5f+position.x); vertex.add(-0.5f+position.y); vertex.add(0.5f+position.z);       vertex.add(0.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
-                vertex.add(0.5f+position.x); vertex.add(-0.5f+position.y); vertex.add(0.5f+position.z);       vertex.add(1.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
-                vertex.add(0.5f+position.x); vertex.add(0.5f+position.y); vertex.add(0.5f+position.z);       vertex.add(1.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
-                vertex.add(-0.5f+position.x); vertex.add(0.5f+position.y); vertex.add(0.5f+position.z);       vertex.add(0.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
+                vertex.add(-0.5f+block.getPosition().x); vertex.add(-0.5f+block.getPosition().y); vertex.add(0.5f+block.getPosition().z);       vertex.add(0.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f); vertex.add(block.getTextureIndex(1));
+                vertex.add(0.5f+block.getPosition().x); vertex.add(-0.5f+block.getPosition().y); vertex.add(0.5f+block.getPosition().z);       vertex.add(1.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f); vertex.add(block.getTextureIndex(1));
+                vertex.add(0.5f+block.getPosition().x); vertex.add(0.5f+block.getPosition().y); vertex.add(0.5f+block.getPosition().z);       vertex.add(1.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f); vertex.add(block.getTextureIndex(1));
+                vertex.add(-0.5f+block.getPosition().x); vertex.add(0.5f+block.getPosition().y); vertex.add(0.5f+block.getPosition().z);       vertex.add(0.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f); vertex.add(block.getTextureIndex(1));
                 break;
             case Block.Faces.RIGHT:
-                vertex.add(-0.5f+position.x); vertex.add(0.5f+position.y); vertex.add(-0.5f+position.z);       vertex.add(0.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
-                vertex.add(-0.5f+position.x); vertex.add(-0.5f+position.y); vertex.add(-0.5f+position.z);       vertex.add(0.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
-                vertex.add(-0.5f+position.x); vertex.add(-0.5f+position.y); vertex.add(0.5f+position.z);       vertex.add(1.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
-                vertex.add(-0.5f+position.x); vertex.add(0.5f+position.y); vertex.add(0.5f+position.z);       vertex.add(1.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
+                vertex.add(-0.5f+block.getPosition().x); vertex.add(0.5f+block.getPosition().y); vertex.add(-0.5f+block.getPosition().z);       vertex.add(0.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f); vertex.add(block.getTextureIndex(2));
+                vertex.add(-0.5f+block.getPosition().x); vertex.add(-0.5f+block.getPosition().y); vertex.add(-0.5f+block.getPosition().z);       vertex.add(0.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f); vertex.add(block.getTextureIndex(2));
+                vertex.add(-0.5f+block.getPosition().x); vertex.add(-0.5f+block.getPosition().y); vertex.add(0.5f+block.getPosition().z);       vertex.add(1.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f); vertex.add(block.getTextureIndex(2));
+                vertex.add(-0.5f+block.getPosition().x); vertex.add(0.5f+block.getPosition().y); vertex.add(0.5f+block.getPosition().z);       vertex.add(1.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f); vertex.add(block.getTextureIndex(2));
                 break;
             case Block.Faces.LEFT:
-                vertex.add(0.5f+position.x); vertex.add(-0.5f+position.y); vertex.add(-0.5f+position.z);       vertex.add(1.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
-                vertex.add(0.5f+position.x); vertex.add(0.5f+position.y); vertex.add(-0.5f+position.z);       vertex.add(1.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
-                vertex.add(0.5f+position.x); vertex.add(0.5f+position.y); vertex.add(0.5f+position.z);       vertex.add(0.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
-                vertex.add(0.5f+position.x); vertex.add(-0.5f+position.y); vertex.add(0.5f+position.z);       vertex.add(0.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
+                vertex.add(0.5f+block.getPosition().x); vertex.add(-0.5f+block.getPosition().y); vertex.add(-0.5f+block.getPosition().z);       vertex.add(1.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f); vertex.add(block.getTextureIndex(3));
+                vertex.add(0.5f+block.getPosition().x); vertex.add(0.5f+block.getPosition().y); vertex.add(-0.5f+block.getPosition().z);       vertex.add(1.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f); vertex.add(block.getTextureIndex(3));
+                vertex.add(0.5f+block.getPosition().x); vertex.add(0.5f+block.getPosition().y); vertex.add(0.5f+block.getPosition().z);       vertex.add(0.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f); vertex.add(block.getTextureIndex(3));
+                vertex.add(0.5f+block.getPosition().x); vertex.add(-0.5f+block.getPosition().y); vertex.add(0.5f+block.getPosition().z);       vertex.add(0.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f); vertex.add(block.getTextureIndex(3));
                 break;
             case Block.Faces.BOTTOM:
-                vertex.add(-0.5f+position.x); vertex.add(-0.5f+position.y); vertex.add(-0.5f+position.z);       vertex.add(0.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
-                vertex.add(0.5f+position.x); vertex.add(-0.5f+position.y); vertex.add(-0.5f+position.z);       vertex.add(1.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
-                vertex.add(0.5f+position.x); vertex.add(-0.5f+position.y); vertex.add(0.5f+position.z);       vertex.add(1.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
-                vertex.add(-0.5f+position.x); vertex.add(-0.5f+position.y); vertex.add(0.5f+position.z);       vertex.add(0.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
+                vertex.add(-0.5f+block.getPosition().x); vertex.add(-0.5f+block.getPosition().y); vertex.add(-0.5f+block.getPosition().z);       vertex.add(0.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f); vertex.add(block.getTextureIndex(5));
+                vertex.add(0.5f+block.getPosition().x); vertex.add(-0.5f+block.getPosition().y); vertex.add(-0.5f+block.getPosition().z);       vertex.add(1.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f); vertex.add(block.getTextureIndex(5));
+                vertex.add(0.5f+block.getPosition().x); vertex.add(-0.5f+block.getPosition().y); vertex.add(0.5f+block.getPosition().z);       vertex.add(1.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f); vertex.add(block.getTextureIndex(5));
+                vertex.add(-0.5f+block.getPosition().x); vertex.add(-0.5f+block.getPosition().y); vertex.add(0.5f+block.getPosition().z);       vertex.add(0.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f); vertex.add(block.getTextureIndex(5));
                 break;
             case Block.Faces.TOP:
-                vertex.add(0.5f+position.x); vertex.add(0.5f+position.y); vertex.add(-0.5f+position.z);       vertex.add(0.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
-                vertex.add(-0.5f+position.x); vertex.add(0.5f+position.y); vertex.add(-0.5f+position.z);       vertex.add(1.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
-                vertex.add(-0.5f+position.x); vertex.add(0.5f+position.y); vertex.add(0.5f+position.z);       vertex.add(1.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
-                vertex.add(0.5f+position.x); vertex.add(0.5f+position.y); vertex.add(0.5f+position.z);       vertex.add(0.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
+                vertex.add(0.5f+block.getPosition().x); vertex.add(0.5f+block.getPosition().y); vertex.add(-0.5f+block.getPosition().z);       vertex.add(0.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f); vertex.add(block.getTextureIndex(4));
+                vertex.add(-0.5f+block.getPosition().x); vertex.add(0.5f+block.getPosition().y); vertex.add(-0.5f+block.getPosition().z);       vertex.add(1.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f); vertex.add(block.getTextureIndex(4));
+                vertex.add(-0.5f+block.getPosition().x); vertex.add(0.5f+block.getPosition().y); vertex.add(0.5f+block.getPosition().z);       vertex.add(1.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f); vertex.add(block.getTextureIndex(4));
+                vertex.add(0.5f+block.getPosition().x); vertex.add(0.5f+block.getPosition().y); vertex.add(0.5f+block.getPosition().z);       vertex.add(0.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f); vertex.add(block.getTextureIndex(4));
                 break;
         }
 

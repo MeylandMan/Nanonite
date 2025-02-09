@@ -7,12 +7,11 @@
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Block.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Block.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/BlockData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/BlockData.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Chunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Chunk.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Model/CubeMesh.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Model/CubeMesh.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Scene.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Scene.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/_Object.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/_Object.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Texture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Texture.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/dirt.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/textures/dirt.png" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,6 +98,7 @@
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\src\main\resources" />
+      <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\src\main\resources\textures" />
       <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\src\main\resources\Dirt" />
       <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\shaders\Opengl" />
     </key>
@@ -139,6 +139,7 @@
       <workItem from="1739117375839" duration="12011000" />
       <workItem from="1739133604470" duration="622000" />
       <workItem from="1739134597345" duration="3748000" />
+      <workItem from="1739139773042" duration="2650000" />
     </task>
     <servers />
   </component>
