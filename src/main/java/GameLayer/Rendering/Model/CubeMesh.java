@@ -75,7 +75,6 @@ public class CubeMesh {
     }
 
     public void Init() {
-        int vertexs = vertices.length/8;
         setupMesh();
         setupNormal();
     }
