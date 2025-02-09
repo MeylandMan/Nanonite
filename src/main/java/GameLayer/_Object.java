@@ -2,6 +2,7 @@ package GameLayer;
 
 import GameLayer.Rendering.Model.CubeMesh;
 import GameLayer.Rendering.Scene;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class _Object {
@@ -31,6 +32,13 @@ public class _Object {
         this.position = new Vector3f(position);
         this.rotation = new Vector3f();
         this.scale = new Vector3f(1.0f);
+    }
+
+    public Matrix4f getModelMatrix() {
+        return new Matrix4f().identity()
+                .translate(position)                 // Translation
+                .rotateXYZ(rotation)                 // Rotation
+                .scale(scale);                       // Scale
     }
 
     public _Object(String texture, Vector3f position, Vector3f rotation) {

@@ -46,10 +46,12 @@ public class Chunk {
                                     this.position.y+y,
                                     this.position.z+z
                             ));
+
                     if(z == 0)
                         blocks[x][y][z].addDataToVertice(Block.Faces.FRONT);
                     if(z == Z_DIMENSION-1)
                         blocks[x][y][z].addDataToVertice(Block.Faces.BACK);
+
 
 
                     if(x == 0)
@@ -61,7 +63,6 @@ public class Chunk {
                         blocks[x][y][z].addDataToVertice(Block.Faces.BOTTOM);
                     if(y == 4)
                         blocks[x][y][z].addDataToVertice(Block.Faces.TOP);
-
 
 
                     blocks[x][y][z].createDatas();

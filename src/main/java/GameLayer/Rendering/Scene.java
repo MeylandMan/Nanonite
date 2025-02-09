@@ -20,12 +20,8 @@ public class Scene {
     public void Draw(Shader shader) {
 
         for (_Object obj: objects) {
-            Matrix4f Model = new Matrix4f().identity()
-                    .translate(obj.getPosition())                 // Translation
-                    .rotateXYZ(obj.getRotation())                 // Rotation
-                    .scale(obj.getScale());                       // Scale
             shader.Uniform1i("u_Texture", 0);
-            shader.UniformMatrix4x4("u_Model", Model);
+            shader.UniformMatrix4x4("u_Model", obj.getModelMatrix());
             obj.DrawMesh();
         }
     }
