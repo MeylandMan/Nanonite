@@ -207,8 +207,28 @@ public class App {
         Vector3f pos = new Vector3f();
 
         chunk = new Chunk(scene, pos);
+
         // Enable BackFace Culling
         glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT);
+        glFrontFace(GL_CW);
+
+        /*
+        Block block = new Block();
+        block.addDataToVertice(Block.Faces.FRONT);
+        block.addDataToVertice(Block.Faces.BACK);
+
+        block.addDataToVertice(Block.Faces.RIGHT);
+        block.addDataToVertice(Block.Faces.LEFT);
+
+        block.addDataToVertice(Block.Faces.TOP);
+        block.addDataToVertice(Block.Faces.BOTTOM);
+
+        block.createDatas();
+        block.mesh.Init();
+        block.AddToScene(scene);
+        */
+
 
         ctx = NkContext.create();
         allocator = NkAllocator.create();

@@ -48,8 +48,9 @@ public class Chunk {
                             ));
                     if(z == 0)
                         blocks[x][y][z].addDataToVertice(Block.Faces.FRONT);
+                    if(z == Z_DIMENSION-1)
+                        blocks[x][y][z].addDataToVertice(Block.Faces.BACK);
 
-                    blocks[x][y][z].addDataToVertice(Block.Faces.BACK);
 
                     if(x == 0)
                         blocks[x][y][z].addDataToVertice(Block.Faces.RIGHT);
@@ -58,8 +59,8 @@ public class Chunk {
 
                     if(y == 0)
                         blocks[x][y][z].addDataToVertice(Block.Faces.BOTTOM);
-                    blocks[x][y][z].addDataToVertice(Block.Faces.TOP);
-
+                    if(y == 4)
+                        blocks[x][y][z].addDataToVertice(Block.Faces.TOP);
 
 
 

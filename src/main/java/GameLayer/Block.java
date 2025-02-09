@@ -72,12 +72,12 @@ public class Block extends _Object {
                 _indices.add(2); _indices.add(3); _indices.add(0);
                 break;
             case Faces.RIGHT:
-                vertex.add(-0.5f); vertex.add(-0.5f); vertex.add(-0.5f);       vertex.add(0.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
                 vertex.add(-0.5f); vertex.add(0.5f); vertex.add(-0.5f);       vertex.add(0.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
-                vertex.add(-0.5f); vertex.add(0.5f); vertex.add(0.5f);       vertex.add(1.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
+                vertex.add(-0.5f); vertex.add(-0.5f); vertex.add(-0.5f);       vertex.add(0.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
                 vertex.add(-0.5f); vertex.add(-0.5f); vertex.add(0.5f);       vertex.add(1.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
-                _indices.add(1); _indices.add(0); _indices.add(3);
-                _indices.add(1); _indices.add(3); _indices.add(2);
+                vertex.add(-0.5f); vertex.add(0.5f); vertex.add(0.5f);       vertex.add(1.0f); vertex.add(1.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
+                _indices.add(0); _indices.add(1); _indices.add(2);
+                _indices.add(2); _indices.add(3); _indices.add(0);
                 break;
             case Faces.LEFT:
                 vertex.add(0.5f); vertex.add(-0.5f); vertex.add(-0.5f);       vertex.add(1.0f); vertex.add(0.0f);      vertex.add(0.0f); vertex.add(0.0f); vertex.add(0.0f);
