@@ -2,33 +2,28 @@ package GameLayer;
 
 import GameLayer.Rendering.Scene;
 import GameLayer.Rendering.*;
+import org.jetbrains.annotations.*;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class Chunk {
+public class Chunk extends _Object{
 
     final static int X_DIMENSION = 16;
     final static int Y_DIMENSION = 255;
     final static int Z_DIMENSION = 16;
     final static int TEXTURE_LOADED = 3;
     int Y_MAX = 5;
-    private final float positionX;
-    private final float positionZ;
+
     private final Block[][][] blocks = new Block[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
 
-    protected int[] indices = {};
-    protected float[] vertices = {};
+    
     String[] texture_paths = {};
-
-    VAO ChunkVAO;
-    VBO ChunkVBO;
-    EBO ChunkEBO;
     public Texture[] textures;
 
-    public Chunk(Scene scene, Vector3f position) {
+    public Chunk(Scene scene, @NotNull Vector3f position) {
         //Add Air
         this.positionX = position.x;
         this.positionZ = position.z;
@@ -55,6 +50,7 @@ public class Chunk {
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int y = 0; y < Y_MAX; y++) {
                 for(int z = 0; z < Z_DIMENSION; z++) {
+
                     blocks[x][y][z] = new Block( new Vector3f(
                                     this.positionX+x,
                                         y,
@@ -84,8 +80,11 @@ public class Chunk {
 
         // Check if we can add faces
         for(int x = 0; x < X_DIMENSION; x++) {
-            for(int y = 0; y < Y_MAX; y++) {
+            for(int y = 0; y < Y_DIMENSION; y++) {
                 for(int z = 0; z < Z_DIMENSION; z++) {
+                    if(blocks[x][y][z].type == Block.BlockType.AIR)
+                        continue;
+
                     if (shouldRenderFace(x, y, z, Block.Faces.FRONT)) {
                         BlockData.createFaceVertices(this, blocks[x][y][z], Block.Faces.FRONT);
                         BlockData.createFaceIndices(this, Block.Faces.FRONT);
@@ -119,7 +118,7 @@ public class Chunk {
 
     }
 
-    private boolean shouldRenderFace(int x, int y, int z, Block.Faces face) {
+    private boolean shouldRenderFace(int x, int y, int z, @NotNull Block.Faces face) {
         int nx = x, ny = y, nz = z;
 
         switch (face) {
@@ -145,24 +144,16 @@ public class Chunk {
         return (blocks[nx][ny][nz].type == Block.BlockType.AIR);
     }
 
-    public void AddToScene(Scene scene) {
-        scene.AddChunk(this);
-    }
-
-    public Matrix4f getModelMatrix() {
-        return new Matrix4f().identity()
-                .translate(new Vector3f(positionX, 0, positionZ))                 // Translation
-                .rotateXYZ(new Vector3f())                 // Rotation
-                .scale(new Vector3f(1.0f));                       // Scale
-    }
-
+    @Override
     public void Delete() {
         for(Texture texture : textures)
             texture.Delete();
-        ChunkVAO.Delete();
-        ChunkVBO.Delete();
-        ChunkEBO.Delete();
+        vao.Delete();
+        vbo.Delete();
+        ebo.Delete();
     }
+
+    @Override
     public void DrawMesh(Shader shader) {
         int[] samplers = new int[textures.length];
         for(int i = 0; i < textures.length; i++) {
@@ -170,24 +161,25 @@ public class Chunk {
             textures[i].Bind(i);
         }
         shader.Uniform1iv("u_Textures", samplers);
-        ChunkVAO.Bind();
-        ChunkEBO.Bind();
+        vao.Bind();
+        ebo.Bind();
 
 
         glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
 
-        ChunkVAO.UnBind();
-        ChunkEBO.UnBind();
+        vao.UnBind();
+        ebo.UnBind();
     }
 
+    @Override
     public void Init() {
         if (!GL.getCapabilities().OpenGL30) {
             throw new IllegalStateException("OpenGL 3.0 non disponible !");
         }
 
-        ChunkVAO = new VAO();
-        ChunkVBO = new VBO();
-        ChunkEBO = new EBO();
+        vao = new VAO();
+        vbo = new VBO();
+        ebo = new EBO();
 
         VertexBufferLayout layout = new VertexBufferLayout();
         textures = new Texture[TEXTURE_LOADED];
@@ -197,14 +189,14 @@ public class Chunk {
 
 
         // Initialize them
-        ChunkVBO.Init(vertices);
+        vbo.Init(vertices);
         layout.Add(3);
         layout.Add(2);
         layout.Add(3);
         layout.Add(1);
-        ChunkVAO.AddBuffer(ChunkVBO, layout);
+        vao.AddBuffer(vbo, layout);
 
-        ChunkEBO.Init(indices);
+        ebo.Init(indices);
     }
     public Block GetBlock(int x) {
         return blocks[x][0][0];
@@ -214,8 +206,5 @@ public class Chunk {
     }
     public Block GetBlock(int x, int y, int z) {
         return blocks[x][y][z];
-    }
-    public Vector3f getPosition() {
-        return new Vector3f(positionX, 0, positionZ);
     }
 }

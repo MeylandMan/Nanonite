@@ -1,15 +1,25 @@
 package GameLayer;
 
+import GameLayer.Rendering.*;
 import GameLayer.Rendering.Model.CubeMesh;
-import GameLayer.Rendering.Scene;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.lwjgl.opengl.GL;
+
+import static org.lwjgl.opengl.GL11.*;
 
 public class _Object {
 
-    private float positionX;
-    private float positionY;
-    private float positionZ;
+    protected int[] indices = {};
+    protected float[] vertices = {};
+
+    protected VAO vao;
+    protected VBO vbo;
+    protected EBO ebo;
+
+    protected float positionX;
+    protected float positionY;
+    protected float positionZ;
 
     private float rotationX;
     private float rotationY;
@@ -83,5 +93,43 @@ public class _Object {
     }
     public static void AddObjectToScene(_Object obj, Scene scene) {
         scene.AddObject(obj);
+    }
+
+    public void DrawMesh(Shader shader) {
+        vao.Bind();
+        ebo.Bind();
+
+        glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
+
+        vao.UnBind();
+        ebo.UnBind();
+    }
+
+    public void Init() {
+        if (!GL.getCapabilities().OpenGL30) {
+            throw new IllegalStateException("OpenGL 3.0 non disponible !");
+        }
+
+        vao = new VAO();
+        vbo = new VBO();
+        ebo = new EBO();
+
+        VertexBufferLayout layout = new VertexBufferLayout();
+
+        // Initialize them
+        vbo.Init(vertices);
+        layout.Add(3);
+        layout.Add(2);
+        layout.Add(3);
+        layout.Add(1);
+        vao.AddBuffer(vbo, layout);
+
+        ebo.Init(indices);
+    }
+    
+    public void Delete() {
+        vao.Delete();
+        vbo.Delete();
+        ebo.Delete();
     }
 }

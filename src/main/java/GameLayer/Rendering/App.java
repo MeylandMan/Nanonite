@@ -393,10 +393,6 @@ public class App {
                         .id(fontTexID));
         nk_style_set_font(ctx, default_font);
 
-        // Depth render
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LESS);
-
         shader.CreateShader("shaders/Opengl/Default.vert", "shaders/Opengl/Default.frag");
 
         Vector3f pos = new Vector3f();
@@ -448,6 +444,10 @@ public class App {
 
             shader.UniformMatrix4x4("u_View", camera.GetViewMatrix());
             shader.UniformMatrix4x4("u_Proj", camera.GetProjectionMatrix(m_Width, m_Height));
+
+            // Depth render
+            glEnable(GL_DEPTH_TEST);
+            glDepthFunc(GL_LESS);
 
             // Enable BackFace Culling
             glEnable(GL_CULL_FACE);
