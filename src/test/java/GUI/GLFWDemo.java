@@ -1,36 +1,33 @@
-package GameLayer.Rendering.GUI;
+package GUI;
 
-import org.lwjgl.glfw.*;
+import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.nuklear.*;
 import org.lwjgl.opengl.*;
-import org.lwjgl.stb.*;
-import org.lwjgl.system.*;
-import org.lwjgl.BufferUtils;
+import org.lwjgl.stb.STBTTAlignedQuad;
+import org.lwjgl.stb.STBTTFontinfo;
+import org.lwjgl.stb.STBTTPackContext;
+import org.lwjgl.stb.STBTTPackedchar;
+import org.lwjgl.system.Callback;
+import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.Platform;
 
-import java.io.*;
-import java.nio.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.*;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.util.Objects;
 
-
-
-import static GameLayer.Rendering.GUI.IOUtil.*;
-import static org.lwjgl.glfw.Callbacks.*;
+import static GameLayer.Rendering.GUI.IOUtil.ioResourceToByteBuffer;
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.nuklear.Nuklear.*;
 import static org.lwjgl.opengl.ARBDebugOutput.*;
 import static org.lwjgl.opengl.GL30C.*;
 import static org.lwjgl.stb.STBTruetype.*;
-import static org.lwjgl.system.MemoryStack.*;
+import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.*;
 
-/**
- * Nuklear demo using GLFW, OpenGL and stb_truetype for rendering.
- *
- * <p>This demo is a Java port of
- * <a href="https://github.com/vurtun/nuklear/tree/master/demo/glfw_opengl3">https://github.com/vurtun/nuklear/tree/master/demo/glfw_opengl3</a>.</p>
- */
 public class GLFWDemo {
 
     private static final int BUFFER_INITIAL_SIZE = 4 * 1024;
@@ -58,6 +55,7 @@ public class GLFWDemo {
     public static void main(String[] args) {
         new GLFWDemo().run();
     }
+    
     private final ByteBuffer ttf;
 
     private long win;
@@ -83,7 +81,7 @@ public class GLFWDemo {
     private int uniform_tex;
     private int uniform_proj;
 
-    private final Demo       demo = new Demo();
+    private final Demo demo = new Demo();
     private final Calculator calc = new Calculator();
 
     public GLFWDemo() {

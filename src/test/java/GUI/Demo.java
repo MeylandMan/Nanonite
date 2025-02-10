@@ -1,18 +1,15 @@
-package GameLayer.Rendering.GUI;
+package GUI;
 
-import org.lwjgl.*;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.nuklear.*;
-import org.lwjgl.system.*;
+import org.lwjgl.system.MemoryStack;
 
-import java.nio.*;
+import java.nio.IntBuffer;
 
 import static org.lwjgl.nuklear.Nuklear.*;
-import static org.lwjgl.system.MemoryStack.*;
+import static org.lwjgl.system.MemoryStack.stackPush;
 
-/**
- * Java port of
- * <a href="https://github.com/vurtun/nuklear/blob/master/demo/glfw_opengl3/main.c">https://github.com/vurtun/nuklear/blob/master/demo/glfw_opengl3/main.c</a>.
- */
+
 class Demo {
 
     private static final int EASY = 0;
