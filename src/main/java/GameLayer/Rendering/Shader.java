@@ -106,6 +106,11 @@ public class Shader {
         int location = getUniform(name);
         glUniform1i(location, x);
     }
+    public void Uniform1iv(String name, int[] x) {
+        int location = getUniform(name);
+        glUniform1iv(location, x);
+    }
+
     public void Uniform2i(String name, int x, int y) {
         int location = getUniform(name);
         glUniform2i (location, x, y);

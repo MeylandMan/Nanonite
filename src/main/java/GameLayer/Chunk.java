@@ -13,6 +13,7 @@ public class Chunk {
     final static int X_DIMENSION = 16;
     final static int Y_DIMENSION = 255;
     final static int Z_DIMENSION = 16;
+    final static int TEXTURE_LOADED = 3;
     private final Vector3f position;
     private final Block[][][] blocks = new Block[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
 
@@ -23,7 +24,7 @@ public class Chunk {
     VAO ChunkVAO;
     VBO ChunkVBO;
     EBO ChunkEBO;
-    public Texture texture;
+    public Texture[] textures;
 
     public Chunk(Scene scene) {
         this.position = new Vector3f();
@@ -37,7 +38,7 @@ public class Chunk {
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int y = 0; y < Y_DIMENSION; y++) {
                 for(int z = 0; z < Z_DIMENSION; z++) {
-                    blocks[x][y][z] = new Block("dirt.png",
+                    blocks[x][y][z] = new Block("blocks/dirt.png",
                             new Vector3f(
                                     this.position.x+x,
                                     this.position.y+y,
@@ -55,13 +56,18 @@ public class Chunk {
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int y = 0; y < 5; y++) {
                 for(int z = 0; z < Z_DIMENSION; z++) {
-                    blocks[x][y][z] = new Block("dirt.png",
+                    blocks[x][y][z] = new Block("blocks/dirt.png",
                             new Vector3f(
                                     this.position.x+x,
                                     this.position.y+y,
                                     this.position.z+z
                             ));
+
                     blocks[x][y][z].type = Block.BlockType.DIRT;
+                    if(y == 4) {
+                        blocks[x][y][z].type = Block.BlockType.GRASS;
+                    }
+
 
                     if(z == 0){
                         BlockData.createFaceVertices(this, blocks[x][y][z], Block.Faces.FRONT);
@@ -112,15 +118,22 @@ public class Chunk {
     }
 
     public void Delete() {
-        texture.Delete();
+        for(Texture texture : textures)
+            texture.Delete();
         ChunkVAO.Delete();
         ChunkVBO.Delete();
         ChunkEBO.Delete();
     }
-    public void DrawMesh() {
-        texture.Bind();
+    public void DrawMesh(Shader shader) {
+        int[] samplers = new int[textures.length];
+        for(int i = 0; i < textures.length; i++) {
+            samplers[i] = i;
+            textures[i].Bind(i);
+        }
+        shader.Uniform1iv("u_Textures", samplers);
         ChunkVAO.Bind();
         ChunkEBO.Bind();
+
 
         glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
 
@@ -138,7 +151,11 @@ public class Chunk {
         ChunkEBO = new EBO();
 
         VertexBufferLayout layout = new VertexBufferLayout();
-        texture = new Texture("dirt.png");
+        textures = new Texture[TEXTURE_LOADED];
+        for(int i = 0; i < textures.length; i++) {
+            textures[i] = new Texture(BlockData.getTexturePath(i));
+        }
+
 
         // Initialize them
         ChunkVBO.Init(vertices);

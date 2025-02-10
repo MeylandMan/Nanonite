@@ -6,12 +6,14 @@
   <component name="ChangeListManager">
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shaders/Opengl/Default.frag" beforeDir="false" afterPath="$PROJECT_DIR$/shaders/Opengl/Default.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shaders/Opengl/Default.vert" beforeDir="false" afterPath="$PROJECT_DIR$/shaders/Opengl/Default.vert" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Block.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Block.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/BlockData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/BlockData.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Chunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Chunk.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Texture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Texture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/dirt.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/textures/dirt.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Scene.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Scene.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Shader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Shader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/textures/dirt.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/textures/blocks/dirt.png" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,7 +81,7 @@
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Client/Documents/GitHub/MineJAVA",
+    "last_opened_file_path": "C:/Users/Client/Documents/GitHub/MInecraft-Clone/src/main/resources/textures/blocks",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -94,9 +96,11 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\src\main\resources\textures\blocks" />
       <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\shaders\Opengl ES" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\src\main\resources\textures\blocks" />
       <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\src\main\resources" />
       <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\src\main\resources\textures" />
       <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\src\main\resources\Dirt" />
@@ -139,7 +143,7 @@
       <workItem from="1739117375839" duration="12011000" />
       <workItem from="1739133604470" duration="622000" />
       <workItem from="1739134597345" duration="3748000" />
-      <workItem from="1739139773042" duration="2650000" />
+      <workItem from="1739139773042" duration="7389000" />
     </task>
     <servers />
   </component>

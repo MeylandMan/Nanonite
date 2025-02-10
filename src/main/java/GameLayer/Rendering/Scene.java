@@ -37,9 +37,8 @@ public class Scene {
         }
 
         for (Chunk chunk: chunks) {
-            shader.Uniform1i("u_Texture", 0);
             shader.UniformMatrix4x4("u_Model", chunk.getModelMatrix());
-            chunk.DrawMesh();
+            chunk.DrawMesh(shader);
         }
     }
 
