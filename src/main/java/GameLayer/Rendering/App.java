@@ -206,9 +206,9 @@ public class App {
         chunk = new Chunk(scene, pos);
 
         // Enable BackFace Culling
-        //glEnable(GL_CULL_FACE);
-        //glCullFace(GL_FRONT);
-        //glFrontFace(GL_CW);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT);
+        glFrontFace(GL_CW);
 
         /*
         Block block = new Block();

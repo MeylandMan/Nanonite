@@ -10,11 +10,11 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Chunk {
 
-    final static int X_DIMENSION = 1;
-    final static int Y_DIMENSION = 2;
-    final static int Z_DIMENSION = 3;
+    final static int X_DIMENSION = 16;
+    final static int Y_DIMENSION = 255;
+    final static int Z_DIMENSION = 16;
     final static int TEXTURE_LOADED = 3;
-    int Y_MAX = 2;
+    int Y_MAX = 5;
     private final float positionX;
     private final float positionZ;
     private final Block[][][] blocks = new Block[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
@@ -55,9 +55,6 @@ public class Chunk {
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int y = 0; y < Y_MAX; y++) {
                 for(int z = 0; z < Z_DIMENSION; z++) {
-                    if(y == Y_MAX-1 && z == zz) {
-                        continue;
-                    }
                     blocks[x][y][z] = new Block( new Vector3f(
                                     this.positionX+x,
                                         y,
@@ -143,7 +140,7 @@ public class Chunk {
         if (nx < 0 || nx >= X_DIMENSION || ny < 0 || ny >= Y_DIMENSION || nz < 0 || nz >= Z_DIMENSION) {
             return true; // Bordure -> Afficher la face
         }
-        
+
         // Vérifier si le bloc adjacent est de type AIR
         return (blocks[nx][ny][nz].type == Block.BlockType.AIR);
     }
