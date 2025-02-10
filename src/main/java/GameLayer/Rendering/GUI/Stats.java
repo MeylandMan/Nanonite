@@ -31,13 +31,16 @@ public class Stats {
                 String view_pos = "camera position: (x: " + String.format("%.2f", camera.getFront().x) +
                         ", y: " + String.format("%.2f", camera.getFront().y) +
                         ", z: " + String.format("%.2f", camera.getFront().z) + ")";
-                String fps_string_format = "";
+                String fps_string_format = "fps: " + String.format("%.1f", fps[0]) +
+                        " (avg: " + String.format("%.1f", fps[1]) +
+                        ", Min: " + String.format("%.1f", fps[2]) +
+                        ", Max: " + String.format("%.1f", fps[3]) + ")";
                 nk_layout_row_dynamic(ctx, 10, 1);
                 nk_label(ctx, camera_pos, NK_TEXT_LEFT);
                 nk_layout_row_dynamic(ctx, 20, 1);
                 nk_label(ctx, view_pos, NK_TEXT_LEFT);
                 nk_layout_row_dynamic(ctx, 20, 1);
-                nk_label(ctx, "fps: 400 (avg: 60, Min: 20, Max: 1000)", NK_TEXT_LEFT);
+                nk_label(ctx, fps_string_format, NK_TEXT_LEFT);
                 nk_layout_row_dynamic(ctx, 20, 1);
                 nk_label(ctx, "deltaTime: 1/60", NK_TEXT_LEFT);
                 nk_layout_row_dynamic(ctx, 20, 1);

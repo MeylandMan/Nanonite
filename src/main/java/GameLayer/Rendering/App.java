@@ -411,6 +411,7 @@ public class App {
         while ( !glfwWindowShouldClose(window) ) {
             /* Input */
             newFrame();
+            fpsMonitor.update();
 
             float[] fps =  {
                     fpsMonitor.getFPS(),

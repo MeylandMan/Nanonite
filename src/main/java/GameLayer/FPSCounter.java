@@ -9,7 +9,7 @@ public class FPSCounter {
         long currentTime = System.nanoTime();
         frameCount++;
 
-        if (currentTime - lastTime >= 1_000_000_000) { // 1 seconde écoulée
+        if (currentTime - lastTime >= 1_000_000_000) {
             fps = frameCount;
             frameCount = 0;
             lastTime = currentTime;
