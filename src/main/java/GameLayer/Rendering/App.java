@@ -1,6 +1,7 @@
 package GameLayer.Rendering;
 
 
+import GameLayer.FPSMonitor;
 import GameLayer.Rendering.GUI.Stats;
 import GameLayer.Chunk;
 import org.joml.*;
@@ -155,9 +156,9 @@ public class App {
         glfwDestroyWindow(window);
 
         // Delete the buffers and shader we don't need anymore
-        shutdown();
         scene.Delete();
         shader.Clear();
+        shutdown();
 
         // Terminate GLFW and free the error callback
         glfwTerminate();
@@ -405,11 +406,20 @@ public class App {
         System.out.println("MAX TEXTURE YOU CAN LOAD : " + GL_MAX_TEXTURE_IMAGE_UNITS);
 
         Stats stats = new Stats();
+        FPSMonitor fpsMonitor = new FPSMonitor();
+
         while ( !glfwWindowShouldClose(window) ) {
             /* Input */
             newFrame();
 
-            stats.layout(ctx, 50, 50);
+            float[] fps =  {
+                    fpsMonitor.getFPS(),
+                    fpsMonitor.getAverageFPS(),
+                    fpsMonitor.getMinFPS(),
+                    fpsMonitor.getMaxFPS(),
+            };
+
+            stats.layout(ctx, 20, 20, camera, fps);
 
             ProcessInput(window);
             if (Input.is_locked)
@@ -432,7 +442,7 @@ public class App {
             glEnable(GL_CULL_FACE);
             glCullFace(GL_FRONT);
             glFrontFace(GL_CW);
-            
+
             renderer.DrawScene(scene, shader);
 
             render(NK_ANTI_ALIASING_ON, MAX_VERTEX_BUFFER, MAX_ELEMENT_BUFFER);
