@@ -408,6 +408,14 @@ public class App {
         Stats stats = new Stats();
         FPSMonitor fpsMonitor = new FPSMonitor();
 
+        Query[] query = {
+                new Query(),
+                new Query(),
+                new Query()
+        };
+
+        int[] drawsInfos = new int[3];
+
         while ( !glfwWindowShouldClose(window) ) {
             /* Input */
             newFrame();
@@ -424,7 +432,7 @@ public class App {
             delta = currentFrame - lastFrame;
             lastFrame = currentFrame;
 
-            stats.layout(ctx, 20, 20, camera, fps, delta);
+            stats.layout(ctx, 20, 20, camera, fps, delta, drawsInfos);
 
             ProcessInput(window);
             if (Input.is_locked)
@@ -446,7 +454,19 @@ public class App {
             glCullFace(GL_FRONT);
             glFrontFace(GL_CW);
 
+            query[0].startVerticesQuery();
+            query[1].startQuery();
+            query[2].startTransformFeedbackQuery();
             renderer.DrawScene(scene, shader);
+
+            query[0].endVerticesQuery();
+            query[1].endQuery();
+            query[2].endTransformFeedbackQuery();
+
+
+            drawsInfos[0] = query[0].getVerticesRendered();
+            drawsInfos[1] = query[1].getPrimitivesGenerated();
+            drawsInfos[2] = query[2].getTrianglesRendered();
 
             render(NK_ANTI_ALIASING_ON, MAX_VERTEX_BUFFER, MAX_ELEMENT_BUFFER);
 
