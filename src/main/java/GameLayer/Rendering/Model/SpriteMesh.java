@@ -10,70 +10,60 @@ import static org.lwjgl.opengl.GL11.*;
 public class SpriteMesh {
 
     // Datas
-    float[] vertices = {
-            // POSITION             // COLORS
-            -0.5f, -0.5f, 0.0f,  1.f, 0.f, 0.f,
-            -0.5f,  0.5f, 0.0f,  0.f, 1.f, 0.f,
+    float[] vertices = {};
 
-            0.5f,   0.5f, 0.0f,  0.f, 0.f, 1.f,
-            0.5f,  -0.5f, 0.0f,  1.f, 1.f, 1.f
-    };
-
-    int[] indices = {
+    public int[] indices = {
             1, 2, 0,
             0, 2, 3
     };
 
     // OpenGL Context
-    VAO m_Vao;
-    VBO m_Vbo;
-    EBO m_Ebo;
+    public VAO vao;
+    public VBO vbo;
+    public EBO ebo;
 
 
     public SpriteMesh() {
+        this.vertices = new float[] {
+                -0.5f, -0.5f, 0.0f,  1.f, 0.f, 0.f,
+                -0.5f,  0.5f, 0.0f,  0.f, 1.f, 0.f,
+
+                0.5f,   0.5f, 0.0f,  0.f, 0.f, 1.f,
+                0.5f,  -0.5f, 0.0f,  1.f, 1.f, 1.f
+        };
         setupMesh();
-        setupNormal();
     }
     public void Draw() {
-        m_Vao.Bind();
-        m_Ebo.Bind();
+        vao.Bind();
+        ebo.Bind();
 
         glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
 
-        m_Vao.UnBind();
-        m_Ebo.UnBind();
+        vao.UnBind();
+        ebo.UnBind();
 
     }
     public void Delete() {
         // Delete them
-        m_Vao.Delete();
-        m_Vbo.Delete();
-        m_Ebo.Delete();
+        vao.Delete();
+        vbo.Delete();
+        ebo.Delete();
     }
 
 
     void setupMesh() {
         // Instantiate them
-        m_Vao = new VAO();
-        m_Vbo = new VBO();
-        m_Ebo = new EBO();
+        vao = new VAO();
+        vbo = new VBO();
+        ebo = new EBO();
         VertexBufferLayout layout = new VertexBufferLayout();
 
         // Initialize them
-        m_Vbo.Init(vertices);
+        vbo.Init(vertices);
         layout.Add(3);
         layout.Add(3);
-        m_Vao.AddBuffer(m_Vbo, layout);
+        vao.AddBuffer(vbo, layout);
 
-        m_Ebo.Init(indices);
+        ebo.Init(indices);
     }
-
-    // Unused for now
-    void DrawNormals() {
-
-    }
-    void setupNormal() {
-
-    }
-    // -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 }

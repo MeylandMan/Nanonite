@@ -3,9 +3,10 @@ package GameLayer;
 import GameLayer.Rendering.Scene;
 import GameLayer.Rendering.*;
 import org.jetbrains.annotations.*;
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL;
+
+import java.util.Arrays;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -24,20 +25,18 @@ public class Chunk extends _Object{
     public Texture[] textures;
 
     public Chunk(Scene scene, @NotNull Vector3f position) {
-        //Add Air
         this.positionX = position.x;
         this.positionZ = position.z;
 
-        // Fill with VOID
+        // Fill with AIR
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int y = 0; y < Y_DIMENSION; y++) {
                 for(int z = 0; z < Z_DIMENSION; z++) {
                     blocks[x][y][z] = new Block( new Vector3f(
-                                    this.positionX+x,
-                                        y,
-                                    this.positionZ+z
-                            ));
-                    blocks[x][y][z].type = Block.BlockType.VOID;
+                            this.positionX+x,
+                            y,
+                            this.positionZ+z
+                    ));
                 }
             }
         }
@@ -63,17 +62,12 @@ public class Chunk extends _Object{
 
         // Fill void with Air and check if a
         for(int x = 0; x < X_DIMENSION; x++) {
-            for(int y = 0; y < Y_DIMENSION; y++) {
+            for(int y = 0; y < Y_MAX; y++) {
                 for(int z = 0; z < Z_DIMENSION; z++) {
-                    if(blocks[x][y][z].type == Block.BlockType.VOID)
-                        blocks[x][y][z].type = Block.BlockType.AIR;
                     if(blocks[x][y][z].type == Block.BlockType.DIRT) {
-                        if(blocks[x][y+1][z].type == Block.BlockType.AIR ||
-                                blocks[x][y+1][z].type == Block.BlockType.VOID)
+                        if(blocks[x][y+1][z].type == Block.BlockType.AIR)
                             blocks[x][y][z].type = Block.BlockType.GRASS;
                     }
-
-
                 }
             }
         }

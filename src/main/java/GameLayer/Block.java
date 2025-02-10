@@ -19,9 +19,8 @@ public class Block extends _Object {
         BOTTOM
     }
 
-    BlockType type;
+    BlockType type = BlockType.AIR;
     public enum BlockType {
-        VOID,
         AIR,
         DIRT,
         GRASS

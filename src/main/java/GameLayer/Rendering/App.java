@@ -4,6 +4,7 @@ package GameLayer.Rendering;
 import GameLayer.FPSMonitor;
 import GameLayer.Rendering.GUI.Stats;
 import GameLayer.Chunk;
+import GameLayer.Rendering.Model.SpriteMesh;
 import org.joml.*;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
@@ -11,6 +12,8 @@ import org.lwjgl.nuklear.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 import Core.Input.Input;
+
+import java.lang.Math;
 import java.nio.IntBuffer;
 import java.nio.ByteBuffer;
 import org.lwjgl.stb.*;
@@ -110,7 +113,11 @@ public class App {
     public Input input;
     Chunk chunk;
     Scene scene = new Scene();
+    Scene ui_scene = new Scene();
     Shader shader = new Shader();
+    Shader ui_shader = new Shader();
+    SpriteMesh surface2D;
+
     Camera camera = new Camera(new Vector3f(0.f, 0.f, -3.f));
     float delta;
     float lastFrame;
@@ -394,6 +401,10 @@ public class App {
         nk_style_set_font(ctx, default_font);
 
         shader.CreateShader("shaders/Opengl/Default.vert", "shaders/Opengl/Default.frag");
+        ui_shader.CreateShader("shaders/Opengl/UI.vert", "shaders/Opengl/UI.frag");
+
+        surface2D = new SpriteMesh();
+        ui_scene.create2DSurface(surface2D);
 
         Vector3f pos = new Vector3f();
 
@@ -467,6 +478,13 @@ public class App {
             drawsInfos[0] = query[0].getVerticesRendered();
             drawsInfos[1] = query[1].getPrimitivesGenerated();
             drawsInfos[2] = query[2].getTrianglesRendered();
+
+
+            ui_shader.Bind();
+            glDisable(GL_DEPTH_TEST);
+            glDisable(GL_CULL_FACE);
+
+            renderer.Draw2DSurface(ui_scene, ui_shader, (float)m_Width / (float) Math.max(m_Height, 1));
 
             render(NK_ANTI_ALIASING_ON, MAX_VERTEX_BUFFER, MAX_ELEMENT_BUFFER);
 
