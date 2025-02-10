@@ -1,5 +1,5 @@
 package GameLayer.Rendering;
-import static org.lwjgl.opengl.GL33.*;
+import static org.lwjgl.opengl.GL46.*;
 
 public class Query {
     private int m_ID;
@@ -29,6 +29,18 @@ public class Query {
     }
 
     public int getTrianglesRendered() {
+        return glGetQueryObjecti(m_ID, GL_QUERY_RESULT);
+    }
+
+    public void startVerticesQuery() {
+        glBeginQuery(GL_VERTICES_SUBMITTED, m_ID);
+    }
+
+    public void endVerticesQuery() {
+        glEndQuery(GL_VERTICES_SUBMITTED);
+    }
+
+    public int getVerticesRendered() {
         return glGetQueryObjecti(m_ID, GL_QUERY_RESULT);
     }
 }
