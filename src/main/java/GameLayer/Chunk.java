@@ -10,11 +10,11 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Chunk {
 
-    final static int X_DIMENSION = 16;
-    final static int Y_DIMENSION = 255;
-    final static int Z_DIMENSION = 16;
+    final static int X_DIMENSION = 1;
+    final static int Y_DIMENSION = 2;
+    final static int Z_DIMENSION = 3;
     final static int TEXTURE_LOADED = 3;
-
+    int Y_MAX = 2;
     private final float positionX;
     private final float positionZ;
     private final Block[][][] blocks = new Block[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
@@ -32,6 +32,8 @@ public class Chunk {
         //Add Air
         this.positionX = position.x;
         this.positionZ = position.z;
+
+        // Fill with VOID
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int y = 0; y < Y_DIMENSION; y++) {
                 for(int z = 0; z < Z_DIMENSION; z++) {
@@ -40,7 +42,7 @@ public class Chunk {
                                         y,
                                     this.positionZ+z
                             ));
-                    blocks[x][y][z].type = Block.BlockType.AIR;
+                    blocks[x][y][z].type = Block.BlockType.VOID;
                 }
             }
         }
@@ -48,11 +50,12 @@ public class Chunk {
     }
 
     private void setupChunk(Scene scene) {
-        // Add Blocks
+        // Add Blocks inside the chunk
+        int zz = 2;
         for(int x = 0; x < X_DIMENSION; x++) {
-            for(int y = 0; y < 5; y++) {
+            for(int y = 0; y < Y_MAX; y++) {
                 for(int z = 0; z < Z_DIMENSION; z++) {
-                    if(y == 4 && z == 2) {
+                    if(y == Y_MAX-1 && z == zz) {
                         continue;
                     }
                     blocks[x][y][z] = new Block( new Vector3f(
@@ -60,10 +63,32 @@ public class Chunk {
                                         y,
                                     this.positionZ+z
                             ));
+                    blocks[x][y][z].type = ( y == Y_MAX-1 )? Block.BlockType.GRASS : Block.BlockType.DIRT;
+                }
+            }
+        }
 
-                    blocks[x][y][z].type = ( y == 4 )? Block.BlockType.GRASS : Block.BlockType.DIRT;
+        // Fill void with Air and check if a
+        for(int x = 0; x < X_DIMENSION; x++) {
+            for(int y = 0; y < Y_DIMENSION; y++) {
+                for(int z = 0; z < Z_DIMENSION; z++) {
+                    if(blocks[x][y][z].type == Block.BlockType.VOID)
+                        blocks[x][y][z].type = Block.BlockType.AIR;
+                    if(blocks[x][y][z].type == Block.BlockType.DIRT) {
+                        if(blocks[x][y+1][z].type == Block.BlockType.AIR ||
+                                blocks[x][y+1][z].type == Block.BlockType.VOID)
+                            blocks[x][y][z].type = Block.BlockType.GRASS;
+                    }
 
-                    //Check if we should draw faces
+
+                }
+            }
+        }
+
+        // Check if we can add faces
+        for(int x = 0; x < X_DIMENSION; x++) {
+            for(int y = 0; y < Y_MAX; y++) {
+                for(int z = 0; z < Z_DIMENSION; z++) {
                     if (shouldRenderFace(x, y, z, Block.Faces.FRONT)) {
                         BlockData.createFaceVertices(this, blocks[x][y][z], Block.Faces.FRONT);
                         BlockData.createFaceIndices(this, Block.Faces.FRONT);
@@ -91,27 +116,34 @@ public class Chunk {
                 }
             }
         }
+
         Init();
         AddToScene(scene);
+
     }
 
     private boolean shouldRenderFace(int x, int y, int z, Block.Faces face) {
         int nx = x, ny = y, nz = z;
 
         switch (face) {
-            case FRONT:  nz += 1; break;
-            case BACK:   nz -= 1; break;
-            case RIGHT:  nx += 1; break;
-            case LEFT:   nx -= 1; break;
-            case TOP:    ny += 1; break;
-            case BOTTOM: ny -= 1; break;
+            case RIGHT:  nx -= 1; break; // -X
+            case LEFT:   nx += 1; break; // +X
+            case FRONT:  nz -= 1; break; // -Z
+            case BACK:   nz += 1; break; // +Z
+            case BOTTOM: ny -= 1; break; // -Y
+            case TOP:    ny += 1; break; // +Y
+        }
+
+        // Check if the current block is not AIR or VOID
+        if(blocks[x][y][z].type == Block.BlockType.AIR) {
+            return false;
         }
 
         // Vérifier si la face est en bordure du chunk
         if (nx < 0 || nx >= X_DIMENSION || ny < 0 || ny >= Y_DIMENSION || nz < 0 || nz >= Z_DIMENSION) {
             return true; // Bordure -> Afficher la face
         }
-
+        
         // Vérifier si le bloc adjacent est de type AIR
         return (blocks[nx][ny][nz].type == Block.BlockType.AIR);
     }

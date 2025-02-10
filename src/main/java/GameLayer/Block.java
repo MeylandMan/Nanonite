@@ -21,6 +21,7 @@ public class Block extends _Object {
 
     BlockType type;
     public enum BlockType {
+        VOID,
         AIR,
         DIRT,
         GRASS
