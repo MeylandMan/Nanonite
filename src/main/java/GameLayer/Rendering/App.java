@@ -420,7 +420,11 @@ public class App {
                     fpsMonitor.getMaxFPS(),
             };
 
-            stats.layout(ctx, 20, 20, camera, fps);
+            float currentFrame = (float)(glfwGetTime());
+            delta = currentFrame - lastFrame;
+            lastFrame = currentFrame;
+
+            stats.layout(ctx, 20, 20, camera, fps, delta);
 
             ProcessInput(window);
             if (Input.is_locked)
@@ -430,9 +434,7 @@ public class App {
 
             renderer.ClearColor();
 
-            float currentFrame = (float)(glfwGetTime());
-            delta = currentFrame - lastFrame;
-            lastFrame = currentFrame;
+
 
             shader.Bind();
 

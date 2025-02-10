@@ -14,7 +14,7 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class Stats {
 
-    public void layout(NkContext ctx, int x, int y, Camera camera, float[] fps) {
+    public void layout(NkContext ctx, int x, int y, Camera camera, float[] fps, float deltaTime) {
         try (MemoryStack stack = stackPush()) {
             NkRect rect = NkRect.malloc(stack);
 
@@ -42,7 +42,7 @@ public class Stats {
                 nk_layout_row_dynamic(ctx, 20, 1);
                 nk_label(ctx, fps_string_format, NK_TEXT_LEFT);
                 nk_layout_row_dynamic(ctx, 20, 1);
-                nk_label(ctx, "deltaTime: 1/60", NK_TEXT_LEFT);
+                nk_label(ctx, "deltaTime: " + String.format("%2f", deltaTime), NK_TEXT_LEFT);
                 nk_layout_row_dynamic(ctx, 20, 1);
                 nk_label(ctx, "vertices: 120", NK_TEXT_LEFT);
                 nk_layout_row_dynamic(ctx, 20, 1);

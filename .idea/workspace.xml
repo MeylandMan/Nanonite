@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/FPSCounter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/FPSCounter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/Stats.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/Stats.java" afterDir="false" />
-    </list>
+    <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -64,7 +61,7 @@
     "Gradle.Download Sources.executor": "Run",
     "Gradle.MInecraft-Clone [:GUI.GLFWDemo.main()].executor": "Run",
     "Gradle.MInecraft-Clone [:GameLayer.Rendering.GUI.GLFWDemo.main()].executor": "Run",
-    "Gradle.MInecraft-Clone [:Main.main()].executor": "Debug",
+    "Gradle.MInecraft-Clone [:Main.main()].executor": "Run",
     "Gradle.MInecraft-Clone.executor": "Run",
     "Gradle.OGL [:Main.main()].executor": "Run",
     "Java Scratch.MC 0.0.0.1.executor": "Run",
@@ -151,7 +148,7 @@
       <workItem from="1739117375839" duration="12011000" />
       <workItem from="1739133604470" duration="622000" />
       <workItem from="1739134597345" duration="3748000" />
-      <workItem from="1739139773042" duration="31988000" />
+      <workItem from="1739139773042" duration="32356000" />
     </task>
     <servers />
   </component>
@@ -184,11 +181,6 @@
           <properties class="java.nio.BufferUnderflowException" package="java.nio" />
           <option name="timeStamp" value="82" />
         </breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java</url>
-          <line>415</line>
-          <option name="timeStamp" value="109" />
-        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>
