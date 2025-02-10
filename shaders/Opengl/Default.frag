@@ -6,6 +6,7 @@ in float v_TexIndex;
 
 #define TEXTURE_LOADED 3
 #define DEFAULT_GRASS_COLOR vec4(0.61, 0.80, 0.42, 1.0)
+
 uniform sampler2D u_Textures[TEXTURE_LOADED];
 
 void main() {

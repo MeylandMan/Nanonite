@@ -32,14 +32,14 @@ public class Block extends _Object {
     public Block(String texture) {
         super(texture);
     }
-    public Block(String texture, Vector3f position) {
-        super(texture, position);
+    public Block(Vector3f position) {
+        super(position);
     }
-    public Block(String texture, Vector3f position, Vector3f rotation) {
-        super(texture, position, rotation);
+    public Block(Vector3f position, Vector3f rotation) {
+        super(position, rotation);
     }
-    public Block(String texture, Vector3f position, Vector3f rotation, Vector3f scale) {
-        super(texture, position, rotation, scale);
+    public Block(Vector3f position, Vector3f rotation, Vector3f scale) {
+        super(position, rotation, scale);
     }
 
 }

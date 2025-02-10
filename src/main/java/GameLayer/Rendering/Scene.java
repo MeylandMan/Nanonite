@@ -19,7 +19,7 @@ public class Scene {
 
     public void Delete() {
         for(_Object obj : objects) {
-            obj.Delete();
+            //obj.Delete();
         }
         for(Chunk chunk : chunks) {
             chunk.Delete();
@@ -33,7 +33,7 @@ public class Scene {
         for (_Object obj: objects) {
             shader.Uniform1i("u_Texture", 0);
             shader.UniformMatrix4x4("u_Model", obj.getModelMatrix());
-            obj.DrawMesh();
+            //obj.DrawMesh();
         }
 
         for (Chunk chunk: chunks) {

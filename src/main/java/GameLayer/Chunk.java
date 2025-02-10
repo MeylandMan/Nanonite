@@ -14,7 +14,9 @@ public class Chunk {
     final static int Y_DIMENSION = 255;
     final static int Z_DIMENSION = 16;
     final static int TEXTURE_LOADED = 3;
-    private final Vector3f position;
+
+    private final float positionX;
+    private final float positionZ;
     private final Block[][][] blocks = new Block[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
 
     protected int[] indices = {};
@@ -26,23 +28,17 @@ public class Chunk {
     EBO ChunkEBO;
     public Texture[] textures;
 
-    public Chunk(Scene scene) {
-        this.position = new Vector3f();
-
-        setupChunk(scene);
-    }
-
     public Chunk(Scene scene, Vector3f position) {
         //Add Air
-        this.position = position;
+        this.positionX = position.x;
+        this.positionZ = position.z;
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int y = 0; y < Y_DIMENSION; y++) {
                 for(int z = 0; z < Z_DIMENSION; z++) {
-                    blocks[x][y][z] = new Block("blocks/dirt.png",
-                            new Vector3f(
-                                    this.position.x+x,
-                                    this.position.y+y,
-                                    this.position.z+z
+                    blocks[x][y][z] = new Block( new Vector3f(
+                                    this.positionX+x,
+                                        y,
+                                    this.positionZ+z
                             ));
                     blocks[x][y][z].type = Block.BlockType.AIR;
                 }
@@ -56,46 +52,39 @@ public class Chunk {
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int y = 0; y < 5; y++) {
                 for(int z = 0; z < Z_DIMENSION; z++) {
-                    blocks[x][y][z] = new Block("blocks/dirt.png",
-                            new Vector3f(
-                                    this.position.x+x,
-                                    this.position.y+y,
-                                    this.position.z+z
+                    if(y == 4 && z == 2) {
+                        continue;
+                    }
+                    blocks[x][y][z] = new Block( new Vector3f(
+                                    this.positionX+x,
+                                        y,
+                                    this.positionZ+z
                             ));
 
-                    blocks[x][y][z].type = Block.BlockType.DIRT;
-                    if(y == 4) {
-                        blocks[x][y][z].type = Block.BlockType.GRASS;
-                    }
+                    blocks[x][y][z].type = ( y == 4 )? Block.BlockType.GRASS : Block.BlockType.DIRT;
 
-
-                    if(z == 0){
+                    //Check if we should draw faces
+                    if (shouldRenderFace(x, y, z, Block.Faces.FRONT)) {
                         BlockData.createFaceVertices(this, blocks[x][y][z], Block.Faces.FRONT);
                         BlockData.createFaceIndices(this, Block.Faces.FRONT);
                     }
-
-                    if(z == Z_DIMENSION-1) {
+                    if (shouldRenderFace(x, y, z, Block.Faces.BACK)) {
                         BlockData.createFaceVertices(this, blocks[x][y][z], Block.Faces.BACK);
                         BlockData.createFaceIndices(this, Block.Faces.BACK);
                     }
-
-                    if(x == 0) {
+                    if (shouldRenderFace(x, y, z, Block.Faces.RIGHT)) {
                         BlockData.createFaceVertices(this, blocks[x][y][z], Block.Faces.RIGHT);
                         BlockData.createFaceIndices(this, Block.Faces.RIGHT);
                     }
-
-                    if(x == X_DIMENSION-1) {
+                    if (shouldRenderFace(x, y, z, Block.Faces.LEFT)) {
                         BlockData.createFaceVertices(this, blocks[x][y][z], Block.Faces.LEFT);
                         BlockData.createFaceIndices(this, Block.Faces.LEFT);
                     }
-
-
-                    if(y == 0) {
+                    if (shouldRenderFace(x, y, z, Block.Faces.BOTTOM)) {
                         BlockData.createFaceVertices(this, blocks[x][y][z], Block.Faces.BOTTOM);
                         BlockData.createFaceIndices(this, Block.Faces.BOTTOM);
                     }
-
-                    if(y == 4) {
+                    if (shouldRenderFace(x, y, z, Block.Faces.TOP)) {
                         BlockData.createFaceVertices(this, blocks[x][y][z], Block.Faces.TOP);
                         BlockData.createFaceIndices(this, Block.Faces.TOP);
                     }
@@ -106,13 +95,34 @@ public class Chunk {
         AddToScene(scene);
     }
 
+    private boolean shouldRenderFace(int x, int y, int z, Block.Faces face) {
+        int nx = x, ny = y, nz = z;
+
+        switch (face) {
+            case FRONT:  nz += 1; break;
+            case BACK:   nz -= 1; break;
+            case RIGHT:  nx += 1; break;
+            case LEFT:   nx -= 1; break;
+            case TOP:    ny += 1; break;
+            case BOTTOM: ny -= 1; break;
+        }
+
+        // Vérifier si la face est en bordure du chunk
+        if (nx < 0 || nx >= X_DIMENSION || ny < 0 || ny >= Y_DIMENSION || nz < 0 || nz >= Z_DIMENSION) {
+            return true; // Bordure -> Afficher la face
+        }
+
+        // Vérifier si le bloc adjacent est de type AIR
+        return (blocks[nx][ny][nz].type == Block.BlockType.AIR);
+    }
+
     public void AddToScene(Scene scene) {
         scene.AddChunk(this);
     }
 
     public Matrix4f getModelMatrix() {
         return new Matrix4f().identity()
-                .translate(position)                 // Translation
+                .translate(new Vector3f(positionX, 0, positionZ))                 // Translation
                 .rotateXYZ(new Vector3f())                 // Rotation
                 .scale(new Vector3f(1.0f));                       // Scale
     }
@@ -177,6 +187,6 @@ public class Chunk {
         return blocks[x][y][z];
     }
     public Vector3f getPosition() {
-        return position;
+        return new Vector3f(positionX, 0, positionZ);
     }
 }
