@@ -28,6 +28,12 @@ public class VAO {
             offset += element.count * VertexBufferElement.GetSizeOfType(element.type);
         }
         UnBind();
+        vbo.UnBind();
+    }
+
+    public void Attribute(int index, int size, int stride) {
+        glVertexAttribPointer(index, size, GL_FLOAT, false, stride, 0);
+        glEnableVertexAttribArray(index);
     }
 
     public void Bind() {

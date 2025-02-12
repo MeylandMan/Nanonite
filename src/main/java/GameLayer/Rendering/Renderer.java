@@ -8,8 +8,8 @@ import GameLayer.Rendering.Model.SpriteMesh;
 
 public class Renderer {
 
-    public void Draw2DSurface(Scene scene, Shader shader, float aspectRatio) {
-        scene.draw2DSurface(shader, aspectRatio);
+    public void Draw2DSurface(Scene scene, Shader shader) {
+        scene.draw2DSurface(shader);
     }
 
     public void Draw(CubeMesh mesh) {

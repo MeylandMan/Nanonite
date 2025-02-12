@@ -19,6 +19,11 @@ public class VertexBufferLayout {
         stride += VertexBufferElement.GetSizeOfType(GL_FLOAT) * count;
     }
 
+    public void Add(int count, int stride) {
+        elements.add(new VertexBufferElement(GL_FLOAT, count, false));
+        this.stride = stride;
+    }
+
 
     /* USELESS FOR NOW
 

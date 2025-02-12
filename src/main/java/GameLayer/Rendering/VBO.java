@@ -6,6 +6,7 @@ import org.lwjgl.system.MemoryUtil;
 
 public class VBO {
     private int  m_ID;
+    private final int drawing_state = GL_STATIC_DRAW;
 
     public void Init(float[] data) {
         m_ID = glGenBuffers();
@@ -13,11 +14,35 @@ public class VBO {
 
         FloatBuffer buffer = MemoryUtil.memAllocFloat(data.length);
         buffer.put(data).flip();
-        glBufferData(GL_ARRAY_BUFFER, data, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, data, drawing_state);
         UnBind();
         MemoryUtil.memFree(buffer);
     }
 
+    public void Init(float[] data, int drawing_state) {
+        m_ID = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, m_ID);
+
+        FloatBuffer buffer = MemoryUtil.memAllocFloat(data.length);
+        buffer.put(data).flip();
+        glBufferData(GL_ARRAY_BUFFER, data, drawing_state);
+        UnBind();
+        MemoryUtil.memFree(buffer);
+    }
+
+    public void Init(float data, int drawing_state) {
+        m_ID = glGenBuffers();
+
+        glBindBuffer(GL_ARRAY_BUFFER, m_ID);
+        FloatBuffer buffer = MemoryUtil.memAllocFloat(1);
+        buffer.put(data);
+        glBufferData(GL_ARRAY_BUFFER, buffer, drawing_state);
+        UnBind();
+    }
+
+    public void SubData(int offset, float[] data) {
+        glBufferSubData(GL_ARRAY_BUFFER, offset, data);
+    }
     public void Delete() {
         glDeleteBuffers(m_ID);
     }

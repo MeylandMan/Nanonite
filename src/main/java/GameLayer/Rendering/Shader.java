@@ -3,6 +3,7 @@ package GameLayer.Rendering;
 
 import org.joml.*;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL20;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -154,7 +155,9 @@ public class Shader {
         glUniformMatrix4fv(location, false, matrix.get(new float[16]));
     }
 
-
+    protected void bindAttribute(int attribute, String variableName){
+        glBindAttribLocation(m_ID, attribute, variableName);
+    }
 
 }
 

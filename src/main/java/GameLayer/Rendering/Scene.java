@@ -17,10 +17,10 @@ public class Scene {
         surface2D = sm;
     }
 
-    public void draw2DSurface(Shader shader, float aspectRatio) {
+    public void draw2DSurface(Shader shader) {
         surface2D.vao.Bind();
         surface2D.ebo.Bind();
-        shader.Uniform1f("u_Ratio" , aspectRatio);
+
         glDrawElements(GL_TRIANGLES, surface2D.indices.length, GL_UNSIGNED_INT, 0);
 
         surface2D.vao.UnBind();

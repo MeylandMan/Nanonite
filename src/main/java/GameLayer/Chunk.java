@@ -155,6 +155,7 @@ public class Chunk extends _Object{
             textures[i].Bind(i);
         }
         shader.Uniform1iv("u_Textures", samplers);
+
         vao.Bind();
         ebo.Bind();
 
@@ -163,6 +164,10 @@ public class Chunk extends _Object{
 
         vao.UnBind();
         ebo.UnBind();
+
+        for (Texture texture : textures) {
+            texture.Unbind();
+        }
     }
 
     @Override

@@ -5,15 +5,36 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/shaders/Opengl/UI.frag" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/shaders/Opengl/UI.vert" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/shaders/Opengl/Text.frag" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/shaders/Opengl/Text.vert" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/fonts/arial.fnt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/fonts/arial.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/fonts/calibri.fnt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/fonts/calibri.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/fonts/harrington.fnt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/fonts/harrington.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/fonts/sans.fnt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/fonts/sans.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/fonts/segoe.fnt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/fonts/segoe.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/fonts/segoeUI.fnt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/fonts/segoeUI.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/fonts/tahoma.fnt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/fonts/tahoma.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Block.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Block.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shaders/Opengl/Default.frag" beforeDir="false" afterPath="$PROJECT_DIR$/shaders/Opengl/Default.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shaders/Opengl/UI.frag" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/shaders/Opengl/UI.vert" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/BlockData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/BlockData.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Chunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Chunk.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Model/SpriteMesh.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Model/SpriteMesh.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Renderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Renderer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Scene.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Scene.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Shader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Shader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Texture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Texture.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/VAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/VAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/VBO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/VBO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/VertexBufferLayout.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/VertexBufferLayout.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,6 +69,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -105,11 +127,11 @@
       <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\shaders\Opengl ES" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\src\main\resources\fonts" />
+      <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\src\main\java\GameLayer\Rendering\GUI" />
       <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\shaders\Opengl" />
       <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\src\main\resources\textures\blocks" />
       <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\src\main\resources" />
-      <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\src\main\resources\textures" />
-      <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\src\main\resources\Dirt" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="" />
@@ -160,7 +182,10 @@
       <workItem from="1739117375839" duration="12011000" />
       <workItem from="1739133604470" duration="622000" />
       <workItem from="1739134597345" duration="3748000" />
-      <workItem from="1739139773042" duration="42699000" />
+      <workItem from="1739139773042" duration="43002000" />
+      <workItem from="1739346673904" duration="15456000" />
+      <workItem from="1739362759578" duration="1567000" />
+      <workItem from="1739376989014" duration="14849000" />
     </task>
     <servers />
   </component>
@@ -193,6 +218,21 @@
           <properties class="java.nio.BufferUnderflowException" package="java.nio" />
           <option name="timeStamp" value="82" />
         </breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/GameLayer/Rendering/VAO.java</url>
+          <line>35</line>
+          <option name="timeStamp" value="86" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/fontRendering/FontRenderer.java</url>
+          <line>19</line>
+          <option name="timeStamp" value="88" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/fontRendering/FontRenderer.java</url>
+          <line>26</line>
+          <option name="timeStamp" value="89" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>

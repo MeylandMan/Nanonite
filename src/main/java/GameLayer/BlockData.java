@@ -93,9 +93,9 @@ public class BlockData {
         }
 
         String[] xx = {
-                "blocks/dirt.png",
-                "blocks/grass_block_side.png",
-                "blocks/grass_block_top.png"
+                "textures/blocks/dirt.png",
+                "textures/blocks/grass_block_side.png",
+                "textures/blocks/grass_block_top.png"
         };
         return xx[x];
     }
