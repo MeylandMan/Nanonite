@@ -6,8 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shaders/Opengl/Text.frag" beforeDir="false" afterPath="$PROJECT_DIR$/shaders/Opengl/Text.frag" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/Text/Font.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/Text/Font.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/Text/FontLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/Text/FontLoader.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/Text/TextRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/Text/TextRenderer.java" afterDir="false" />
     </list>
@@ -68,7 +68,7 @@
     "Gradle.Download Sources.executor": "Run",
     "Gradle.MInecraft-Clone [:GUI.GLFWDemo.main()].executor": "Run",
     "Gradle.MInecraft-Clone [:GameLayer.Rendering.GUI.GLFWDemo.main()].executor": "Run",
-    "Gradle.MInecraft-Clone [:Main.main()].executor": "Run",
+    "Gradle.MInecraft-Clone [:Main.main()].executor": "Debug",
     "Gradle.MInecraft-Clone.executor": "Run",
     "Gradle.OGL [:Main.main()].executor": "Run",
     "Java Scratch.MC 0.0.0.1.executor": "Run",
@@ -160,7 +160,7 @@
       <workItem from="1739139773042" duration="43002000" />
       <workItem from="1739346673904" duration="15456000" />
       <workItem from="1739362759578" duration="1567000" />
-      <workItem from="1739376989014" duration="17390000" />
+      <workItem from="1739376989014" duration="20614000" />
     </task>
     <servers />
   </component>
@@ -193,11 +193,6 @@
           <properties class="java.nio.BufferUnderflowException" package="java.nio" />
           <option name="timeStamp" value="82" />
         </breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/GameLayer/Rendering/VAO.java</url>
-          <line>35</line>
-          <option name="timeStamp" value="86" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/fontRendering/FontRenderer.java</url>
           <line>19</line>

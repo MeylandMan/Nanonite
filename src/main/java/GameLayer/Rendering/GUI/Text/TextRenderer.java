@@ -64,12 +64,17 @@ public class TextRenderer {
         FloatBuffer buffer = MemoryUtil.memAllocFloat(text.length() * 6 * 4); // 6 vertices par quad, 4 valeurs (x, y, u, v)
 
         float cursorX = x;
+
         for (char c : text.toCharArray()) {
             Font.CharInfo charInfo = font.getChar((int) c);
-            if (charInfo == null) continue; // Si caractère inconnu, on l'ignore
+            if (c == '\n') {
+                cursorX = x;
+                y += font.lineHeight * scale;
+                continue;
+            } else if (charInfo == null) continue;
 
             float xpos = cursorX + charInfo.xOffset * scale;
-            float ypos = y - charInfo.yOffset * scale;
+            float ypos = y + charInfo.yOffset * scale;
             float w = charInfo.width * scale;
             float h = charInfo.height * scale;
 

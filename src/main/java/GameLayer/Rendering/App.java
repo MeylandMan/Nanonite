@@ -287,7 +287,7 @@ public class App {
             textRenderer.getProjectionMatrix( new Matrix4f().identity()
                     .ortho(0, m_Width, m_Height, 0, -1, 1)
             );
-            textRenderer.renderText("Just to see !", m_Width/2, m_Height/2, 0.5f);
+            textRenderer.renderText("Just to see !\nTest Align", m_Width/2, m_Height/2, 0.5f);
             glfwSwapBuffers(window);
             glfwPollEvents();
         }

@@ -22,6 +22,17 @@ public class FontLoader {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
+                if (line.startsWith("common ")) {
+                    String[] parts = line.split(" ");
+                    for (String part : parts) {
+                        if (part.startsWith("lineHeight=")) {
+                            font.setLineHeight(Integer.parseInt(part.split("=")[1]));
+                        } else if (part.startsWith("base=")) {
+                            font.setBase(Integer.parseInt(part.split("=")[1]));
+                        }
+                    }
+                }
+
                 if (line.startsWith("char ")) {
                     Font.CharInfo charInfo = new Font.CharInfo();
                     String[] tokens = line.split(" ");

@@ -13,6 +13,7 @@ public class Font {
     private Map<Integer, CharInfo> characters = new HashMap<>();
     private int textureID;
     protected int textureWidth, textureHeight;
+    protected int lineHeight, base;
 
     public void addChar(CharInfo charInfo) {
         characters.put(charInfo.id, charInfo);
@@ -28,6 +29,14 @@ public class Font {
 
     public void setTextureID(int textureID) {
         this.textureID = textureID;
+    }
+
+    public void setLineHeight(int lineHeight) {
+        this.lineHeight = lineHeight;
+    }
+
+    public void setBase(int base) {
+        this.base = base;
     }
 
     public void setTextureSize(int width, int height) {
