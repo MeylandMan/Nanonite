@@ -216,11 +216,11 @@ public class App {
 
         int[] drawsInfos = new int[3];
 
-        Font font = new Font();
+        Font font;
         TextRenderer textRenderer = new TextRenderer();
         try {
-            font = FontLoader.loadFont("calibri.fnt");
-            int textureID = FontLoader.loadTexture("calibri.png", font);
+            font = FontLoader.loadFont("arial.fnt");
+            int textureID = FontLoader.loadTexture("arial.png", font);
 
             textRenderer = new TextRenderer(font);
 
@@ -285,9 +285,9 @@ public class App {
             // Rendering something //
             textRenderer.getScreenSize(m_Width, m_Height);
             textRenderer.getProjectionMatrix( new Matrix4f().identity()
-                    .ortho(0, m_Width, 0, m_Height, -1, 1)
+                    .ortho(0, m_Width, m_Height, 0, -1, 1)
             );
-            textRenderer.renderText("Just to see !", m_Width/2, m_Height/2, 1);
+            textRenderer.renderText("Just to see !", m_Width/2, m_Height/2, 0.5f);
             glfwSwapBuffers(window);
             glfwPollEvents();
         }

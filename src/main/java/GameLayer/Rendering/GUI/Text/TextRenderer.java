@@ -54,6 +54,9 @@ public class TextRenderer {
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
 
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         shader.Bind();
         glBindVertexArray(vao);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -74,6 +77,10 @@ public class TextRenderer {
             float v0 = charInfo.y / font.textureHeight;
             float u1 = (charInfo.x + charInfo.width) / font.textureWidth;
             float v1 = (charInfo.y + charInfo.height) / font.textureHeight;
+
+            // Inverse Y coordinates
+            v0 = 1.0f - v0;
+            v1 = 1.0f - v1;
 
             buffer.put(new float[]{
                     xpos,     ypos,     u0, v0,
@@ -102,6 +109,8 @@ public class TextRenderer {
 
         glBindVertexArray(0);
         shader.UnBind();
+
+        glDisable(GL_BLEND);
     }
 }
 

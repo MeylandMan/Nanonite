@@ -12,6 +12,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
+import static org.lwjgl.stb.STBImage.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class FontLoader {
@@ -57,6 +58,7 @@ public class FontLoader {
             IntBuffer height = stack.mallocInt(1);
             IntBuffer channels = stack.mallocInt(1);
 
+            stbi_set_flip_vertically_on_load(true);
             ByteBuffer image = STBImage.stbi_load(path, width, height, channels, 4);
             if (image == null) {
                 throw new RuntimeException("Failed to load texture: " + path);
