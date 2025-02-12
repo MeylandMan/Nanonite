@@ -32,7 +32,7 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 public class App {
     private long window;
-
+    private final String version = "0.0.0.0";
     private int m_Width = 0;
     private int m_Height = 0;
     private final String m_Title;
@@ -287,7 +287,13 @@ public class App {
             textRenderer.getProjectionMatrix( new Matrix4f().identity()
                     .ortho(0, m_Width, m_Height, 0, -1, 1)
             );
-            textRenderer.renderText("Just to see !\nTest Align", m_Width/2, m_Height/2, 0.5f);
+
+            textRenderer.renderText("MyCraft " + version + " Vanilla\n" +
+                            (int)fps[0] + " fps (avg: " + (int)fps[1] + ", min: " + (int)fps[2] + ", max: " + (int)fps[3] +
+                    ")\nvertices: " + drawsInfos[0] + "(triangles: " + drawsInfos[2] + ", real: " + drawsInfos[1] + ")",
+                    10, 10, 0.3f);
+
+            
             glfwSwapBuffers(window);
             glfwPollEvents();
         }
