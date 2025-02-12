@@ -2,7 +2,6 @@ package GameLayer.Rendering;
 
 
 import GameLayer.FPSMonitor;
-import GameLayer.Rendering.GUI.Stats;
 import GameLayer.Chunk;
 import GameLayer.Rendering.GUI.Text.Font;
 import GameLayer.Rendering.GUI.Text.FontLoader;
@@ -16,14 +15,12 @@ import org.lwjgl.system.*;
 import Core.Input.Input;
 
 
-import java.io.File;
 import java.nio.IntBuffer;
 import java.util.*;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 
-import static org.lwjgl.opengl.GL11C.glDisable;
 import static org.lwjgl.opengl.GL11C.glEnable;
 import static org.lwjgl.opengl.GL11C.glViewport;
 import static org.lwjgl.opengl.GL30.*;
@@ -204,8 +201,6 @@ public class App {
         chunk = new Chunk(scene, pos);
 
         System.out.println("MAX TEXTURE YOU CAN LOAD : " + GL_MAX_TEXTURE_IMAGE_UNITS);
-
-        Stats stats = new Stats();
         FPSMonitor fpsMonitor = new FPSMonitor();
 
         Query[] query = {
