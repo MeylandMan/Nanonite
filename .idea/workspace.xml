@@ -5,49 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-assimp-javadoc.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-assimp-natives-linux-arm32.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-assimp-natives-linux-arm64.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-assimp-natives-linux-ppc64le.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-assimp-natives-linux-riscv64.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-assimp-natives-linux.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-assimp-natives-macos-arm64.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-assimp-natives-macos.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-assimp-natives-windows-x86.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-assimp-natives-windows.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-assimp-sources.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-assimp.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-freetype-javadoc.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-freetype-natives-linux-arm32.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-freetype-natives-linux-arm64.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-freetype-natives-linux-ppc64le.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-freetype-natives-linux-riscv64.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-freetype-natives-linux.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-freetype-natives-macos-arm64.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-freetype-natives-macos.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-freetype-natives-windows-arm64.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-freetype-natives-windows-x86.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-freetype-natives-windows.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-freetype-sources.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-freetype.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-nuklear-javadoc.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-nuklear-natives-linux-arm32.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-nuklear-natives-linux-arm64.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-nuklear-natives-linux-ppc64le.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-nuklear-natives-linux-riscv64.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-nuklear-natives-linux.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-nuklear-natives-macos-arm64.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-nuklear-natives-macos.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-nuklear-natives-windows-arm64.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-nuklear-natives-windows-x86.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-nuklear-natives-windows.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-nuklear-sources.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lwjgl-nuklear.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/GUI/Calculator.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/GUI/Demo.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/GUI/GLFWDemo.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Input/Input.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Input/Input.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Camera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Camera.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -187,7 +147,7 @@
       <workItem from="1739139773042" duration="43002000" />
       <workItem from="1739346673904" duration="15456000" />
       <workItem from="1739362759578" duration="1567000" />
-      <workItem from="1739376989014" duration="23614000" />
+      <workItem from="1739376989014" duration="24005000" />
     </task>
     <servers />
   </component>

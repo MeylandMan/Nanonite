@@ -64,6 +64,7 @@ public class App {
                 camera.ProcessKeyboard(Camera.Camera_Movement.LEFT, delta);
             if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
                 camera.ProcessKeyboard(Camera.Camera_Movement.RIGHT, delta);
+
         }
     }
 
@@ -118,6 +119,7 @@ public class App {
         });
 
         glfwSetKeyCallback(window, input);
+
         glfwSetCursorPosCallback(window, (long window, double xposIn, double yposIn) -> {
             float xpos = (float)xposIn;
             float ypos = (float)yposIn;
@@ -140,11 +142,6 @@ public class App {
             }
 
         });
-
-        glfwSetScrollCallback(window, (long window, double _, double yoffset) -> {
-            camera.ProcessMouseScroll((float)yoffset);
-        });
-
 
         IntBuffer pWidth;
         IntBuffer pHeight;
@@ -283,15 +280,18 @@ public class App {
                     .ortho(0, m_Width, m_Height, 0, -1, 1)
             );
 
-            textRenderer.renderText("MyCraft " + version + " Vanilla\n" +
-                            (int)fps[0] + " fps (avg: " + (int)fps[1] + ", min: " + (int)fps[2] + ", max: " + (int)fps[3] +
-                    ")\nvertices: " + drawsInfos[0] + "(triangles: " + drawsInfos[2] + ", real: " + drawsInfos[1] + ")",
-                    10, 10, 0.3f);
+            if(Input.is_debug) {
+                textRenderer.renderText("MyCraft " + version + " Vanilla\n" +
+                                (int)fps[0] + " fps (avg: " + (int)fps[1] + ", min: " + (int)fps[2] + ", max: " + (int)fps[3] +
+                                ")\nvertices: " + drawsInfos[0] + "(triangles: " + drawsInfos[2] + ", real: " + drawsInfos[1] + ")",
+                        10, 10, 0.3f);
 
-            textRenderer.renderText("XYZ: " + String.format("%.3f",camera.Position.x) + " / " + String.format("%.3f",camera.Position.y) + " / " + String.format("%.3f",camera.Position.z) +
-                    "\n Blocks: nah\nChunks: nah\n"+
-                    "Facing Direction: " + String.format("%.2f",camera.getFront().x) + " / " + String.format("%.2f",camera.getFront().y) + " / " + String.format("%.2f",camera.getFront().z),
-                    10, 150, 0.3f);
+                textRenderer.renderText("XYZ: " + String.format("%.3f",camera.Position.x) + " / " + String.format("%.3f",camera.Position.y) + " / " + String.format("%.3f",camera.Position.z) +
+                                "\n Blocks: nah\nChunks: nah\n"+
+                                "Facing Direction: " + String.format("%.2f",camera.getFront().x) + " / " + String.format("%.2f",camera.getFront().y) + " / " + String.format("%.2f",camera.getFront().z),
+                        10, 150, 0.3f);
+            }
+
 
             glfwSwapBuffers(window);
             glfwPollEvents();

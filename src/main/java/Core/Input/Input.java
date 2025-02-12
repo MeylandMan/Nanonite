@@ -7,6 +7,8 @@ import static org.lwjgl.glfw.GLFW.*;
 public class Input extends GLFWKeyCallback {
 
     public static boolean is_locked;
+    public static boolean is_debug;
+
     Camera cam;
     private static boolean[] keys = new boolean[GLFW.GLFW_KEY_LAST];
 
@@ -25,6 +27,10 @@ public class Input extends GLFWKeyCallback {
 
         if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
             is_locked = !is_locked;
+        }
+
+        if (glfwGetKey(window, GLFW_KEY_F3) == GLFW_PRESS) {
+            is_debug = !is_debug;
         }
     }
 

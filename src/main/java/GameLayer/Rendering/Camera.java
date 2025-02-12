@@ -134,13 +134,6 @@ public class Camera {
         updateCameraVectors();
     }
 
-
-    public void ProcessMouseScroll(float y_offset)
-    {
-        Zoom -= y_offset;
-        Zoom = Math.clamp(Zoom, 1.0f, 45.0f);
-    }
-
     // calculates the front vector from the Camera's (updated) Euler Angles
     private void updateCameraVectors()
     {
