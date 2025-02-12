@@ -293,7 +293,11 @@ public class App {
                     ")\nvertices: " + drawsInfos[0] + "(triangles: " + drawsInfos[2] + ", real: " + drawsInfos[1] + ")",
                     10, 10, 0.3f);
 
-            
+            textRenderer.renderText("XYZ: " + String.format("%.3f",camera.Position.x) + " / " + String.format("%.3f",camera.Position.y) + " / " + String.format("%.3f",camera.Position.z) +
+                    "\n Blocks: nah\nChunks: nah\n"+
+                    "Facing Direction: " + String.format("%.2f",camera.getFront().x) + " / " + String.format("%.2f",camera.getFront().y) + " / " + String.format("%.2f",camera.getFront().z),
+                    10, 150, 0.3f);
+
             glfwSwapBuffers(window);
             glfwPollEvents();
         }
