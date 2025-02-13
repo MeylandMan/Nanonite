@@ -1,2 +1,2 @@
-rootProject.name = "Minecraft-Clone"
+rootProject.name = "Mycraft"
 

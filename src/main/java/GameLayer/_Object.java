@@ -17,9 +17,9 @@ public class _Object {
     protected VBO vbo;
     protected EBO ebo;
 
-    protected float positionX;
-    protected float positionY;
-    protected float positionZ;
+    protected int positionX;
+    protected int positionY;
+    protected int positionZ;
 
     private float rotationX;
     private float rotationY;
@@ -30,18 +30,18 @@ public class _Object {
     private float scaleZ;
 
     public _Object() {
-        this.positionX = 0.f; this.positionY = 0.f; this.positionZ = 0.f;
-        this.rotationX = 0.f; this.rotationY = 0.f; this.rotationZ = 0.f;
+        this.positionX = 0; this.positionY = 0; this.positionZ = 0;
+        this.rotationX = 0; this.rotationY = 0; this.rotationZ = 0;
         this.scaleX = 1.f; this.scaleY = 1.f; this.scaleZ = 1.f;
     }
     public _Object(String texture) {
-        this.positionX = 0.f; this.positionY = 0.f; this.positionZ = 0.f;
-        this.rotationX = 0.f; this.rotationY = 0.f; this.rotationZ = 0.f;
+        this.positionX = 0; this.positionY = 0; this.positionZ = 0;
+        this.rotationX = 0; this.rotationY = 0; this.rotationZ = 0;
         this.scaleX = 1.f; this.scaleY = 1.f; this.scaleZ = 1.f;
     }
     public _Object(Vector3f position) {
-        this.positionX = position.x; this.positionY = position.y; this.positionZ = position.z;
-        this.rotationX = 0.f; this.rotationY = 0.f; this.rotationZ = 0.f;
+        this.positionX = (int)position.x; this.positionY = (int)position.y; this.positionZ = (int)position.z;
+        this.rotationX = 0; this.rotationY = 0; this.rotationZ = 0;
         this.scaleX = 1.f; this.scaleY = 1.f; this.scaleZ = 1.f;
     }
 
@@ -53,19 +53,19 @@ public class _Object {
     }
 
     public _Object(Vector3f position, Vector3f rotation) {
-        this.positionX = position.x; this.positionY = position.y; this.positionZ = position.z;
+        this.positionX = (int)position.x; this.positionY = (int)position.y; this.positionZ = (int)position.z;
         this.rotationX = rotation.x; this.rotationY = rotation.y; this.rotationZ = rotation.z;
         this.scaleX = 1.f; this.scaleY = 1.f; this.scaleZ = 1.f;
     }
 
     public _Object(Vector3f position, Vector3f rotation, Vector3f scale) {
-        this.positionX = position.x; this.positionY = position.y; this.positionZ = position.z;
+        this.positionX = (int)position.x; this.positionY = (int)position.y; this.positionZ = (int)position.z;
         this.rotationX = rotation.x; this.rotationY = rotation.y; this.rotationZ = rotation.z;
         this.scaleX = scale.x; this.scaleY = scale.y; this.scaleZ = scale.z;
     }
 
     public void setPosition(Vector3f position) {
-        this.positionX = position.x; this.positionY = position.y; this.positionZ = position.z;
+        this.positionX = (int)position.x; this.positionY = (int)position.y; this.positionZ = (int)position.z;
     }
 
     public void setRotation(Vector3f rotation) {

@@ -12,42 +12,31 @@ public class SpriteMesh {
     // Datas
     float[] vertices = {};
 
-    public int[] indices = {
-            1, 2, 0,
-            0, 2, 3
-    };
-
     // OpenGL Context
     public VAO vao;
     public VBO vbo;
-    public EBO ebo;
 
 
-    public SpriteMesh() {
+    public SpriteMesh(float x, float y, float width, float height) {
         this.vertices = new float[] {
-                -0.5f, -0.5f, 0.0f,  1.f, 0.f, 0.f,
-                -0.5f,  0.5f, 0.0f,  0.f, 1.f, 0.f,
+                x, y-height,            0.f, 0.f,
+                x,  y,                  0.f, 0.f,
 
-                0.5f,   0.5f, 0.0f,  0.f, 0.f, 1.f,
-                0.5f,  -0.5f, 0.0f,  1.f, 1.f, 1.f
+                x+width,   y,           0.f, 0.f,
+                x+width,  y-height,     0.f, 0.f
         };
         setupMesh();
     }
     public void Draw() {
         vao.Bind();
-        ebo.Bind();
-
-        glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
-
+        glDrawArrays(GL_TRIANGLES, 0, 6);
         vao.UnBind();
-        ebo.UnBind();
 
     }
     public void Delete() {
         // Delete them
         vao.Delete();
         vbo.Delete();
-        ebo.Delete();
     }
 
 
@@ -55,15 +44,12 @@ public class SpriteMesh {
         // Instantiate them
         vao = new VAO();
         vbo = new VBO();
-        ebo = new EBO();
         VertexBufferLayout layout = new VertexBufferLayout();
 
         // Initialize them
         vbo.Init(vertices);
-        layout.Add(3);
-        layout.Add(3);
+        layout.Add(2);
+        layout.Add(2);
         vao.AddBuffer(vbo, layout);
-
-        ebo.Init(indices);
     }
 }

@@ -24,19 +24,20 @@ public class Camera {
 
     // camera Attributes
     public Vector3f Position;
-    private Vector3f Front = new Vector3f(0.0f, 0.0f, -
-
-            1.0f);
+    private Vector3f Front = new Vector3f(0.0f, 0.0f, -1.0f);
     private final Vector3f Up = new Vector3f();
     private final Vector3f Right = new Vector3f();
     private final Vector3f WorldUp;
+
     // euler Angles
     public float Yaw;
     public float Pitch;
+
     // camera options
     public float MovementSpeed = SPEED;
     public float MouseSensitivity = SENSITIVITY;
     public float Zoom = ZOOM;
+
 
     // Camera constructor
     public Camera() {
@@ -104,15 +105,21 @@ public class Camera {
 
     void ProcessKeyboard(Camera_Movement direction, float deltaTime)
     {
+
         float velocity = MovementSpeed * deltaTime;
-        if (direction == Camera_Movement.FORWARD)
+
+        if (direction == Camera_Movement.FORWARD) {
             Position.add(Front.mul(velocity));
-        if (direction == Camera_Movement.BACKWARD)
+        }
+        if (direction == Camera_Movement.BACKWARD) {
             Position.add(Front.mul(-velocity));
-        if (direction == Camera_Movement.LEFT)
+        }
+        if (direction == Camera_Movement.LEFT) {
             Position.add(Right.mul(velocity));
-        if (direction == Camera_Movement.RIGHT)
+        }
+        if (direction == Camera_Movement.RIGHT) {
             Position.add(Right.mul(-velocity));
+        }
         updateCameraVectors();
     }
 

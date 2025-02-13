@@ -17,16 +17,6 @@ public class Scene {
         surface2D = sm;
     }
 
-    public void draw2DSurface(Shader shader) {
-        surface2D.vao.Bind();
-        surface2D.ebo.Bind();
-
-        glDrawElements(GL_TRIANGLES, surface2D.indices.length, GL_UNSIGNED_INT, 0);
-
-        surface2D.vao.UnBind();
-        surface2D.ebo.UnBind();
-    }
-
     public void AddObject(_Object object) {
         objects.add(object);
     }

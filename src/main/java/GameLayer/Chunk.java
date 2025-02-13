@@ -12,9 +12,9 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Chunk extends _Object{
 
-    final static int X_DIMENSION = 16;
-    final static int Y_DIMENSION = 255;
-    final static int Z_DIMENSION = 16;
+    public final static int X_DIMENSION = 16;
+    public final static int Y_DIMENSION = 255;
+    public final static int Z_DIMENSION = 16;
     final static int TEXTURE_LOADED = 3;
     int Y_MAX = 5;
 
@@ -25,8 +25,8 @@ public class Chunk extends _Object{
     public Texture[] textures;
 
     public Chunk(Scene scene, @NotNull Vector3f position) {
-        this.positionX = position.x;
-        this.positionZ = position.z;
+        this.positionX = (int)position.x;
+        this.positionZ = (int)position.z;
 
         // Fill with AIR
         for(int x = 0; x < X_DIMENSION; x++) {

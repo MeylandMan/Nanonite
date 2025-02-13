@@ -3,6 +3,7 @@ package GameLayer.Rendering;
 
 import GameLayer.FPSMonitor;
 import GameLayer.Chunk;
+import GameLayer.Rendering.GUI.SpriteRenderer;
 import GameLayer.Rendering.GUI.Text.Font;
 import GameLayer.Rendering.GUI.Text.FontLoader;
 import GameLayer.Rendering.GUI.Text.TextRenderer;
@@ -38,7 +39,6 @@ public class App {
     float lastY;
     public Renderer renderer;
     public Input input;
-    Chunk chunk;
     Scene scene = new Scene();
     Shader shader = new Shader();
     SpriteMesh surface2D;
@@ -195,7 +195,7 @@ public class App {
 
         Vector3f pos = new Vector3f();
 
-        chunk = new Chunk(scene, pos);
+        Chunk chunk = new Chunk(scene, new Vector3f());
 
         System.out.println("MAX TEXTURE YOU CAN LOAD : " + GL_MAX_TEXTURE_IMAGE_UNITS);
         FPSMonitor fpsMonitor = new FPSMonitor();
@@ -220,8 +220,11 @@ public class App {
             e.printStackTrace();
         }
 
-
         while ( !glfwWindowShouldClose(window) ) {
+            int error;
+            while ((error = glGetError()) != GL_NO_ERROR) {
+                System.out.println("OpenGL Error: " + error);
+            }
 
             fpsMonitor.update();
 
@@ -263,6 +266,7 @@ public class App {
             query[0].startVerticesQuery();
             query[1].startQuery();
             query[2].startTransformFeedbackQuery();
+
             renderer.DrawScene(scene, shader);
 
             query[0].endVerticesQuery();
@@ -275,10 +279,15 @@ public class App {
             drawsInfos[2] = query[2].getTrianglesRendered();
 
             // Rendering something //
-            textRenderer.getScreenSize(m_Width, m_Height);
-            textRenderer.getProjectionMatrix( new Matrix4f().identity()
-                    .ortho(0, m_Width, m_Height, 0, -1, 1)
-            );
+            Matrix4f orthoTextMatrix = new Matrix4f().identity()
+                    .ortho(0, m_Width, m_Height, 0, -1, 1);
+
+            Matrix4f orthoSpriteMatrix = new Matrix4f().identity()
+                    .ortho(0, m_Width, 0, m_Height, -1, 1);
+            textRenderer.getProjectionMatrix(orthoTextMatrix);
+
+            //spriteRenderer.getMatrixProjection(orthoSpriteMatrix);
+            //spriteRenderer.drawRectangle(0, 0, 100, 100, new Vector3f(1.0f), 1);
 
             if(Input.is_debug) {
                 textRenderer.renderText("MyCraft " + version + " Vanilla\n" +
@@ -287,11 +296,10 @@ public class App {
                         10, 10, 0.3f);
 
                 textRenderer.renderText("XYZ: " + String.format("%.3f",camera.Position.x) + " / " + String.format("%.3f",camera.Position.y) + " / " + String.format("%.3f",camera.Position.z) +
-                                "\n Blocks: nah\nChunks: nah\n"+
+                                "\nBlocks: nah\nChunks: nah\n"+
                                 "Facing Direction: " + String.format("%.2f",camera.getFront().x) + " / " + String.format("%.2f",camera.getFront().y) + " / " + String.format("%.2f",camera.getFront().z),
                         10, 150, 0.3f);
             }
-
 
             glfwSwapBuffers(window);
             glfwPollEvents();

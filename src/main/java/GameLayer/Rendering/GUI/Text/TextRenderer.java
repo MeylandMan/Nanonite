@@ -5,6 +5,8 @@ import org.joml.Matrix4f;
 
 import static org.lwjgl.opengl.GL11C.glEnable;
 import static org.lwjgl.opengl.GL30.*;
+
+import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
@@ -14,7 +16,6 @@ public class TextRenderer {
     private Shader shader;
     private Font font;
     Matrix4f matrix;
-    private int screenWidth, screenHeight;
 
     public TextRenderer() {
 
@@ -24,12 +25,12 @@ public class TextRenderer {
         shader = new Shader();
         shader.CreateShader("shaders/Opengl/Text.vert", "shaders/Opengl/Text.frag");
 
-
         vao = glGenVertexArrays();
         vbo = glGenBuffers();
 
         glBindVertexArray(vao);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, 6 * 4 * 500, GL_DYNAMIC_DRAW);
 
         // Position (x, y) + UV (u, v)
         glVertexAttribPointer(0, 2, GL_FLOAT, false, 4 * Float.BYTES, 0);
@@ -41,16 +42,12 @@ public class TextRenderer {
         glBindVertexArray(0);
     }
 
-    public void getScreenSize(int screenWidth, int screenHeight) {
-        this.screenWidth = screenWidth;
-        this.screenHeight = screenHeight;
-    }
-
     public void getProjectionMatrix(Matrix4f matrix) {
         this.matrix = matrix;
     }
 
     public void renderText(String text, float x, float y, float scale) {
+
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
 
@@ -101,8 +98,9 @@ public class TextRenderer {
         }
 
         buffer.flip();
-        glBufferData(GL_ARRAY_BUFFER, buffer, GL_DYNAMIC_DRAW);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, buffer);
         MemoryUtil.memFree(buffer);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         shader.Uniform1i("fontTexture", 0);
         shader.UniformMatrix4x4("projection", matrix);

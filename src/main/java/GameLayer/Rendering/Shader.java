@@ -155,10 +155,6 @@ public class Shader {
         glUniformMatrix4fv(location, false, matrix.get(new float[16]));
     }
 
-    protected void bindAttribute(int attribute, String variableName){
-        glBindAttribLocation(m_ID, attribute, variableName);
-    }
-
 }
 
 

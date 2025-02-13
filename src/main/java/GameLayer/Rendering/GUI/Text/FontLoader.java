@@ -5,7 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import static org.lwjgl.opengl.GL11.*;
-import org.lwjgl.opengl.GL30;
+
 import org.lwjgl.stb.STBImage;
 
 import java.nio.ByteBuffer;
