@@ -3,7 +3,9 @@ package GameLayer;
 import GameLayer.Rendering.Scene;
 import GameLayer.Rendering.*;
 import org.jetbrains.annotations.*;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 import org.lwjgl.opengl.GL;
 
 import java.util.Arrays;
@@ -16,7 +18,7 @@ public class Chunk extends _Object{
     public final static int Y_DIMENSION = 255;
     public final static int Z_DIMENSION = 16;
     final static int TEXTURE_LOADED = 3;
-    int Y_MAX = 5;
+    int Y_MAX = 255;
 
     private final Block[][][] blocks = new Block[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
 
@@ -32,11 +34,7 @@ public class Chunk extends _Object{
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int y = 0; y < Y_DIMENSION; y++) {
                 for(int z = 0; z < Z_DIMENSION; z++) {
-                    blocks[x][y][z] = new Block( new Vector3f(
-                            this.positionX+x,
-                            y,
-                            this.positionZ+z
-                    ));
+                    blocks[x][y][z] = new Block( new Vector3f(x, y, z));
                 }
             }
         }
@@ -49,12 +47,7 @@ public class Chunk extends _Object{
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int y = 0; y < Y_MAX; y++) {
                 for(int z = 0; z < Z_DIMENSION; z++) {
-
-                    blocks[x][y][z] = new Block( new Vector3f(
-                                    this.positionX+x,
-                                        y,
-                                    this.positionZ+z
-                            ));
+                    blocks[x][y][z] = new Block( new Vector3f(x, y, z));
                     blocks[x][y][z].type = ( y == Y_MAX-1 )? Block.BlockType.GRASS : Block.BlockType.DIRT;
                 }
             }
@@ -155,6 +148,7 @@ public class Chunk extends _Object{
             textures[i].Bind(i);
         }
         shader.Uniform1iv("u_Textures", samplers);
+        //shader.Uniform3f("u_Position", positionX, positionY, positionZ);
 
         vao.Bind();
         ebo.Bind();
@@ -186,13 +180,12 @@ public class Chunk extends _Object{
             textures[i] = new Texture(BlockData.getTexturePath(i));
         }
 
-
         // Initialize them
         vbo.Init(vertices);
-        layout.Add(3);
-        layout.Add(2);
-        layout.Add(3);
-        layout.Add(1);
+        layout.AddBytes(3);
+        layout.AddBytes(2);
+        layout.AddBytes(3);
+        layout.AddBytes(1);
         vao.AddBuffer(vbo, layout);
 
         ebo.Init(indices);
@@ -203,7 +196,13 @@ public class Chunk extends _Object{
     public Block GetBlock(int x, int y) {
         return blocks[x][y][0];
     }
+    public Block GetBlock(Vector2f position) {
+        return blocks[(int)position.x][(int)position.y][0];
+    }
     public Block GetBlock(int x, int y, int z) {
         return blocks[x][y][z];
+    }
+    public Block GetBlock(Vector3f position) {
+        return blocks[(int)position.x][(int)position.y][(int)position.z];
     }
 }

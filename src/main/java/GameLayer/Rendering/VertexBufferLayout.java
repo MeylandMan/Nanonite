@@ -24,6 +24,12 @@ public class VertexBufferLayout {
         this.stride = stride;
     }
 
+    // Add Bytes
+
+    public void AddBytes(int count) {
+        elements.add(new VertexBufferElement(GL_UNSIGNED_BYTE, count, false));
+        stride += VertexBufferElement.GetSizeOfType(GL_UNSIGNED_BYTE) * count;
+    }
 
     /* USELESS FOR NOW
 

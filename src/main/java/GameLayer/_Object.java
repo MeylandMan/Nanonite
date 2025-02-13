@@ -11,7 +11,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class _Object {
 
     protected int[] indices = {};
-    protected float[] vertices = {};
+    protected byte[] vertices = {};
 
     protected VAO vao;
     protected VBO vbo;

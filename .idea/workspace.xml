@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ArtifactsWorkspaceSettings">
     <artifacts-to-build>
-      <artifact name="Minecraft-Clone.main:jar" />
+      <artifact name="beta-0.0.0.1:jar" />
     </artifacts-to-build>
   </component>
   <component name="AutoImportSettings">
@@ -10,19 +10,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/Minecraft_Clone_main_jar.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/settings.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/BlockData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/BlockData.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Chunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Chunk.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Camera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Camera.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/Text/FontLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/Text/FontLoader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/Text/TextRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/Text/TextRenderer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Model/SpriteMesh.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Model/SpriteMesh.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Renderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Renderer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Scene.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Scene.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Shader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Shader.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/VBO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/VBO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/VertexBufferLayout.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/VertexBufferLayout.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/_Object.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/_Object.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -134,7 +126,7 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration name="Minecraft Clone" type="Application" factoryName="Application">
+    <configuration name="Mycraft" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="Main" />
       <module name="Minecraft-Clone.main" />
       <method v="2">
@@ -178,7 +170,7 @@
       <workItem from="1739362759578" duration="1567000" />
       <workItem from="1739376989014" duration="24005000" />
       <workItem from="1739407939142" duration="4628000" />
-      <workItem from="1739443698948" duration="15473000" />
+      <workItem from="1739443698948" duration="20217000" />
     </task>
     <servers />
   </component>

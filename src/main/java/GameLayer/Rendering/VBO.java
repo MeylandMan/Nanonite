@@ -1,6 +1,8 @@
 package GameLayer.Rendering;
 
 import static org.lwjgl.opengl.GL15.*;
+
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import org.lwjgl.system.MemoryUtil;
 
@@ -23,6 +25,17 @@ public class VBO {
         FloatBuffer buffer = MemoryUtil.memAllocFloat(data.length);
         buffer.put(data).flip();
         glBufferData(GL_ARRAY_BUFFER, data, drawing_state);
+        UnBind();
+        MemoryUtil.memFree(buffer);
+    }
+
+    public void Init(byte[] data) {
+        m_ID = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, m_ID);
+
+        ByteBuffer buffer = MemoryUtil.memAlloc(data.length);
+        buffer.put(data).flip();
+        glBufferData(GL_ARRAY_BUFFER, buffer, drawing_state);
         UnBind();
         MemoryUtil.memFree(buffer);
     }
@@ -53,6 +66,7 @@ public class VBO {
         FloatBuffer buffer = MemoryUtil.memAllocFloat(1);
         buffer.put(data);
         glBufferData(GL_ARRAY_BUFFER, buffer, drawing_state);
+        MemoryUtil.memFree(buffer);
         UnBind();
     }
 
