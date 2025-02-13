@@ -18,7 +18,7 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 public class FontLoader {
     public static Font loadFont(String fontFile) throws IOException {
         Font font = new Font();
-            String filePath = "src/main/resources/fonts/" + fontFile;
+            String filePath = "assets/fonts/" + fontFile;
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -63,7 +63,7 @@ public class FontLoader {
 
     public static int loadTexture(String filePath, Font font) {
         int textureID;
-        String path = "src/main/resources/fonts/" + filePath;
+        String path = "assets/fonts/" + filePath;
         try (var stack = stackPush()) {
             IntBuffer width = stack.mallocInt(1);
             IntBuffer height = stack.mallocInt(1);

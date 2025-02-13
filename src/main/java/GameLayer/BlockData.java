@@ -1,7 +1,6 @@
 package GameLayer;
 
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.system.MemoryUtil;
 
 import java.util.ArrayList;
 
@@ -92,9 +91,9 @@ public class BlockData {
         }
 
         String[] xx = {
-                "textures/blocks/dirt.png",
-                "textures/blocks/grass_block_side.png",
-                "textures/blocks/grass_block_top.png"
+                "blocks/dirt.png",
+                "blocks/grass_block_side.png",
+                "blocks/grass_block_top.png"
         };
         return xx[x];
     }

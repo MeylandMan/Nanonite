@@ -27,8 +27,9 @@ public class Shader {
     }
 
     public void CreateShader(String vertexFile, String fragmentFile) {
-        int vertexShaderId = loadShader(vertexFile, GL_VERTEX_SHADER);
-        int fragmentShaderId = loadShader(fragmentFile, GL_FRAGMENT_SHADER);
+
+        int vertexShaderId = loadShader("assets/shaders/" + vertexFile, GL_VERTEX_SHADER);
+        int fragmentShaderId = loadShader("assets/shaders/" + fragmentFile, GL_FRAGMENT_SHADER);
 
         m_ID = glCreateProgram();
         glAttachShader(m_ID, vertexShaderId);

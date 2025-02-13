@@ -18,7 +18,7 @@ public class Chunk extends _Object{
     public final static int Y_DIMENSION = 255;
     public final static int Z_DIMENSION = 16;
     final static int TEXTURE_LOADED = 3;
-    int Y_MAX = 255;
+    int Y_MAX = 5;
 
     private final Block[][][] blocks = new Block[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
 
@@ -148,12 +148,11 @@ public class Chunk extends _Object{
             textures[i].Bind(i);
         }
         shader.Uniform1iv("u_Textures", samplers);
-        //shader.Uniform3f("u_Position", positionX, positionY, positionZ);
 
         vao.Bind();
         ebo.Bind();
 
-
+        int x = vertices.length;
         glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
 
         vao.UnBind();
@@ -167,7 +166,7 @@ public class Chunk extends _Object{
     @Override
     public void Init() {
         if (!GL.getCapabilities().OpenGL30) {
-            throw new IllegalStateException("OpenGL 3.0 non disponible !");
+            throw new IllegalStateException("OpenGL 3.0 unavailable !");
         }
 
         vao = new VAO();

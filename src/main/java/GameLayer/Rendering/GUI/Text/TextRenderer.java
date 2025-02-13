@@ -20,10 +20,11 @@ public class TextRenderer {
     public TextRenderer() {
 
     }
+
     public TextRenderer(Font font) {
         this.font = font;
         shader = new Shader();
-        shader.CreateShader("shaders/Opengl/Text.vert", "shaders/Opengl/Text.frag");
+        shader.CreateShader("Text.vert", "Text.frag");
 
         vao = glGenVertexArrays();
         vbo = glGenBuffers();

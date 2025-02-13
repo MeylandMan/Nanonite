@@ -191,7 +191,7 @@ public class App {
 
         GLCapabilities caps = GL.createCapabilities();
 
-        shader.CreateShader("shaders/Opengl/Default.vert", "shaders/Opengl/Default.frag");
+        shader.CreateShader("Default.vert", "Default.frag");
 
         Vector3f pos = new Vector3f();
 

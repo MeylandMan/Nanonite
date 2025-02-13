@@ -21,7 +21,7 @@ public class SpriteRenderer {
 
     public SpriteRenderer() {
         shader = new Shader();
-        shader.CreateShader("shaders/Opengl/Sprite.vert", "shaders/Opengl/Sprite.frag");
+        shader.CreateShader("Sprite.vert", "Sprite.frag");
 
 
         vao = new VAO();
