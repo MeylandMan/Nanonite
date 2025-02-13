@@ -14,7 +14,6 @@
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/BlockData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/BlockData.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Chunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Chunk.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/EBO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/EBO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/VBO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/VBO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/_Object.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/_Object.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -163,7 +162,7 @@
       <workItem from="1739376989014" duration="24005000" />
       <workItem from="1739407939142" duration="4628000" />
       <workItem from="1739443698948" duration="20217000" />
-      <workItem from="1739468620864" duration="9430000" />
+      <workItem from="1739468620864" duration="10810000" />
     </task>
     <servers />
   </component>
@@ -210,6 +209,11 @@
           <url>file://$PROJECT_DIR$/assets/src/Main.java</url>
           <line>11</line>
           <option name="timeStamp" value="91" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/GameLayer/Rendering/EBO.java</url>
+          <line>42</line>
+          <option name="timeStamp" value="99" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

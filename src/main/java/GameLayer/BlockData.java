@@ -99,7 +99,7 @@ public class BlockData {
     }
 
 
-    public static void createFaceIndices(Chunk chunk, @NotNull Block.Faces face) {
+    public static void createFaceIndices(ArrayList<Integer> indices, @NotNull Block.Faces face) {
         ArrayList<Integer> _indices = new ArrayList<>();
         switch (face) {
             case Block.Faces.FRONT:
@@ -127,8 +127,7 @@ public class BlockData {
                 _indices.add(2); _indices.add(3); _indices.add(0);
                 break;
         }
-        chunk.indices = setIndicesData(chunk.indices, _indices);
-
+        setIndicesData(indices, _indices);
     }
 
     public static float[] setVerticesData(@NotNull byte[] vertices, @NotNull float[] vertex) {
@@ -142,6 +141,14 @@ public class BlockData {
         }
 
         return newData;
+    }
+
+    public static void setIndicesData(ArrayList<Integer> indices,ArrayList<Integer> _indices) {
+        int last = findMax(indices)+1;
+
+        for (Integer index : _indices) {
+            indices.add(index + last);
+        }
     }
 
     public static int[] setIndicesData(@NotNull int[] indices, @NotNull int[] _indices) {
@@ -206,6 +213,21 @@ public class BlockData {
         }
 
         int max = array[0];
+        for (int j : array) {
+            max = Math.max(max, j);
+        }
+        return max;
+    }
+
+    public static int findMax(ArrayList<Integer> array) {
+        if(array == null) {
+            throw new IllegalArgumentException("The ArrayList is null");
+        }
+
+        if(array.isEmpty())
+            return -1;
+
+        int max = array.getFirst();
         for (int j : array) {
             max = Math.max(max, j);
         }

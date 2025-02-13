@@ -13,8 +13,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class _Object {
 
-    protected int[] indices = {};
-
+    int length;
     protected VAO vao;
     protected VBO vbo;
     protected EBO ebo;
@@ -101,13 +100,13 @@ public class _Object {
         vao.Bind();
         ebo.Bind();
 
-        glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, length, GL_UNSIGNED_INT, 0);
 
         vao.UnBind();
         ebo.UnBind();
     }
 
-    public void Init(ArrayList<Byte> vertices) {
+    public void Init(ArrayList<Byte> vertices, ArrayList<Integer> indices) {
         if (!GL.getCapabilities().OpenGL30) {
             throw new IllegalStateException("OpenGL 3.0 non disponible !");
         }

@@ -1,5 +1,11 @@
 package GameLayer.Rendering;
 
+import org.lwjgl.system.MemoryUtil;
+
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import java.util.ArrayList;
+
 import static org.lwjgl.opengl.GL30.*;
 
 public class EBO {
@@ -20,6 +26,22 @@ public class EBO {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ID);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, data, drawing_state);
         UnBind();
+    }
+
+    public void Init(ArrayList<Integer> data) {
+        m_ID = glGenBuffers();
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ID);
+
+        int[] datas = new int[data.size()];
+        for (int i = 0; i < data.size(); i++) {
+            datas[i] = data.get(i);
+        }
+
+        IntBuffer buffer = MemoryUtil.memAllocInt(datas.length);
+        buffer.put(datas).flip();
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, buffer, drawing_state);
+        UnBind();
+        MemoryUtil.memFree(buffer);
     }
 
     public void Delete() {
