@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 
 public class BlockData {
-    public static void createFaceVertices(Chunk chunk, Block block, Block.Faces face) {
+    public static void createFaceVertices(ArrayList<Byte> vertices, Block block, Block.Faces face) {
         ArrayList<Byte> vertex = new ArrayList<>();
         switch (face) {
             case Block.Faces.FRONT:
@@ -46,7 +46,7 @@ public class BlockData {
                 break;
         }
 
-        chunk.vertices = setVerticesData(chunk.vertices, vertex);
+        vertices.addAll(vertex);
     }
 
     public static float getTextureIndex(int x, Block block) {

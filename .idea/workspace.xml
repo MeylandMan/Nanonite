@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ArtifactsWorkspaceSettings">
     <artifacts-to-build>
-      <artifact name="Beta 0001" />
+      <artifact name="Beta0001" />
     </artifacts-to-build>
   </component>
   <component name="AutoImportSettings">
@@ -10,44 +10,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/artifacts/Beta_0001.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.PVS-Studio/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/.PVS-Studio/settings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/beta_0_0_0_1_jar.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shaders/Opengl/Default.frag" beforeDir="false" afterPath="$PROJECT_DIR$/assets/shaders/Opengl/Default.frag" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shaders/Opengl/Default.vert" beforeDir="false" afterPath="$PROJECT_DIR$/assets/shaders/Opengl/Default.vert" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shaders/Opengl/Sprite.frag" beforeDir="false" afterPath="$PROJECT_DIR$/assets/shaders/Opengl/Sprite.frag" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shaders/Opengl/Sprite.vert" beforeDir="false" afterPath="$PROJECT_DIR$/assets/shaders/Opengl/Sprite.vert" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shaders/Opengl/Text.frag" beforeDir="false" afterPath="$PROJECT_DIR$/assets/shaders/Opengl/Text.frag" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shaders/Opengl/Text.vert" beforeDir="false" afterPath="$PROJECT_DIR$/assets/shaders/Opengl/Text.vert" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/BlockData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/BlockData.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Chunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Chunk.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/SpriteRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/SpriteRenderer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/Text/FontLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/Text/FontLoader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/Text/TextRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/Text/TextRenderer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Shader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Shader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Texture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Texture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/MANIFEST.MF" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fonts/FiraSans-Bold.ttf" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/FiraSans-Bold.ttf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fonts/arial.fnt" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/arial.fnt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fonts/arial.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/arial.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fonts/calibri.fnt" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/calibri.fnt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fonts/calibri.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/calibri.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fonts/harrington.fnt" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/harrington.fnt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fonts/harrington.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/harrington.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fonts/sans.fnt" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/sans.fnt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fonts/sans.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/sans.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fonts/segoe.fnt" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/segoe.fnt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fonts/segoe.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/segoe.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fonts/segoeUI.fnt" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/segoeUI.fnt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fonts/segoeUI.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/segoeUI.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fonts/tahoma.fnt" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/tahoma.fnt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fonts/tahoma.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/fonts/tahoma.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/textures/blocks/dirt.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/textures/blocks/grass_block_side.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/textures/blocks/grass_block_side.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/textures/blocks/grass_block_top.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/textures/blocks/grass_block_top.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/EBO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/EBO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/VBO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/VBO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/_Object.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/_Object.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -103,6 +71,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Application.Minecraft Clone.executor": "Profiler#1",
+    "Application.Mycraft.executor": "Profiler#1",
     "Downloaded.Files.Path.Enabled": "false",
     "Gradle.Build MInecraft-Clone.executor": "Run",
     "Gradle.Download Sources.executor": "Run",
@@ -121,7 +90,7 @@
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Client/Documents/GitHub/Minecraft-Clone/assets/textures/blocks",
+    "last_opened_file_path": "C:/Users/Client/Documents/GitHub/Minecraft-Clone/out/artifacts",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -144,11 +113,11 @@
       <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\src\main\resources\textures\blocks" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Client\Documents\GitHub\Minecraft-Clone\assets\shaders" />
       <recent name="C:\Users\Client\Documents\GitHub\Minecraft-Clone\assets\textures" />
       <recent name="C:\Users\Client\Documents\GitHub\Minecraft-Clone\assets" />
       <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\src\main\resources\fonts" />
       <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\src\main\java\GameLayer\Rendering\GUI" />
-      <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\shaders\Opengl" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="" />
@@ -194,7 +163,7 @@
       <workItem from="1739376989014" duration="24005000" />
       <workItem from="1739407939142" duration="4628000" />
       <workItem from="1739443698948" duration="20217000" />
-      <workItem from="1739468620864" duration="1930000" />
+      <workItem from="1739468620864" duration="9430000" />
     </task>
     <servers />
   </component>

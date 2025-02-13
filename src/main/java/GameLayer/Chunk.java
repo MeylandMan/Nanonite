@@ -8,9 +8,12 @@ import org.joml.Vector3f;
 import org.joml.Vector3i;
 import org.lwjgl.opengl.GL;
 
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 
 public class Chunk extends _Object{
 
@@ -18,7 +21,8 @@ public class Chunk extends _Object{
     public final static int Y_DIMENSION = 255;
     public final static int Z_DIMENSION = 16;
     final static int TEXTURE_LOADED = 3;
-    int Y_MAX = 5;
+    int Y_MAX = 255;
+    int temp = 0;
 
     private final Block[][][] blocks = new Block[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
 
@@ -42,6 +46,8 @@ public class Chunk extends _Object{
     }
 
     private void setupChunk(Scene scene) {
+        ArrayList<Byte> vertices = new ArrayList<>();
+
         // Add Blocks inside the chunk
         int zz = 2;
         for(int x = 0; x < X_DIMENSION; x++) {
@@ -71,38 +77,40 @@ public class Chunk extends _Object{
                 for(int z = 0; z < Z_DIMENSION; z++) {
                     if(blocks[x][y][z].type == Block.BlockType.AIR)
                         continue;
-
-                    if (shouldRenderFace(x, y, z, Block.Faces.FRONT)) {
-                        BlockData.createFaceVertices(this, blocks[x][y][z], Block.Faces.FRONT);
-                        BlockData.createFaceIndices(this, Block.Faces.FRONT);
-                    }
-                    if (shouldRenderFace(x, y, z, Block.Faces.BACK)) {
-                        BlockData.createFaceVertices(this, blocks[x][y][z], Block.Faces.BACK);
-                        BlockData.createFaceIndices(this, Block.Faces.BACK);
-                    }
-                    if (shouldRenderFace(x, y, z, Block.Faces.RIGHT)) {
-                        BlockData.createFaceVertices(this, blocks[x][y][z], Block.Faces.RIGHT);
-                        BlockData.createFaceIndices(this, Block.Faces.RIGHT);
-                    }
-                    if (shouldRenderFace(x, y, z, Block.Faces.LEFT)) {
-                        BlockData.createFaceVertices(this, blocks[x][y][z], Block.Faces.LEFT);
-                        BlockData.createFaceIndices(this, Block.Faces.LEFT);
-                    }
-                    if (shouldRenderFace(x, y, z, Block.Faces.BOTTOM)) {
-                        BlockData.createFaceVertices(this, blocks[x][y][z], Block.Faces.BOTTOM);
-                        BlockData.createFaceIndices(this, Block.Faces.BOTTOM);
-                    }
-                    if (shouldRenderFace(x, y, z, Block.Faces.TOP)) {
-                        BlockData.createFaceVertices(this, blocks[x][y][z], Block.Faces.TOP);
-                        BlockData.createFaceIndices(this, Block.Faces.TOP);
-                    }
+                    renderBlock(vertices, x, y, z);
                 }
             }
         }
 
-        Init();
+        Init(vertices);
         AddToScene(scene);
 
+    }
+    public void renderBlock(ArrayList<Byte> vertices, int x, int y, int z) {
+        if (shouldRenderFace(x, y, z, Block.Faces.FRONT)) {
+            BlockData.createFaceVertices(vertices, blocks[x][y][z], Block.Faces.FRONT);
+            BlockData.createFaceIndices(this, Block.Faces.FRONT);
+        }
+        if (shouldRenderFace(x, y, z, Block.Faces.BACK)) {
+            BlockData.createFaceVertices(vertices, blocks[x][y][z], Block.Faces.BACK);
+            BlockData.createFaceIndices(this, Block.Faces.BACK);
+        }
+        if (shouldRenderFace(x, y, z, Block.Faces.RIGHT)) {
+            BlockData.createFaceVertices(vertices, blocks[x][y][z], Block.Faces.RIGHT);
+            BlockData.createFaceIndices(this, Block.Faces.RIGHT);
+        }
+        if (shouldRenderFace(x, y, z, Block.Faces.LEFT)) {
+            BlockData.createFaceVertices(vertices, blocks[x][y][z], Block.Faces.LEFT);
+            BlockData.createFaceIndices(this, Block.Faces.LEFT);
+        }
+        if (shouldRenderFace(x, y, z, Block.Faces.BOTTOM)) {
+            BlockData.createFaceVertices(vertices, blocks[x][y][z], Block.Faces.BOTTOM);
+            BlockData.createFaceIndices(this, Block.Faces.BOTTOM);
+        }
+        if (shouldRenderFace(x, y, z, Block.Faces.TOP)) {
+            BlockData.createFaceVertices(vertices, blocks[x][y][z], Block.Faces.TOP);
+            BlockData.createFaceIndices(this, Block.Faces.TOP);
+        }
     }
 
     private boolean shouldRenderFace(int x, int y, int z, @NotNull Block.Faces face) {
@@ -142,6 +150,7 @@ public class Chunk extends _Object{
 
     @Override
     public void DrawMesh(Shader shader) {
+
         int[] samplers = new int[textures.length];
         for(int i = 0; i < textures.length; i++) {
             samplers[i] = i;
@@ -152,7 +161,6 @@ public class Chunk extends _Object{
         vao.Bind();
         ebo.Bind();
 
-        int x = vertices.length;
         glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
 
         vao.UnBind();
@@ -164,13 +172,13 @@ public class Chunk extends _Object{
     }
 
     @Override
-    public void Init() {
+    public void Init(ArrayList<Byte> vertices) {
         if (!GL.getCapabilities().OpenGL30) {
             throw new IllegalStateException("OpenGL 3.0 unavailable !");
         }
 
         vao = new VAO();
-        vbo = new VBO();
+        vbo = new VBO(GL_DYNAMIC_DRAW);
         ebo = new EBO();
 
         VertexBufferLayout layout = new VertexBufferLayout();
@@ -180,6 +188,7 @@ public class Chunk extends _Object{
         }
 
         // Initialize them
+        //vbo.Init(4 * 9 * (X_DIMENSION * Y_DIMENSION * Z_DIMENSION));
         vbo.Init(vertices);
         layout.AddBytes(3);
         layout.AddBytes(2);

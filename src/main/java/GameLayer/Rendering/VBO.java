@@ -4,6 +4,8 @@ import static org.lwjgl.opengl.GL15.*;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
+
 import org.lwjgl.system.MemoryUtil;
 
 public class VBO {
@@ -25,6 +27,22 @@ public class VBO {
         FloatBuffer buffer = MemoryUtil.memAllocFloat(data.length);
         buffer.put(data).flip();
         glBufferData(GL_ARRAY_BUFFER, data, drawing_state);
+        UnBind();
+        MemoryUtil.memFree(buffer);
+    }
+
+    public void Init(ArrayList<Byte> data) {
+        m_ID = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, m_ID);
+
+        byte[] datas = new byte[data.size()];
+        for (int i = 0; i < data.size(); i++) {
+            datas[i] = data.get(i);
+        }
+
+        ByteBuffer buffer = MemoryUtil.memAlloc(datas.length);
+        buffer.put(datas).flip();
+        glBufferData(GL_ARRAY_BUFFER, buffer, drawing_state);
         UnBind();
         MemoryUtil.memFree(buffer);
     }
@@ -75,6 +93,12 @@ public class VBO {
     }
     public void SubData(int offset, FloatBuffer data) {
         glBufferSubData(GL_ARRAY_BUFFER, offset, data);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+
+    public void SubData(int offset, byte[] data) {
+        glBindBuffer(GL_ARRAY_BUFFER, m_ID);
+        glBufferSubData(GL_ARRAY_BUFFER, offset, ByteBuffer.wrap(data));
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 

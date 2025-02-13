@@ -6,12 +6,14 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL;
 
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+
 import static org.lwjgl.opengl.GL11.*;
 
 public class _Object {
 
     protected int[] indices = {};
-    protected byte[] vertices = {};
 
     protected VAO vao;
     protected VBO vbo;
@@ -105,7 +107,7 @@ public class _Object {
         ebo.UnBind();
     }
 
-    public void Init() {
+    public void Init(ArrayList<Byte> vertices) {
         if (!GL.getCapabilities().OpenGL30) {
             throw new IllegalStateException("OpenGL 3.0 non disponible !");
         }
