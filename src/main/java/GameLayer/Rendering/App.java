@@ -195,20 +195,10 @@ public class App {
 
         shader.CreateShader("Default.vert", "Default.frag");
 
-        Vector3f pos = new Vector3f();
-
         Chunk chunk = new Chunk(scene, new Vector3f());
 
         //System.out.println("MAX TEXTURE YOU CAN LOAD : " + GL_MAX_TEXTURE_IMAGE_UNITS); 34930
         FPSMonitor fpsMonitor = new FPSMonitor();
-
-        Query[] query = {
-                new Query(),
-                new Query(),
-                new Query()
-        };
-
-        int[] drawsInfos = new int[3];
 
         Font font;
         TextRenderer textRenderer = new TextRenderer();
@@ -269,21 +259,8 @@ public class App {
             glCullFace(GL_FRONT);
             glFrontFace(GL_CW);
 
-            query[0].startVerticesQuery();
-            query[1].startQuery();
-            query[2].startTransformFeedbackQuery();
-
             renderer.DrawScene(scene, shader);
             world.onRender();
-
-            query[0].endVerticesQuery();
-            query[1].endQuery();
-            query[2].endTransformFeedbackQuery();
-
-
-            drawsInfos[0] = query[0].getVerticesRendered();
-            drawsInfos[1] = query[1].getPrimitivesGenerated();
-            drawsInfos[2] = query[2].getTrianglesRendered();
 
             // Rendering something //
             Matrix4f orthoTextMatrix = new Matrix4f().identity()
@@ -298,9 +275,8 @@ public class App {
 
             if(Input.is_debug) {
                 textRenderer.renderText("MyCraft " + version + " Vanilla\n" +
-                                (int)fps[0] + " fps (avg: " + (int)fps[1] + ", min: " + (int)fps[2] + ", max: " + (int)fps[3] +
-                                ")\nvertices: " + drawsInfos[0] + "(triangles: " + drawsInfos[2] + ", real: " + drawsInfos[1] + ")",
-                        10, 10, 0.3f);
+                                (int)fps[0] + " fps (avg: " + (int)fps[1] + ", min: " + (int)fps[2] + ", max: " + (int)fps[3] + ")",
+                                10, 10, 0.3f);
 
                 textRenderer.renderText("XYZ: " + String.format("%.3f",camera.Position.x) + " / " + String.format("%.3f",camera.Position.y) + " / " + String.format("%.3f",camera.Position.z) +
                                 "\nBlocks: nah\nChunks: nah\n"+

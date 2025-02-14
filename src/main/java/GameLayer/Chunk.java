@@ -11,6 +11,7 @@ import org.lwjgl.opengl.GL;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
@@ -34,14 +35,6 @@ public class Chunk extends _Object{
         this.positionX = (int)position.x;
         this.positionZ = (int)position.z;
 
-        // Fill with AIR
-        for(int x = 0; x < X_DIMENSION; x++) {
-            for(int y = 0; y < Y_DIMENSION; y++) {
-                for(int z = 0; z < Z_DIMENSION; z++) {
-                    blocks[x][y][z] = new Block( new Vector3f(x, y, z));
-                }
-            }
-        }
         setupChunk(scene);
     }
 
@@ -62,8 +55,11 @@ public class Chunk extends _Object{
 
         // Fill void with Air and check if a
         for(int x = 0; x < X_DIMENSION; x++) {
-            for(int y = 0; y < Y_MAX; y++) {
+            for(int y = 0; y < Y_DIMENSION; y++) {
                 for(int z = 0; z < Z_DIMENSION; z++) {
+                    if(blocks[x][y][z] == null)
+                        blocks[x][y][z] = new Block(new Vector3f(x, y, z));
+
                     if(blocks[x][y][z].type == Block.BlockType.DIRT) {
                         if(blocks[x][y+1][z].type == Block.BlockType.AIR)
                             blocks[x][y][z].type = Block.BlockType.GRASS;
