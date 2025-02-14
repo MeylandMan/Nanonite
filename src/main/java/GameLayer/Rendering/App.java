@@ -66,15 +66,6 @@ public class App {
                 camera.ProcessKeyboard(Camera.Camera_Movement.LEFT, delta);
             if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
                 camera.ProcessKeyboard(Camera.Camera_Movement.RIGHT, delta);
-
-            if(glfwGetKey(window, GLFW_KEY_KP_8) == GLFW_PRESS)
-                collision.position.y += 0.1f;
-            if(glfwGetKey(window, GLFW_KEY_KP_5) == GLFW_PRESS)
-                collision.position.y -= 0.1f;
-            if(glfwGetKey(window, GLFW_KEY_KP_6) == GLFW_PRESS)
-                collision.position.x -= 0.1f;
-            if(glfwGetKey(window, GLFW_KEY_KP_4) == GLFW_PRESS)
-                collision.position.x += 0.1f;
         }
     }
 
@@ -230,7 +221,6 @@ public class App {
         }
 
         collision = new CubeCollision(new Vector3f(-10, 3, 0), new Vector3f(1));
-        CubeCollision collision2 = new CubeCollision(new Vector3f(-10, 2.2f, 0), new Vector3f(1));
         while ( !glfwWindowShouldClose(window) ) {
             int error;
             while ((error = glGetError()) != GL_NO_ERROR) {
@@ -279,8 +269,8 @@ public class App {
             query[2].startTransformFeedbackQuery();
 
             renderer.DrawScene(scene, shader);
-            collision.drawAABB(collision.intersects(collision2));
-            collision2.drawAABB(collision.intersects(collision2));
+            collision.drawAABB();
+            camera.collision.drawAABB();
 
             query[0].endVerticesQuery();
             query[1].endQuery();
@@ -301,10 +291,6 @@ public class App {
 
             //spriteRenderer.getMatrixProjection(orthoSpriteMatrix);
             //spriteRenderer.drawRectangle(0, 0, 100, 100, new Vector3f(1.0f), 1);
-
-            if(collision.intersects(collision2)) {
-                textRenderer.renderText("Intersecting each other" , 300, 200, 0.2f);
-            }
 
             if(Input.is_debug) {
                 textRenderer.renderText("MyCraft " + version + " Vanilla\n" +

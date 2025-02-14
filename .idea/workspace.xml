@@ -10,9 +10,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.PVS-Studio/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/.PVS-Studio/settings.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Chunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Chunk.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Physics/CubeCollision.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Physics/CubeCollision.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Camera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Camera.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,6 +78,7 @@
     "Gradle.MInecraft-Clone [:GameLayer.Rendering.GUI.GLFWDemo.main()].executor": "Run",
     "Gradle.MInecraft-Clone [:Main.main()].executor": "Run",
     "Gradle.MInecraft-Clone.executor": "Run",
+    "Gradle.MyCraft [:Main.main()].executor": "Run",
     "Gradle.OGL [:Main.main()].executor": "Run",
     "Java Scratch.MC 0.0.0.1.executor": "Run",
     "Repository.Attach.Annotations": "false",
@@ -87,7 +90,7 @@
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Client/Documents/GitHub/Minecraft-Clone/out/artifacts",
+    "last_opened_file_path": "C:/Users/Client/Documents/GitHub/MyCraft",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -110,11 +113,11 @@
       <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\src\main\resources\textures\blocks" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Client\Documents\GitHub\MyCraft\src\main\java\GameLayer" />
       <recent name="C:\Users\Client\Documents\GitHub\Minecraft-Clone\assets\shaders" />
       <recent name="C:\Users\Client\Documents\GitHub\Minecraft-Clone\assets\textures" />
       <recent name="C:\Users\Client\Documents\GitHub\Minecraft-Clone\assets" />
       <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\src\main\resources\fonts" />
-      <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\src\main\java\GameLayer\Rendering\GUI" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="" />
@@ -161,6 +164,7 @@
       <workItem from="1739407939142" duration="4628000" />
       <workItem from="1739443698948" duration="20217000" />
       <workItem from="1739468620864" duration="18681000" />
+      <workItem from="1739542314899" duration="2161000" />
     </task>
     <servers />
   </component>

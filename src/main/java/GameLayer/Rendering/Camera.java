@@ -1,5 +1,6 @@
 package GameLayer.Rendering;
 
+import GameLayer.Physics.CubeCollision;
 import org.joml.*;
 import java.lang.Math;
 
@@ -23,6 +24,7 @@ public class Camera {
     private static final float ZOOM = 45.0f;
 
     // camera Attributes
+    public CubeCollision collision;
     public Vector3f Position;
     private Vector3f Front = new Vector3f(0.0f, 0.0f, -1.0f);
     private final Vector3f Up = new Vector3f();
@@ -46,6 +48,7 @@ public class Camera {
         this.WorldUp = new Vector3f(0.f, 1.f, 0.f);
         this.Yaw = YAW;
         this.Pitch = PITCH;
+        collision = new CubeCollision(Position, new Vector3f(1, 2, 1));
         updateCameraVectors();
     }
     public Camera(Vector3f position) {
@@ -53,6 +56,7 @@ public class Camera {
         this.WorldUp = new Vector3f(0.f, 1.f, 0.f);
         this.Yaw = YAW;
         this.Pitch = PITCH;
+        collision = new CubeCollision(Position, new Vector3f(1, 2, 1));
         updateCameraVectors();
     }
 
@@ -61,6 +65,7 @@ public class Camera {
         this.WorldUp = new Vector3f(up);
         this.Yaw = YAW;
         this.Pitch = PITCH;
+        collision = new CubeCollision(Position, new Vector3f(1, 2, 1));
         updateCameraVectors();
     }
     public Camera(Vector3f position, Vector3f up, float yaw) {
@@ -68,6 +73,7 @@ public class Camera {
         this.WorldUp = new Vector3f(up);
         this.Yaw = yaw;
         this.Pitch = PITCH;
+        collision = new CubeCollision(Position, new Vector3f(1, 2, 1));
         updateCameraVectors();
     }
 
@@ -76,6 +82,7 @@ public class Camera {
         this.WorldUp = new Vector3f(up);
         this.Yaw = yaw;
         this.Pitch = pitch;
+        collision = new CubeCollision(Position, new Vector3f(1, 2, 1));
         updateCameraVectors();
     }
     //Camera constructor with scalar values
@@ -84,6 +91,7 @@ public class Camera {
         this.WorldUp = new Vector3f(upX, upY, upZ);
         this.Yaw = yaw;
         this.Pitch = pitch;
+        collision = new CubeCollision(Position, new Vector3f(1, 2, 1));
         updateCameraVectors();
     }
 
@@ -109,16 +117,16 @@ public class Camera {
         float velocity = MovementSpeed * deltaTime;
 
         if (direction == Camera_Movement.FORWARD) {
-            Position.add(Front.mul(velocity));
+            collision.position.add(Front.mul(velocity));
         }
         if (direction == Camera_Movement.BACKWARD) {
-            Position.add(Front.mul(-velocity));
+            collision.position.add(Front.mul(-velocity));
         }
         if (direction == Camera_Movement.LEFT) {
-            Position.add(Right.mul(velocity));
+            collision.position.add(Right.mul(velocity));
         }
         if (direction == Camera_Movement.RIGHT) {
-            Position.add(Right.mul(-velocity));
+            collision.position.add(Right.mul(-velocity));
         }
         updateCameraVectors();
     }
@@ -156,6 +164,11 @@ public class Camera {
         // also re-calculate the Right and Up vector
         Right.set(WorldUp).cross(Front).normalize();
         Up.set(Front).cross(Right).normalize();
+
+        Position = new Vector3f(collision.position.x+0.5f , collision.position.y+1.5f, collision.position.z+0.5f);
+        //Position.x = collision.position.x+0.5f;
+        //Position.y = collision.position.y+1.5f;
+        //Position.z = collision.position.z+0.5f;
     }
 
     // Getters

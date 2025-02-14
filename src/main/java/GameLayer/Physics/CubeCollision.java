@@ -56,12 +56,10 @@ public class CubeCollision {
         };
     }
 
-    public void drawAABB(boolean isColliding) {
+    public void drawAABB() {
         Vector3f[] vertices = getVertices();
 
-        float[] color = isColliding ? new float[]{1.0f, 0.0f, 0.0f} : new float[]{0.0f, 1.0f, 0.0f};
-
-        glColor3f(color[0], color[1], color[2]); // Rouge si collision, Vert sinon
+        glColor3f(1, 1,1);
         glBegin(GL_LINES);
 
         // Bas
@@ -88,6 +86,26 @@ public class CubeCollision {
     private void drawLine(Vector3f v1, Vector3f v2) {
         glVertex3f(v1.x + position.x, v1.y + position.y, v1.z + position.z);
         glVertex3f(v2.x + position.x, v2.y + position.y, v2.z + position.z);
+    }
+
+    public static void resolveCollision(CubeCollision blockA, CubeCollision blockB, float deltaTime) {
+        if (!blockA.intersects(blockB)) return; // Pas de collision
+
+        Vector3f centerA = blockA.getCenter();
+        Vector3f centerB = blockB.getCenter();
+
+        Vector3f direction = centerB.sub(centerA).normalize();
+
+        blockB.position.add(direction.mul(deltaTime*5));
+
+    }
+
+    public Vector3f getCenter() {
+        return new Vector3f(
+                (min.x + max.x) / 2.0f,
+                (min.y + max.y) / 2.0f,
+                (min.z + max.z) / 2.0f
+        );
     }
     
 }
