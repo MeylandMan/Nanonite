@@ -9,6 +9,7 @@ import GameLayer.Rendering.GUI.Text.Font;
 import GameLayer.Rendering.GUI.Text.FontLoader;
 import GameLayer.Rendering.GUI.Text.TextRenderer;
 import GameLayer.Rendering.Model.SpriteMesh;
+import GameLayer.World;
 import org.joml.*;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
@@ -46,6 +47,7 @@ public class App {
     SpriteMesh surface2D;
 
     Camera camera = new Camera(new Vector3f(0.f, 0.f, -3.f));
+    World world;
     float delta;
     float lastFrame;
 
@@ -197,7 +199,7 @@ public class App {
 
         Chunk chunk = new Chunk(scene, new Vector3f());
 
-        System.out.println("MAX TEXTURE YOU CAN LOAD : " + GL_MAX_TEXTURE_IMAGE_UNITS);
+        //System.out.println("MAX TEXTURE YOU CAN LOAD : " + GL_MAX_TEXTURE_IMAGE_UNITS); 34930
         FPSMonitor fpsMonitor = new FPSMonitor();
 
         Query[] query = {
@@ -220,7 +222,10 @@ public class App {
             e.printStackTrace();
         }
 
-        collision = new CubeCollision(new Vector3f(-10, 3, 0), new Vector3f(1));
+        world = new World();
+        world.addCollision(camera.collision);
+        world.addCollision(new CubeCollision(new Vector3f(-10, 3, 0), new Vector3f(1)));
+
         while ( !glfwWindowShouldClose(window) ) {
             int error;
             while ((error = glGetError()) != GL_NO_ERROR) {
@@ -269,8 +274,7 @@ public class App {
             query[2].startTransformFeedbackQuery();
 
             renderer.DrawScene(scene, shader);
-            collision.drawAABB();
-            camera.collision.drawAABB();
+            world.onRender();
 
             query[0].endVerticesQuery();
             query[1].endQuery();
@@ -304,6 +308,7 @@ public class App {
                         10, 150, 0.3f);
             }
 
+            world.onUpdate(camera, delta);
             glfwSwapBuffers(window);
             glfwPollEvents();
         }

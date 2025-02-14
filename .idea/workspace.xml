@@ -10,11 +10,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.PVS-Studio/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/.PVS-Studio/settings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Physics/CubeCollision.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Physics/CubeCollision.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Camera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Camera.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -164,7 +160,7 @@
       <workItem from="1739407939142" duration="4628000" />
       <workItem from="1739443698948" duration="20217000" />
       <workItem from="1739468620864" duration="18681000" />
-      <workItem from="1739542314899" duration="2161000" />
+      <workItem from="1739542314899" duration="2584000" />
     </task>
     <servers />
   </component>
