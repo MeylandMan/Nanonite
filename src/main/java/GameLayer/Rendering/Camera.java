@@ -1,6 +1,7 @@
 package GameLayer.Rendering;
 
 import GameLayer.Physics.CubeCollision;
+import static GameLayer.World.*;
 import org.joml.*;
 import java.lang.Math;
 
@@ -115,22 +116,44 @@ public class Camera {
 
     void ProcessKeyboard(Camera_Movement direction, float deltaTime)
     {
-
         float velocity = MovementSpeed * deltaTime;
-        Vector3f Bidimensional = new Vector3f(Front.x, 0, Front.z);
+        float X = 0;
+        float Y = 0;
+        float Z = 0;
 
-        if (direction == Camera_Movement.FORWARD)
-            collision.position.add(Bidimensional.mul(velocity));
-        if (direction == Camera_Movement.BACKWARD)
-            collision.position.add(Bidimensional.mul(-velocity));
-        if (direction == Camera_Movement.LEFT)
-            collision.position.add(Right.mul(velocity));
-        if (direction == Camera_Movement.RIGHT)
-            collision.position.add(Right.mul(-velocity));
-        if(direction == Camera_Movement.UP)
-            collision.position.y += MovementSpeed * deltaTime;
-        if(direction == Camera_Movement.DOWN)
-            collision.position.y -= MovementSpeed * deltaTime;
+        if (direction == Camera_Movement.FORWARD) {
+            X += Front.x * velocity;
+            Z += Front.z * velocity;
+        }
+        if (direction == Camera_Movement.BACKWARD) {
+            X -= Front.x * velocity;
+            Z -= Front.z * velocity;
+        }
+        if (direction == Camera_Movement.LEFT) {
+            X += Right.x * velocity;
+            Z += Right.z * velocity;
+        }
+        if (direction == Camera_Movement.RIGHT) {
+            X -= Right.x * velocity;
+            Z -= Right.z * velocity;
+        }
+        if(direction == Camera_Movement.UP) {
+            Y += velocity;
+        }
+        if(direction == Camera_Movement.DOWN) {
+            Y -= velocity;
+        }
+
+
+        /*
+
+        */
+
+        collision.position.x += X;
+        collision.position.y += Y;
+        collision.position.z += Z;
+
+        
 
         updateCameraVectors();
     }

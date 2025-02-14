@@ -7,8 +7,8 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class CubeCollision {
     public Vector3f position;
-    private Vector3f min;
-    private Vector3f max;
+    public Vector3f min;
+    public Vector3f max;
 
     public CubeCollision(Vector3f position, Vector3f size) {
         this.min = new Vector3f(Math.min(0, size.x), Math.min(0, size.y), Math.min(0, size.z));
@@ -88,15 +88,24 @@ public class CubeCollision {
         glVertex3f(v2.x + position.x, v2.y + position.y, v2.z + position.z);
     }
 
+    public static Vector3f getIntersectionCenter(CubeCollision a, CubeCollision b) {
+        float interMinX = Math.max(a.min.x, b.min.x);
+        float interMinY = Math.max(a.min.y, b.min.y);
+        float interMinZ = Math.max(a.min.z, b.min.z);
+
+        float interMaxX = Math.min(a.max.x, b.max.x);
+        float interMaxY = Math.min(a.max.y, b.max.y);
+        float interMaxZ = Math.min(a.max.z, b.max.z);
+
+        return new Vector3f(
+                (interMinX + interMaxX) / 2.0f,
+                (interMinY + interMaxY) / 2.0f,
+                (interMinZ + interMaxZ) / 2.0f
+        );
+    }
+
     public static void resolveCollision(CubeCollision blockA, CubeCollision blockB, float deltaTime) {
         if (!blockA.intersects(blockB)) return; // Pas de collision
-
-        Vector3f centerA = blockA.getCenter();
-        Vector3f centerB = blockB.getCenter();
-
-        Vector3f direction = centerB.sub(centerA).normalize();
-
-        blockB.position.add(direction.mul(deltaTime*5));
 
     }
 

@@ -4,6 +4,7 @@ package GameLayer.Rendering;
 import GameLayer.FPSMonitor;
 import GameLayer.Chunk;
 import GameLayer.Physics.CubeCollision;
+import GameLayer.Physics.Raycast;
 import GameLayer.Rendering.GUI.SpriteRenderer;
 import GameLayer.Rendering.GUI.Text.Font;
 import GameLayer.Rendering.GUI.Text.FontLoader;
@@ -224,6 +225,8 @@ public class App {
         world.addCollision(camera.collision);
         world.addCollision(new CubeCollision(new Vector3f(-10, 3, 0), new Vector3f(1)));
 
+        Raycast raycast = new Raycast(camera.Position, camera.getFront());
+
         while ( !glfwWindowShouldClose(window) ) {
             int error;
             while ((error = glGetError()) != GL_NO_ERROR) {
@@ -267,6 +270,11 @@ public class App {
             glFrontFace(GL_CW);
 
             renderer.DrawScene(scene, shader);
+
+            raycast.origin = camera.Position;
+            raycast.direction = camera.getFront();
+            raycast.drawRay(10);
+
             world.onRender();
 
             // Rendering something //

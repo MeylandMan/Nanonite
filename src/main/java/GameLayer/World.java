@@ -6,27 +6,28 @@ import GameLayer.Rendering.Camera;
 import java.util.ArrayList;
 
 public class World {
-    ArrayList<CubeCollision> collisions;
+    public static ArrayList<CubeCollision> worldCollisions;
+
     public static final float GRAVITY = 0;
 
     public World() {
-        collisions = new ArrayList<>();
+        worldCollisions = new ArrayList<>();
     }
 
     public void addCollision(CubeCollision collision) {
-        collisions.add(collision);
+        worldCollisions.add(collision);
     }
 
     public ArrayList<CubeCollision> getCollisions() {
-        return collisions;
+        return worldCollisions;
     }
 
     public CubeCollision getCollisions(int index) {
-        return collisions.get(index);
+        return worldCollisions.get(index);
     }
 
     public void onUpdate(Camera camera, float deltaTime) {
-        for(CubeCollision collision : collisions) {
+        for(CubeCollision collision : worldCollisions) {
             if(collision == camera.collision)
                 continue;
             if(collision.intersects(camera.collision)) {
@@ -37,7 +38,7 @@ public class World {
     }
 
     public void onRender() {
-        for(CubeCollision collision : collisions) {
+        for(CubeCollision collision : worldCollisions) {
             collision.drawAABB();
         }
     }
