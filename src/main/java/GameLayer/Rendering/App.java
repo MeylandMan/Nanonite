@@ -51,11 +51,15 @@ public class App {
     float delta;
     float lastFrame;
 
+    private final int DEFAULT_WIDTH;
+    private final int DEFAULT_HEIGHT;
     public App(int width, int height, String title) {
         this.m_Title = title;
 
         this.lastX = (float)m_Width/2;
         this.lastY = (float)m_Height/2;
+        this.DEFAULT_WIDTH = width;
+        this.DEFAULT_HEIGHT = height;
     }
 
     private void ProcessInput(long window) {
@@ -68,6 +72,10 @@ public class App {
                 camera.ProcessKeyboard(Camera.Camera_Movement.LEFT, delta);
             if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
                 camera.ProcessKeyboard(Camera.Camera_Movement.RIGHT, delta);
+            if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+                camera.ProcessKeyboard(Camera.Camera_Movement.UP, delta);
+            if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+                camera.ProcessKeyboard(Camera.Camera_Movement.DOWN, delta);
         }
     }
 
@@ -106,7 +114,7 @@ public class App {
         //glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-        window = glfwCreateWindow(1280, 720, m_Title, NULL, NULL);
+        window = glfwCreateWindow(DEFAULT_WIDTH, DEFAULT_HEIGHT, m_Title, NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
 
@@ -242,7 +250,6 @@ public class App {
                 glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
             renderer.ClearColor();
-
 
 
             shader.Bind();

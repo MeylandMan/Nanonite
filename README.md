@@ -16,11 +16,6 @@ All you have to do is just build the project and test it.
 
 ## Controls
 </br>
-### Camera
-</br>
-Instead of the weird minecraft camera movement in spectator mode, this project offers you to move tri-dimensionally according the the direction where the camera is facing.
-</br>
-It may sounds good for moving but quite tidious when you just want to go down or up
 
 ### Keyboard & Mouse
 </br>
@@ -29,6 +24,8 @@ Use the mouse to control where the camera is facing.
 Use WASD (or ZQSD if you're on Azerty) to move the player
 </br>
 Hit F3 to check the debug infos (just like Minecraft haha)
+</br>
+Use SPACE to go up and LEFT SHIFT to go down
 
 ## Features
 </br>

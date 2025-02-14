@@ -31,6 +31,7 @@ public class World {
                 continue;
             if(collision.intersects(camera.collision)) {
                 CubeCollision.resolveCollision(collision, camera.collision, deltaTime);
+                camera.updateCameraVectors();
             }
         }
     }

@@ -13,7 +13,9 @@ public class Camera {
         FORWARD,
         BACKWARD,
         LEFT,
-        RIGHT
+        RIGHT,
+        UP,
+        DOWN
     }
 
     // Default camera values
@@ -115,19 +117,21 @@ public class Camera {
     {
 
         float velocity = MovementSpeed * deltaTime;
+        Vector3f Bidimensional = new Vector3f(Front.x, 0, Front.z);
 
-        if (direction == Camera_Movement.FORWARD) {
-            collision.position.add(Front.mul(velocity));
-        }
-        if (direction == Camera_Movement.BACKWARD) {
-            collision.position.add(Front.mul(-velocity));
-        }
-        if (direction == Camera_Movement.LEFT) {
+        if (direction == Camera_Movement.FORWARD)
+            collision.position.add(Bidimensional.mul(velocity));
+        if (direction == Camera_Movement.BACKWARD)
+            collision.position.add(Bidimensional.mul(-velocity));
+        if (direction == Camera_Movement.LEFT)
             collision.position.add(Right.mul(velocity));
-        }
-        if (direction == Camera_Movement.RIGHT) {
+        if (direction == Camera_Movement.RIGHT)
             collision.position.add(Right.mul(-velocity));
-        }
+        if(direction == Camera_Movement.UP)
+            collision.position.y += MovementSpeed * deltaTime;
+        if(direction == Camera_Movement.DOWN)
+            collision.position.y -= MovementSpeed * deltaTime;
+
         updateCameraVectors();
     }
 
@@ -150,7 +154,7 @@ public class Camera {
     }
 
     // calculates the front vector from the Camera's (updated) Euler Angles
-    private void updateCameraVectors()
+    public void updateCameraVectors()
     {
         float yawRad = (float) Math.toRadians(Yaw);
         float pitchRad = (float) Math.toRadians(Pitch);
@@ -166,9 +170,7 @@ public class Camera {
         Up.set(Front).cross(Right).normalize();
 
         Position = new Vector3f(collision.position.x+0.5f , collision.position.y+1.5f, collision.position.z+0.5f);
-        //Position.x = collision.position.x+0.5f;
-        //Position.y = collision.position.y+1.5f;
-        //Position.z = collision.position.z+0.5f;
+
     }
 
     // Getters
