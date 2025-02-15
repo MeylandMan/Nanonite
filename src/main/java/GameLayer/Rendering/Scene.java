@@ -34,6 +34,8 @@ public class Scene {
             shader.UniformMatrix4x4("u_Model", obj.getModelMatrix());
             obj.DrawMesh(shader);
         }
+
+
     }
 
 

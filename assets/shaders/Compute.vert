@@ -59,5 +59,6 @@ void main() {
     // Assigner les coordonnées de texture (UV)
     v_TexCoords = texCoords[vertexIndex % 6];
 
-    gl_Position = projection * view * model * vec4(fragPos, 1.0);
+    mat4 temp = mat4(1.0);
+    gl_Position = projection * view * temp * vec4(fragPos, 1.0);
 }

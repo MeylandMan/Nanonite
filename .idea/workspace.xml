@@ -12,7 +12,10 @@
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/shaders/Compute.vert" beforeDir="false" afterPath="$PROJECT_DIR$/assets/shaders/Compute.vert" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Renderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Renderer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Scene.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Scene.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/Chunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/Chunk.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -179,7 +182,7 @@
       <workItem from="1739542314899" duration="19298000" />
       <workItem from="1739596957280" duration="4507000" />
       <workItem from="1739634554721" duration="177000" />
-      <workItem from="1739658087900" duration="1547000" />
+      <workItem from="1739658087900" duration="4068000" />
     </task>
     <servers />
   </component>
@@ -229,6 +232,11 @@
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo parentTag="Chunk" memberName="blocks" />
+      </pinned-members>
+    </pin-to-top-manager>
     <watches-manager>
       <configuration name="GradleRunConfiguration">
         <watch expression="layout.m_Elements" />

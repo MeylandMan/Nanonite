@@ -33,8 +33,6 @@ public class Chunk extends _Object {
     }
 
     private void setupChunk(Scene scene) {
-        ArrayList<Byte> vertices = new ArrayList<>();
-        ArrayList<Integer> indices = new ArrayList<>();
 
         // Add Blocks inside the chunk
         int zz = 2;
@@ -62,134 +60,41 @@ public class Chunk extends _Object {
             }
         }
 
-        // Check if we can add faces
-        for(int x = 0; x < X_DIMENSION; x++) {
-            for(int y = 0; y < Y_DIMENSION; y++) {
-                for(int z = 0; z < Z_DIMENSION; z++) {
-                    if(blocks[x][y][z].type == Block.BlockType.AIR)
-                        continue;
-                    renderBlock(vertices, indices, x, y, z);
-                }
-            }
-        }
-
-        Init(vertices, indices);
+        InitTextures();
         AddToScene(scene);
 
-    }
-    public void renderBlock(ArrayList<Byte> vertices, ArrayList<Integer> indices, int x, int y, int z) {
-        if (shouldRenderFace(x, y, z, Block.Faces.FRONT)) {
-            BlockData.createFaceVertices(vertices, blocks[x][y][z], Block.Faces.FRONT);
-            BlockData.createFaceIndices(indices, Block.Faces.FRONT);
-        }
-        if (shouldRenderFace(x, y, z, Block.Faces.BACK)) {
-            BlockData.createFaceVertices(vertices, blocks[x][y][z], Block.Faces.BACK);
-            BlockData.createFaceIndices(indices, Block.Faces.BACK);
-        }
-        if (shouldRenderFace(x, y, z, Block.Faces.RIGHT)) {
-            BlockData.createFaceVertices(vertices, blocks[x][y][z], Block.Faces.RIGHT);
-            BlockData.createFaceIndices(indices, Block.Faces.RIGHT);
-        }
-        if (shouldRenderFace(x, y, z, Block.Faces.LEFT)) {
-            BlockData.createFaceVertices(vertices, blocks[x][y][z], Block.Faces.LEFT);
-            BlockData.createFaceIndices(indices, Block.Faces.LEFT);
-        }
-        if (shouldRenderFace(x, y, z, Block.Faces.BOTTOM)) {
-            BlockData.createFaceVertices(vertices, blocks[x][y][z], Block.Faces.BOTTOM);
-            BlockData.createFaceIndices(indices, Block.Faces.BOTTOM);
-        }
-        if (shouldRenderFace(x, y, z, Block.Faces.TOP)) {
-            BlockData.createFaceVertices(vertices, blocks[x][y][z], Block.Faces.TOP);
-            BlockData.createFaceIndices(indices, Block.Faces.TOP);
-        }
-        length = indices.size();
-    }
-
-    private boolean shouldRenderFace(int x, int y, int z, @NotNull Block.Faces face) {
-        int nx = x, ny = y, nz = z;
-
-        switch (face) {
-            case RIGHT:  nx -= 1; break; // -X
-            case LEFT:   nx += 1; break; // +X
-            case FRONT:  nz -= 1; break; // -Z
-            case BACK:   nz += 1; break; // +Z
-            case BOTTOM: ny -= 1; break; // -Y
-            case TOP:    ny += 1; break; // +Y
-        }
-
-        // Check if the current block is not AIR or VOID
-        if(blocks[x][y][z].type == Block.BlockType.AIR) {
-            return false;
-        }
-
-        // Vérifier si la face est en bordure du chunk
-        if (nx < 0 || nx >= X_DIMENSION || ny < 0 || ny >= Y_DIMENSION || nz < 0 || nz >= Z_DIMENSION) {
-            return true; // Bordure -> Afficher la face
-        }
-
-        // Vérifier si le bloc adjacent est de type AIR
-        return (blocks[nx][ny][nz].type == Block.BlockType.AIR);
     }
 
     @Override
     public void Delete() {
         for(Texture texture : textures)
             texture.Delete();
-        vao.Delete();
-        vbo.Delete();
-        ebo.Delete();
     }
 
     @Override
     public void DrawMesh(Shader shader) {
+        /*
 
         int[] samplers = new int[textures.length];
         for(int i = 0; i < textures.length; i++) {
             samplers[i] = i;
-            textures[i].Bind(i);
+
         }
-        shader.Uniform1iv("u_Textures", samplers);
+         */
 
-        vao.Bind();
-        ebo.Bind();
-
-        glDrawElements(GL_TRIANGLES, length, GL_UNSIGNED_INT, 0);
-
-        vao.UnBind();
-        ebo.UnBind();
-
-        for (Texture texture : textures) {
-            texture.Unbind();
-        }
+        glDrawArrays(GL_TRIANGLES, 0, 36*16*255*16);
     }
 
-    @Override
-    public void Init(ArrayList<Byte> vertices, ArrayList<Integer> indices) {
+    public void InitTextures() {
         if (!GL.getCapabilities().OpenGL30) {
             throw new IllegalStateException("OpenGL 3.0 unavailable !");
         }
-
-        vao = new VAO();
-        vbo = new VBO(GL_DYNAMIC_DRAW);
-        ebo = new EBO(GL_DYNAMIC_DRAW);
-
-        VertexBufferLayout layout = new VertexBufferLayout();
         textures = new Texture[TEXTURE_LOADED];
         for(int i = 0; i < textures.length; i++) {
             textures[i] = new Texture(BlockData.getTexturePath(i));
         }
-
-        // Initialize them
-        //vbo.Init(4 * 9 * (X_DIMENSION * Y_DIMENSION * Z_DIMENSION));
-        vbo.Init(vertices);
-        layout.AddBytes(3);
-        layout.AddBytes(2);
-        layout.AddBytes(3);
-        layout.AddBytes(1);
-        vao.AddBuffer(vbo, layout);
-
-        ebo.Init(indices);
     }
+
     public Block GetBlock(int x) {
         return blocks[x][0][0];
     }

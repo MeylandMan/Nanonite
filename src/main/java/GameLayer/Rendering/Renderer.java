@@ -23,6 +23,8 @@ public class Renderer {
     }
     public void DrawScene(Scene scene, Shader shader) {
         scene.Draw(shader);
+
+
     }
 
 
