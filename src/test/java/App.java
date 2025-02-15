@@ -6,6 +6,7 @@ import GameLayer.Rendering.Model.SpriteMesh;
 import GameLayer.Rendering.Renderer;
 import GameLayer.Rendering.Scene;
 import GameLayer.Rendering.Shader;
+import GameLayer.Rendering.Texture;
 import GameLayer.World;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -216,6 +217,7 @@ public class App {
 
         int delayTime = 0;
 
+        Texture texture = new Texture("blocks/dirt.png");
         while ( !glfwWindowShouldClose(window) ) {
             int error;
             while ((error = glGetError()) != GL_NO_ERROR) {
@@ -252,13 +254,17 @@ public class App {
             glCullFace(GL_FRONT);
             glFrontFace(GL_CW);
 
+            texture.Bind();
             shader.Bind();
 
+            shader.Uniform1i("u_Texture", 0);
             shader.UniformMatrix4x4("model", new Matrix4f().identity());
             shader.UniformMatrix4x4("view", camera.GetViewMatrix());
             shader.UniformMatrix4x4("projection", camera.GetProjectionMatrix(m_Width, m_Height));
 
-            glDrawArrays(GL_TRIANGLES, 0, 36);
+            glDrawArrays(GL_TRIANGLES, 0, 72);
+
+            texture.Unbind();
 
             // Rendering something //
             Matrix4f orthoTextMatrix = new Matrix4f().identity()
