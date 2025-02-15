@@ -13,7 +13,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class _Object {
 
-    int length;
+    protected int length;
     protected VAO vao;
     protected VBO vbo;
     protected EBO ebo;
