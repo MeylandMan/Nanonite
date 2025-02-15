@@ -262,7 +262,7 @@ public class App {
             shader.UniformMatrix4x4("view", camera.GetViewMatrix());
             shader.UniformMatrix4x4("projection", camera.GetProjectionMatrix(m_Width, m_Height));
 
-            glDrawArrays(GL_TRIANGLES, 0, 72);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
 
             texture.Unbind();
 
