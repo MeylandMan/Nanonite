@@ -19,6 +19,7 @@ import org.lwjgl.system.*;
 import Core.Input.Input;
 
 
+import java.lang.Math;
 import java.nio.IntBuffer;
 import java.util.*;
 
@@ -226,6 +227,8 @@ public class App {
         world.addCollision(new CubeCollision(new Vector3f(-10, 3, 0), new Vector3f(1)));
 
         Raycast raycast = new Raycast(camera.Position, camera.getFront());
+
+        int delayTime = 0;
 
         while ( !glfwWindowShouldClose(window) ) {
             int error;

@@ -27,14 +27,7 @@ public class World {
     }
 
     public void onUpdate(Camera camera, float deltaTime) {
-        for(CubeCollision collision : worldCollisions) {
-            if(collision == camera.collision)
-                continue;
-            if(collision.intersects(camera.collision)) {
-                CubeCollision.resolveCollision(collision, camera.collision, deltaTime);
-                camera.updateCameraVectors();
-            }
-        }
+
     }
 
     public void onRender() {

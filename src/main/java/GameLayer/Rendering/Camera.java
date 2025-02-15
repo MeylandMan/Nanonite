@@ -43,6 +43,8 @@ public class Camera {
     public float MouseSensitivity = SENSITIVITY;
     public float Zoom = ZOOM;
 
+    // Camera previous positions options
+    private Vector3f prev_position = new Vector3f();
 
     // Camera constructor
     public Camera() {
@@ -51,7 +53,8 @@ public class Camera {
         this.WorldUp = new Vector3f(0.f, 1.f, 0.f);
         this.Yaw = YAW;
         this.Pitch = PITCH;
-        collision = new CubeCollision(Position, new Vector3f(1, 2, 1));
+        collision = new CubeCollision(new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f),
+                new Vector3f(1, 2, 1));
         updateCameraVectors();
     }
     public Camera(Vector3f position) {
@@ -59,7 +62,8 @@ public class Camera {
         this.WorldUp = new Vector3f(0.f, 1.f, 0.f);
         this.Yaw = YAW;
         this.Pitch = PITCH;
-        collision = new CubeCollision(Position, new Vector3f(1, 2, 1));
+        collision = new CubeCollision(new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f),
+                new Vector3f(1, 2, 1));
         updateCameraVectors();
     }
 
@@ -68,7 +72,8 @@ public class Camera {
         this.WorldUp = new Vector3f(up);
         this.Yaw = YAW;
         this.Pitch = PITCH;
-        collision = new CubeCollision(Position, new Vector3f(1, 2, 1));
+        collision = new CubeCollision(new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f),
+                                      new Vector3f(1, 2, 1));
         updateCameraVectors();
     }
     public Camera(Vector3f position, Vector3f up, float yaw) {
@@ -76,7 +81,8 @@ public class Camera {
         this.WorldUp = new Vector3f(up);
         this.Yaw = yaw;
         this.Pitch = PITCH;
-        collision = new CubeCollision(Position, new Vector3f(1, 2, 1));
+        collision = new CubeCollision(new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f),
+                new Vector3f(1, 2, 1));
         updateCameraVectors();
     }
 
@@ -85,7 +91,8 @@ public class Camera {
         this.WorldUp = new Vector3f(up);
         this.Yaw = yaw;
         this.Pitch = pitch;
-        collision = new CubeCollision(Position, new Vector3f(1, 2, 1));
+        collision = new CubeCollision(new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f),
+                new Vector3f(1, 2, 1));
         updateCameraVectors();
     }
     //Camera constructor with scalar values
@@ -94,7 +101,8 @@ public class Camera {
         this.WorldUp = new Vector3f(upX, upY, upZ);
         this.Yaw = yaw;
         this.Pitch = pitch;
-        collision = new CubeCollision(Position, new Vector3f(1, 2, 1));
+        collision = new CubeCollision(new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f),
+                new Vector3f(1, 2, 1));
         updateCameraVectors();
     }
 
@@ -144,16 +152,19 @@ public class Camera {
             Y -= velocity;
         }
 
-
-        /*
-
-        */
-
-        collision.position.x += X;
-        collision.position.y += Y;
-        collision.position.z += Z;
-
         
+        for(CubeCollision collision : worldCollisions) {
+            if(collision == this.collision)
+                continue;
+
+            if(collision.intersects(this.collision)) {
+                X = Y = Z = 0;
+                break;
+            }
+        }
+
+        Position.add(X, Y, Z);
+        collision.position = new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f);
 
         updateCameraVectors();
     }
@@ -177,6 +188,10 @@ public class Camera {
     }
 
     // calculates the front vector from the Camera's (updated) Euler Angles
+    public void updateCameraPrev() {
+        prev_position = new Vector3f(Position);
+    }
+
     public void updateCameraVectors()
     {
         float yawRad = (float) Math.toRadians(Yaw);
@@ -191,8 +206,6 @@ public class Camera {
         // also re-calculate the Right and Up vector
         Right.set(WorldUp).cross(Front).normalize();
         Up.set(Front).cross(Right).normalize();
-
-        Position = new Vector3f(collision.position.x+0.5f , collision.position.y+1.5f, collision.position.z+0.5f);
 
     }
 
