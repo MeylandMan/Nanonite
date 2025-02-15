@@ -11,7 +11,7 @@
   <component name="ChangeListManager">
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/_Object.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/_Object.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/App.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,9 +47,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Interface" />
+        <option value="Class" />
         <option value="vs-template" />
         <option value="fs-template" />
-        <option value="Class" />
       </list>
     </option>
   </component>
@@ -111,11 +111,11 @@
       <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\src\main\resources\textures\blocks" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Client\Documents\GitHub\MyCraft\assets\shaders" />
       <recent name="C:\Users\Client\Documents\GitHub\MyCraft\src\main\java\GameLayer\Physics" />
       <recent name="C:\Users\Client\Documents\GitHub\MyCraft\src\main\java\GameLayer" />
       <recent name="C:\Users\Client\Documents\GitHub\Minecraft-Clone\assets\shaders" />
       <recent name="C:\Users\Client\Documents\GitHub\Minecraft-Clone\assets\textures" />
-      <recent name="C:\Users\Client\Documents\GitHub\Minecraft-Clone\assets" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="" />
@@ -175,7 +175,7 @@
       <workItem from="1739443698948" duration="20217000" />
       <workItem from="1739468620864" duration="18681000" />
       <workItem from="1739542314899" duration="19298000" />
-      <workItem from="1739596957280" duration="1161000" />
+      <workItem from="1739596957280" duration="3232000" />
     </task>
     <servers />
   </component>

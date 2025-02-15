@@ -195,9 +195,9 @@ public class App {
 
         GLCapabilities caps = GL.createCapabilities();
 
-        shader.CreateShader("Default.vert", "Default.frag");
+        shader.CreateShader("Compute.vert", "Compute.frag");
 
-        Chunk chunk = new Chunk(scene, new Vector3f());
+        //Chunk chunk = new Chunk(scene, new Vector3f());
 
         //System.out.println("MAX TEXTURE YOU CAN LOAD : " + GL_MAX_TEXTURE_IMAGE_UNITS); 34930
         FPSMonitor fpsMonitor = new FPSMonitor();
@@ -243,12 +243,6 @@ public class App {
 
             renderer.ClearColor();
 
-
-            shader.Bind();
-
-            shader.UniformMatrix4x4("u_View", camera.GetViewMatrix());
-            shader.UniformMatrix4x4("u_Proj", camera.GetProjectionMatrix(m_Width, m_Height));
-
             // Depth render
             glEnable(GL_DEPTH_TEST);
             glDepthFunc(GL_LESS);
@@ -258,7 +252,13 @@ public class App {
             glCullFace(GL_FRONT);
             glFrontFace(GL_CW);
 
-            renderer.DrawScene(scene, shader);
+            shader.Bind();
+
+            shader.UniformMatrix4x4("model", new Matrix4f().identity());
+            shader.UniformMatrix4x4("view", camera.GetViewMatrix());
+            shader.UniformMatrix4x4("projection", camera.GetProjectionMatrix(m_Width, m_Height));
+
+            glDrawArrays(GL_TRIANGLES, 0, 36);
 
             // Rendering something //
             Matrix4f orthoTextMatrix = new Matrix4f().identity()
