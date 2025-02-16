@@ -4,11 +4,14 @@ package GameLayer.Rendering;
 import org.joml.*;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.system.MemoryUtil;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.util.ArrayList;
 
 import static org.lwjgl.opengl.GL20.*;
 
@@ -111,6 +114,14 @@ public class Shader {
     public void Uniform1iv(String name, int[] x) {
         int location = getUniform(name);
         glUniform1iv(location, x);
+    }
+
+    public void Uniform1iv(String name, ArrayList<Vector3f> x) {
+        int location = getUniform(name);
+
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(x.size());
+        buffer.put(x.size()).flip();
+        glUniform1fv(location, buffer);
     }
 
     public void Uniform2i(String name, int x, int y) {

@@ -1,4 +1,5 @@
-#version 330 core
+#version 460 core
+
 out vec3 fragPos;
 
 out vec2 v_TexCoords;
@@ -43,6 +44,14 @@ vec2(0.0, 0.0), vec2(1.0, 0.0), vec2(1.0, 1.0),
 vec2(0.0, 0.0), vec2(1.0, 1.0), vec2(0.0, 1.0)
 );
 
+uniform int BlockIDs[CHUNK_SIZE_X*CHUNK_SIZE_Y*CHUNK_SIZE_Z];
+uniform bool BlockOpacity[CHUNK_SIZE_X*CHUNK_SIZE_Y*CHUNK_SIZE_Z];
+
+layout(std430, binding = 0) buffer BlockData {
+    vec3 BlockPosition[];
+    int BlockID[];
+};
+
 void main() {
 
     int cubeIndex = int(gl_VertexID/36);
@@ -52,9 +61,9 @@ void main() {
     int x = cubeIndex % CHUNK_SIZE_X;
     int y = (cubeIndex / CHUNK_SIZE_X) % CHUNK_SIZE_Y;
     int z = (cubeIndex / (CHUNK_SIZE_X * CHUNK_SIZE_Y)) % CHUNK_SIZE_Z;
-    vec3 blockPosition = vec3(x, y, z);
+    //vec3 blockPosition = vec3(x, y, z);
 
-    fragPos = cubeVertices[vertexIndex] + blockPosition;
+    fragPos = cubeVertices[vertexIndex] + BlockPosition[cubeIndex];
 
     // Assigner les coordonnées de texture (UV)
     v_TexCoords = texCoords[vertexIndex % 6];

@@ -216,7 +216,6 @@ public class App {
         }
 
         int delayTime = 0;
-        Texture texture  = new Texture("blocks/dirt.png");
 
         while ( !glfwWindowShouldClose(window) ) {
             int error;
@@ -254,12 +253,8 @@ public class App {
             glCullFace(GL_FRONT);
             glFrontFace(GL_CW);
 
-            texture.Bind();
-
-
             shader.Bind();
 
-            shader.Uniform1i("u_Texture", 0);
             shader.UniformMatrix4x4("view", camera.GetViewMatrix());
             shader.UniformMatrix4x4("projection", camera.GetProjectionMatrix(m_Width, m_Height));
 

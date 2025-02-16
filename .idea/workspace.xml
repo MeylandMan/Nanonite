@@ -11,10 +11,12 @@
   <component name="ChangeListManager">
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/shaders/Compute.vert" beforeDir="false" afterPath="$PROJECT_DIR$/assets/shaders/Compute.vert" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Renderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Renderer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Scene.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Scene.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/shaders/Compute.vert" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Shader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Shader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/VBO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/VBO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/Block.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/Block.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/BlockData.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/Chunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/Chunk.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -52,8 +54,10 @@
       <list>
         <option value="Interface" />
         <option value="Class" />
-        <option value="vs-template" />
         <option value="fs-template" />
+        <option value="cs-template" />
+        <option value="shader-template" />
+        <option value="vs-template" />
       </list>
     </option>
   </component>
@@ -183,6 +187,7 @@
       <workItem from="1739596957280" duration="4507000" />
       <workItem from="1739634554721" duration="177000" />
       <workItem from="1739658087900" duration="4068000" />
+      <workItem from="1739680312783" duration="7386000" />
     </task>
     <servers />
   </component>
