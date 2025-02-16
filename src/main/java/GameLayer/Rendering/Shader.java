@@ -119,14 +119,7 @@ public class Shader {
     public void Uniform1iv(String name, IntBuffer x) {
         int location = getUniform(name);
         glUniform1iv(location, x);
-    }
-
-    public void Uniform1iv(String name, ArrayList<Vector3f> x) {
-        int location = getUniform(name);
-
-        FloatBuffer buffer = BufferUtils.createFloatBuffer(x.size());
-        buffer.put(x.size()).flip();
-        glUniform1fv(location, buffer);
+        MemoryUtil.memFree(x);
     }
 
     public void Uniform2i(String name, int x, int y) {

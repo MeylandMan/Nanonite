@@ -93,9 +93,11 @@ public class Chunk extends _Object {
         */
 
         blockdrawn = 0;
+
         int estimatedSize = X_DIMENSION * Y_DIMENSION * Z_DIMENSION * 4; // 3 position + 1 ID
-        FloatBuffer buffer = BufferUtils.createFloatBuffer(estimatedSize);
-        IntBuffer opacity = BufferUtils.createIntBuffer(X_DIMENSION * Y_DIMENSION * Z_DIMENSION);
+        FloatBuffer buffer = MemoryUtil.memAllocFloat(estimatedSize);
+        IntBuffer opacity = MemoryUtil.memAllocInt(X_DIMENSION * Y_DIMENSION * Z_DIMENSION);
+
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int y = 0; y < Y_DIMENSION; y++) {
                 for(int z = 0; z < Z_DIMENSION; z++) {
@@ -132,9 +134,6 @@ public class Chunk extends _Object {
         shader.Uniform3f("Position", positionX, positionY, positionZ);
 
         glDrawArrays(GL_TRIANGLES, 0, 36*blockdrawn);
-
-        MemoryUtil.memFree(buffer);
-        MemoryUtil.memFree(opacity);
     }
 
     public void InitTextures() {

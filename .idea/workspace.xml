@@ -11,8 +11,11 @@
   <component name="ChangeListManager">
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hs_err_pid13632.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/hs_err_pid14060.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/hs_err_pid15300.log" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Shader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Shader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/VBO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/VBO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/Chunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/Chunk.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -183,7 +186,7 @@
       <workItem from="1739596957280" duration="4507000" />
       <workItem from="1739634554721" duration="177000" />
       <workItem from="1739658087900" duration="4068000" />
-      <workItem from="1739680312783" duration="11407000" />
+      <workItem from="1739680312783" duration="12790000" />
     </task>
     <servers />
   </component>
