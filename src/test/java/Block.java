@@ -2,6 +2,15 @@ import GameLayer._Object;
 import org.joml.Vector3f;
 
 public class Block extends _Object {
+    public enum Faces {
+        FRONT,
+        BACK,
+        RIGHT,
+        LEFT,
+        TOP,
+        BOTTOM
+    }
+
     // -1 = AIR
     int ID = -1;
     BlockType type = BlockType.AIR;
