@@ -3,6 +3,7 @@
 out vec3 fragPos;
 
 out vec2 v_TexCoords;
+out float TextureIndex;
 
 uniform mat4 projection;
 uniform mat4 view;
@@ -22,12 +23,15 @@ vec2(0.0, 0.0), vec2(1.0, 1.0), vec2(0.0, 1.0)
 uniform int BlockIDs[CHUNK_SIZE_X*CHUNK_SIZE_Y*CHUNK_SIZE_Z];
 uniform bool BlockOpacity[CHUNK_SIZE_X*CHUNK_SIZE_Y*CHUNK_SIZE_Z];
 
-layout(std430, binding = 0) buffer BlockData {
-    vec3 BlockPosition[];
-    int BlockID[];
+struct Block {
+    vec3 position;
+    float id;
+    //int opacity;
 };
 
-vec3[6] shouldRenderFace(int Face);
+layout(std430, binding = 0) buffer BlockData {
+    Block blocks[];
+};
 
 void main() {
     vec3 model[] = vec3[](
@@ -59,10 +63,11 @@ void main() {
     int cubeIndex = int(gl_VertexID/36);
     int vertexIndex = gl_VertexID % 36; // Assigner l'ID du sommet au cube
 
-    fragPos = model[vertexIndex] + BlockPosition[cubeIndex];
+    fragPos = model[vertexIndex] + blocks[cubeIndex].position.xyz;
 
     // Assigner les coordonnées de texture (UV)
     v_TexCoords = texCoords[vertexIndex % 6];
+    TextureIndex = blocks[cubeIndex].id;
 
     gl_Position = projection * view * vec4(fragPos+Position, 1.0);
 }

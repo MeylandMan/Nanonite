@@ -11,6 +11,8 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 
 import static org.lwjgl.opengl.GL43.*;
 
@@ -106,42 +108,51 @@ public class Chunk extends _Object {
         }
 
         // Vérifier si le bloc adjacent est de type AIR
-        if(blocks[nx][ny][nz].type == Block.BlockType.AIR)
+        if(blocks[nx][ny][nz].opacity == 0)
             return 1;
 
         return 0;
     }
 
-
     @Override
     public void DrawMesh(Shader shader) {
         /*
 
-        int[] samplers = new int[textures.length];
+
         for(int i = 0; i < textures.length; i++) {
-            samplers[i] = i;
+
 
         }
         */
+        int[] samplers = new int[textures.length];
+        for(int i = 0; i < textures.length; i++) {
+            samplers[i] = i;
+            textures[i].Bind(i);
+        }
 
         blockdrawn = 0;
         facedrawn = 0;
 
-        int estimatedSize = X_DIMENSION * Y_DIMENSION * Z_DIMENSION * 5; // 3 position + 1 ID + 6 faces
+        int estimatedSize = X_DIMENSION * Y_DIMENSION * Z_DIMENSION * 4; // 3 position + 1 ID + 1 Opacity
         FloatBuffer buffer = MemoryUtil.memAllocFloat(estimatedSize);
-        IntBuffer opacity = MemoryUtil.memAllocInt(X_DIMENSION * Y_DIMENSION * Z_DIMENSION);
-
-
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int y = 0; y < Y_DIMENSION; y++) {
                 for(int z = 0; z < Z_DIMENSION; z++) {
 
-                    if(blocks[x][y][z].ID != -1) {
+                    int is_block_rendered = shouldRenderFace(x,y,z, Block.Faces.FRONT)+
+                            shouldRenderFace(x,y,z, Block.Faces.BACK)+
+                            shouldRenderFace(x,y,z, Block.Faces.RIGHT)+
+                            shouldRenderFace(x,y,z, Block.Faces.LEFT)+
+                            shouldRenderFace(x,y,z, Block.Faces.TOP)+
+                            shouldRenderFace(x,y,z, Block.Faces.BOTTOM);
+
+                    if(blocks[x][y][z].ID != -1 && is_block_rendered != 0) {
                         blockdrawn++;
                         buffer.put(blocks[x][y][z].getPosition().x);
                         buffer.put(blocks[x][y][z].getPosition().y);
                         buffer.put(blocks[x][y][z].getPosition().z);
                         buffer.put(blocks[x][y][z].ID);
+                        //buffer.put(blocks[x][y][z].opacity);
 
                         facedrawn = (shouldRenderFace(x,y,z, Block.Faces.FRONT) == 1)? facedrawn+1 : facedrawn;
                         facedrawn = (shouldRenderFace(x,y,z, Block.Faces.BACK) == 1)? facedrawn+1 : facedrawn;
@@ -151,24 +162,18 @@ public class Chunk extends _Object {
                         facedrawn = (shouldRenderFace(x,y,z, Block.Faces.BOTTOM) == 1)? facedrawn+1 : facedrawn;
                     }
 
-                    int index = x + (y * X_DIMENSION) + (z * X_DIMENSION * Y_DIMENSION);
-                    opacity.put(blocks[x][y][z].opacity);
+                    //int index = x + (y * X_DIMENSION) + (z * X_DIMENSION * Y_DIMENSION);
 
                 }
             }
         }
         buffer.flip();
-        opacity.flip();
 
         ssbo.Bind();
         ssbo.SubData(0, buffer);
-
         ssbo.BindBase(0);
 
-        textures[0].Bind();
-
-        shader.Uniform1iv("BlockOpacity", opacity);
-        shader.Uniform1i("u_Texture", 0);
+        shader.Uniform1iv("u_Textures", samplers);
         shader.Uniform3f("Position", positionX, positionY, positionZ);
 
         glDrawArrays(GL_TRIANGLES, 0, 6*facedrawn);
@@ -180,7 +185,7 @@ public class Chunk extends _Object {
         }
         ssbo = new VBO(GL_DYNAMIC_DRAW, GL_SHADER_STORAGE_BUFFER);
         ssbo.InitSSBO(
-                X_DIMENSION*Y_DIMENSION*Z_DIMENSION * (3*Float.BYTES + Integer.BYTES + 6*Integer.BYTES),
+                X_DIMENSION*Y_DIMENSION*Z_DIMENSION * (4*Float.BYTES + 2*Integer.BYTES),
                 0);
         textures = new Texture[texture_paths.length];
         for(int i = 0; i < textures.length; i++) {

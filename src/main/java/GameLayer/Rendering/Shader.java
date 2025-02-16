@@ -2,18 +2,14 @@ package GameLayer.Rendering;
 
 
 import org.joml.*;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryUtil;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
 
-import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL43.*;
 
 public class Shader {
     private int m_ID;
