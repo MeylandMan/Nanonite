@@ -5,7 +5,7 @@ out vec2 v_TexCoords;
 
 uniform mat4 projection;
 uniform mat4 view;
-uniform mat4 model;
+uniform vec3 Position;
 
 const int CHUNK_SIZE_X = 16;
 const int CHUNK_SIZE_Y = 255;
@@ -59,6 +59,5 @@ void main() {
     // Assigner les coordonnées de texture (UV)
     v_TexCoords = texCoords[vertexIndex % 6];
 
-    mat4 temp = mat4(1.0);
-    gl_Position = projection * view * temp * vec4(fragPos, 1.0);
+    gl_Position = projection * view * vec4(fragPos+Position, 1.0);
 }

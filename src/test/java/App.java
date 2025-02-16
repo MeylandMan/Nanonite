@@ -198,7 +198,7 @@ public class App {
 
         shader.CreateShader("Compute.vert", "Compute.frag");
 
-        //Chunk chunk = new Chunk(scene, new Vector3f());
+        Chunk chunk = new Chunk(scene, new Vector3f());
 
         //System.out.println("MAX TEXTURE YOU CAN LOAD : " + GL_MAX_TEXTURE_IMAGE_UNITS); 34930
         FPSMonitor fpsMonitor = new FPSMonitor();

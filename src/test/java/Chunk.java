@@ -81,7 +81,7 @@ public class Chunk extends _Object {
 
         }
          */
-
+        shader.Uniform3f("Position", positionX, positionY, positionZ);
         glDrawArrays(GL_TRIANGLES, 0, 36*16*255*16);
     }
 
