@@ -5,8 +5,11 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 
 import static org.lwjgl.opengl.GL43.*;
@@ -17,10 +20,9 @@ public class Chunk extends _Object {
     public final static int Y_DIMENSION = 255;
     public final static int Z_DIMENSION = 16;
     int Y_MAX = 5;
-    int temp = 0;
+    boolean update = true;
 
     private final Block[][][] blocks = new Block[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
-    int[] opacity = new int[X_DIMENSION*Y_DIMENSION*Z_DIMENSION];
     VBO ssbo;
 
     int blockdrawn = 0;
@@ -91,40 +93,48 @@ public class Chunk extends _Object {
         */
 
         blockdrawn = 0;
-        ByteBuffer buffer = BufferUtils.createByteBuffer(
-                X_DIMENSION*Y_DIMENSION*Z_DIMENSION * (3*Float.BYTES + Integer.BYTES)
-        );
+        int estimatedSize = X_DIMENSION * Y_DIMENSION * Z_DIMENSION * 4; // 3 position + 1 ID
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(estimatedSize);
+        IntBuffer opacity = BufferUtils.createIntBuffer(X_DIMENSION * Y_DIMENSION * Z_DIMENSION);
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int y = 0; y < Y_DIMENSION; y++) {
                 for(int z = 0; z < Z_DIMENSION; z++) {
 
                     if(blocks[x][y][z].ID != -1) {
                         blockdrawn++;
-                        buffer.putFloat(blocks[x][y][z].getPosition().x);
-                        buffer.putFloat(blocks[x][y][z].getPosition().y);
-                        buffer.putFloat(blocks[x][y][z].getPosition().z);
-                        buffer.putInt(blocks[x][y][z].ID);
+                        buffer.put(blocks[x][y][z].getPosition().x);
+                        buffer.put(blocks[x][y][z].getPosition().y);
+                        buffer.put(blocks[x][y][z].getPosition().z);
+                        buffer.put(blocks[x][y][z].ID);
                     }
 
                     int index = x + (y * X_DIMENSION) + (z * X_DIMENSION * Y_DIMENSION);
-                    opacity[index] = blocks[x][y][z].opacity;
+                    opacity.put(blocks[x][y][z].opacity);
 
                 }
             }
         }
         buffer.flip();
+        opacity.flip();
 
         ssbo.Bind();
         ssbo.SubData(0, buffer);
+
+
         ssbo.BindBase(0);
 
         textures[0].Bind();
 
         shader.Uniform1iv("BlockOpacity", opacity);
+
+
         shader.Uniform1i("u_Texture", 0);
         shader.Uniform3f("Position", positionX, positionY, positionZ);
 
         glDrawArrays(GL_TRIANGLES, 0, 36*blockdrawn);
+
+        MemoryUtil.memFree(buffer);
+        MemoryUtil.memFree(opacity);
     }
 
     public void InitTextures() {
