@@ -16,14 +16,13 @@ public class Chunk extends _Object {
     public final static byte X_DIMENSION = 16;
     public final static short Y_DIMENSION = 255;
     public final static byte Z_DIMENSION = 16;
-    int Y_MAX = 5;
-    boolean update = true;
+    int Y_MAX = 255;
+    boolean updateChunk = true;
+    private FloatBuffer buffer;
 
     private final Block[][][] blocks = new Block[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
 
     VBO ssbo;
-
-    int blockdrawn = 0;
     int facedrawn = 0;
 
     String[] texture_paths = {
@@ -78,6 +77,37 @@ public class Chunk extends _Object {
     public void Delete() {
         for(Texture texture : textures)
             texture.Delete();
+        MemoryUtil.memFree(buffer);
+    }
+    private void updateMesh() {
+        facedrawn = 0;
+        buffer.clear();
+        for(int x = 0; x < X_DIMENSION; x++) {
+            for(int y = 0; y < Y_DIMENSION; y++) {
+                for(int z = 0; z < Z_DIMENSION; z++) {
+                    for(int i = 0; i < 6; i++) {
+                        if(blocks[x][y][z].ID != -1 && shouldRenderFace(x,y,z, i) == 1) {
+                            buffer.put(blocks[x][y][z].getPosition().x);
+                            buffer.put(blocks[x][y][z].getPosition().y);
+                            buffer.put(blocks[x][y][z].getPosition().z);
+                            buffer.put(0.0f);
+                            int id = (i == 4 && blocks[x][y][z].ID == 1)? blocks[x][y][z].ID+1 : blocks[x][y][z].ID;
+                            buffer.put((float)id);
+                            buffer.put((float)blocks[x][y][z].opacity);
+                            buffer.put((float)i);
+                            buffer.put(0.0f);
+                            facedrawn++;
+                        }
+                    }
+                }
+            }
+        }
+        buffer.flip();
+
+        ssbo.Bind();
+        ssbo.SubData(0, buffer);
+        ssbo.UnBind();
+        buffer.clear();
     }
 
     private int shouldRenderFace(int x, int y, int z, int face) {
@@ -117,40 +147,12 @@ public class Chunk extends _Object {
             samplers[i] = i;
             textures[i].Bind(i);
         }
-
-        blockdrawn = 0;
-        facedrawn = 0;
-
-        int estimatedSize = X_DIMENSION * Y_DIMENSION * Z_DIMENSION * 8; // 4 position + 1 ID + 1 Opacity + 1 Face
-        FloatBuffer buffer = MemoryUtil.memAllocFloat(estimatedSize);
-        for(int x = 0; x < X_DIMENSION; x++) {
-            for(int y = 0; y < Y_DIMENSION; y++) {
-                for(int z = 0; z < Z_DIMENSION; z++) {
-                    for(int i = 0; i < 6; i++) {
-                        if(blocks[x][y][z].ID != -1 && shouldRenderFace(x,y,z, i) == 1) {
-                            buffer.put(blocks[x][y][z].getPosition().x);
-                            buffer.put(blocks[x][y][z].getPosition().y);
-                            buffer.put(blocks[x][y][z].getPosition().z);
-                            buffer.put(0.0f);
-                            int id = (i == 4 && blocks[x][y][z].ID == 1)? blocks[x][y][z].ID+1 : blocks[x][y][z].ID;
-                            buffer.put((float)id);
-                            buffer.put((float)blocks[x][y][z].opacity);
-                            buffer.put((float)i);
-                            buffer.put(0.0f);
-                            facedrawn++;
-                        }
-                    }
-                }
-            }
+        if(updateChunk) {
+            updateMesh();
+            updateChunk = false;
         }
-        buffer.flip();
 
-        ssbo.Bind();
-        ssbo.SubData(0, buffer);
         ssbo.BindBase(0);
-        ssbo.UnBind();
-        MemoryUtil.memFree(buffer);
-
         shader.Uniform1iv("u_Textures", samplers);
         shader.Uniform3f("Position", positionX, positionY, positionZ);
 
@@ -162,10 +164,13 @@ public class Chunk extends _Object {
         if (!GL.getCapabilities().OpenGL30) {
             throw new IllegalStateException("OpenGL 3.0 unavailable !");
         }
+        int estimatedSizeBuffer = (X_DIMENSION * Y_DIMENSION * Z_DIMENSION)/2 * 6 * 8; // 3 position + 1 ID + 1 Opacity + 1 Face + 2 padding
+        buffer = MemoryUtil.memAllocFloat(estimatedSizeBuffer);
+
         ssbo = new VBO(GL_DYNAMIC_DRAW, GL_SHADER_STORAGE_BUFFER);
-        ssbo.InitSSBO(
-                X_DIMENSION*Y_DIMENSION*Z_DIMENSION * (4*Float.BYTES + 3*Integer.BYTES),
-                0);
+        int estimatedSize = ((X_DIMENSION*Y_DIMENSION*Z_DIMENSION)/2) * 6 * (8*Float.BYTES);
+        ssbo.InitSSBO(Math.round(estimatedSize*0.6f),0);
+
         textures = new Texture[texture_paths.length];
         for(int i = 0; i < textures.length; i++) {
             textures[i] = new Texture(texture_paths[i]);

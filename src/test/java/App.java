@@ -196,9 +196,9 @@ public class App {
         shader.CreateShader("Compute.vert", "Compute.frag");
 
         Chunk chunk = new Chunk(scene, new Vector3f());
-        //Chunk chunk2 = new Chunk(scene, new Vector3f(16, 0, 0));
-        //Chunk chunk3 = new Chunk(scene, new Vector3f(0, 0, 16));
-        //Chunk chunk4 = new Chunk(scene, new Vector3f(16, 0, 16));
+        Chunk chunk2 = new Chunk(scene, new Vector3f(16, 0, 0));
+        Chunk chunk3 = new Chunk(scene, new Vector3f(0, 0, 16));
+        Chunk chunk4 = new Chunk(scene, new Vector3f(16, 0, 16));
 
         //System.out.println("MAX TEXTURE YOU CAN LOAD : " + GL_MAX_TEXTURE_IMAGE_UNITS); 34930
         FPSMonitor fpsMonitor = new FPSMonitor();
@@ -247,11 +247,10 @@ public class App {
             glDepthFunc(GL_LESS);
 
             // Enable BackFace Culling
-/*
             glEnable(GL_CULL_FACE);
             glCullFace(GL_FRONT);
             glFrontFace(GL_CW);
-*/
+
             shader.Bind();
 
             shader.UniformMatrix4x4("view", camera.GetViewMatrix());

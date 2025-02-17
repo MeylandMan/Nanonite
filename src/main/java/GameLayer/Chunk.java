@@ -22,7 +22,7 @@ public class Chunk extends _Object{
     public final static int Y_DIMENSION = 255;
     public final static int Z_DIMENSION = 16;
     final static int TEXTURE_LOADED = 3;
-    int Y_MAX = 5;
+    int Y_MAX = 255;
     int temp = 0;
 
     private final Block[][][] blocks = new Block[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
