@@ -25,7 +25,6 @@ struct BlockFace {
     float padding;
 
     float id;
-    float opacity;
     float FaceID;
 };
 

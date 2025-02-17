@@ -28,7 +28,7 @@ public class Chunk extends _Object {
     String[] texture_paths = {
             "blocks/dirt.png",
             "blocks/grass_block_side.png",
-            "blocks/grass_block_top.png",
+            "blocks/grass_block_top.png"
     };
     public Texture[] textures;
 
@@ -93,8 +93,8 @@ public class Chunk extends _Object {
                             buffer.put(0.0f);
                             int id = (i == 4 && blocks[x][y][z].ID == 1)? blocks[x][y][z].ID+1 : blocks[x][y][z].ID;
                             buffer.put((float)id);
-                            buffer.put((float)blocks[x][y][z].opacity);
                             buffer.put((float)i);
+                            buffer.put(0.0f);
                             buffer.put(0.0f);
                             facedrawn++;
                         }
@@ -164,11 +164,11 @@ public class Chunk extends _Object {
         if (!GL.getCapabilities().OpenGL30) {
             throw new IllegalStateException("OpenGL 3.0 unavailable !");
         }
-        int estimatedSizeBuffer = (X_DIMENSION * Y_DIMENSION * Z_DIMENSION)/2 * 6 * 8; // 3 position + 1 ID + 1 Opacity + 1 Face + 2 padding
+        int estimatedSizeBuffer = (X_DIMENSION * Y_DIMENSION * Z_DIMENSION)/2 * 6 * 7; // 3 position + 1 ID + 1 Face + 2 padding
         buffer = MemoryUtil.memAllocFloat(estimatedSizeBuffer);
 
         ssbo = new VBO(GL_DYNAMIC_DRAW, GL_SHADER_STORAGE_BUFFER);
-        int estimatedSize = ((X_DIMENSION*Y_DIMENSION*Z_DIMENSION)/2) * 6 * (8*Float.BYTES);
+        int estimatedSize = ((X_DIMENSION*Y_DIMENSION*Z_DIMENSION)/2) * 6 * (7*Float.BYTES);
         ssbo.InitSSBO(Math.round(estimatedSize*0.6f),0);
 
         textures = new Texture[texture_paths.length];
