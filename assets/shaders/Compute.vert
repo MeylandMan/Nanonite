@@ -20,54 +20,76 @@ vec2(0.0, 0.0), vec2(1.0, 0.0), vec2(1.0, 1.0),
 vec2(0.0, 0.0), vec2(1.0, 1.0), vec2(0.0, 1.0)
 );
 
-uniform int BlockIDs[CHUNK_SIZE_X*CHUNK_SIZE_Y*CHUNK_SIZE_Z];
-uniform bool BlockOpacity[CHUNK_SIZE_X*CHUNK_SIZE_Y*CHUNK_SIZE_Z];
-
-struct Block {
+struct BlockFace {
     vec3 position;
+    float padding;
+
     float id;
-    //int opacity;
+    float opacity;
+    float FaceID;
 };
 
 layout(std430, binding = 0) buffer BlockData {
-    Block blocks[];
+    BlockFace faces[];
 };
 
 void main() {
-    vec3 model[] = vec3[](
-    // Face avant
-    vec3(0.0, 0.0, 1.0), vec3(1.0, 0.0, 1.0), vec3(1.0, 1.0, 1.0),
-    vec3(0.0, 0.0, 1.0), vec3(1.0, 1.0, 1.0), vec3(0.0, 1.0, 1.0),
 
-    // Face arrière
-    vec3(1.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 1.0, 0.0),
-    vec3(1.0, 0.0, 0.0), vec3(0.0, 1.0, 0.0), vec3(1.0, 1.0, 0.0),
+    int faceIndex = int(gl_VertexID/6);
 
-    // Face gauche
-    vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 1.0), vec3(0.0, 1.0, 1.0),
-    vec3(0.0, 0.0, 0.0), vec3(0.0, 1.0, 1.0), vec3(0.0, 1.0, 0.0),
+    vec3 FaceVertices[6];
+    switch(int(faces[faceIndex].FaceID)) {
+        // FRONT
+        case 0:
+            FaceVertices = vec3[](
+            vec3(0.0, 0.0, 1.0), vec3(1.0, 0.0, 1.0), vec3(1.0, 1.0, 1.0),
+            vec3(0.0, 0.0, 1.0), vec3(1.0, 1.0, 1.0), vec3(0.0, 1.0, 1.0)
+            );
+            break;
+        // BACK
+        case 1:
+            FaceVertices = vec3[](
+            vec3(1.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 1.0, 0.0),
+            vec3(1.0, 0.0, 0.0), vec3(0.0, 1.0, 0.0), vec3(1.0, 1.0, 0.0)
+            );
+            break;
+        // RIGHT
+        case 2:
+            FaceVertices = vec3[](
+            vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 1.0), vec3(0.0, 1.0, 1.0),
+            vec3(0.0, 0.0, 0.0), vec3(0.0, 1.0, 1.0), vec3(0.0, 1.0, 0.0)
+            );
+            break;
+        // LEFT
+        case 3:
+            FaceVertices = vec3[](
+            vec3(1.0, 0.0, 1.0), vec3(1.0, 0.0, 0.0), vec3(1.0, 1.0, 0.0),
+            vec3(1.0, 0.0, 1.0), vec3(1.0, 1.0, 0.0), vec3(1.0, 1.0, 1.0)
+            );
+            break;
+        // TOP
+        case 4:
+            FaceVertices = vec3[](
+            vec3(0.0, 1.0, 1.0), vec3(1.0, 1.0, 1.0), vec3(1.0, 1.0, 0.0),
+            vec3(0.0, 1.0, 1.0), vec3(1.0, 1.0, 0.0), vec3(0.0, 1.0, 0.0)
+            );
+            break;
+        // BOTTOM
+        case 5:
+            FaceVertices = vec3[](
+            vec3(0.0, 0.0, 0.0), vec3(1.0, 0.0, 0.0), vec3(1.0, 0.0, 1.0),
+            vec3(0.0, 0.0, 0.0), vec3(1.0, 0.0, 1.0), vec3(0.0, 0.0, 1.0)
+            );
+            break;
+    }
+    int vertexIndex = gl_VertexID % 6;
 
-    // Face droite
-    vec3(1.0, 0.0, 1.0), vec3(1.0, 0.0, 0.0), vec3(1.0, 1.0, 0.0),
-    vec3(1.0, 0.0, 1.0), vec3(1.0, 1.0, 0.0), vec3(1.0, 1.0, 1.0),
-
-    // Face supérieure
-    vec3(0.0, 1.0, 1.0), vec3(1.0, 1.0, 1.0), vec3(1.0, 1.0, 0.0),
-    vec3(0.0, 1.0, 1.0), vec3(1.0, 1.0, 0.0), vec3(0.0, 1.0, 0.0),
-
-    // Face inférieure
-    vec3(0.0, 0.0, 0.0), vec3(1.0, 0.0, 0.0), vec3(1.0, 0.0, 1.0),
-    vec3(0.0, 0.0, 0.0), vec3(1.0, 0.0, 1.0), vec3(0.0, 0.0, 1.0)
-    );
-
-    int cubeIndex = int(gl_VertexID/36);
-    int vertexIndex = gl_VertexID % 36; // Assigner l'ID du sommet au cube
-
-    fragPos = model[vertexIndex] + blocks[cubeIndex].position.xyz;
+    fragPos = FaceVertices[vertexIndex] + faces[faceIndex].position.xyz;
 
     // Assigner les coordonnées de texture (UV)
     v_TexCoords = texCoords[vertexIndex % 6];
-    TextureIndex = blocks[cubeIndex].id;
+    TextureIndex = faces[faceIndex].id;
 
     gl_Position = projection * view * vec4(fragPos+Position, 1.0);
 }
+

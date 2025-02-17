@@ -230,6 +230,7 @@ public class App {
 
         int delayTime = 0;
 
+        Query query = new Query();
         while ( !glfwWindowShouldClose(window) ) {
             int error;
             while ((error = glGetError()) != GL_NO_ERROR) {
@@ -272,8 +273,11 @@ public class App {
             glCullFace(GL_FRONT);
             glFrontFace(GL_CW);
 
+            query.startVerticesQuery();
             renderer.DrawScene(scene, shader);
+            query.endVerticesQuery();
 
+            System.out.println("Number of vertices: " + query.getVerticesRendered());
             raycast.origin = camera.Position;
             raycast.direction = camera.getFront();
             raycast.drawRay(10);

@@ -7,6 +7,7 @@ import org.lwjgl.system.MemoryUtil;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL43.*;
@@ -110,6 +111,16 @@ public class Shader {
     public void Uniform1iv(String name, int[] x) {
         int location = getUniform(name);
         glUniform1iv(location, x);
+    }
+
+    public void Uniform1fv(String name, FloatBuffer x) {
+        int location = getUniform(name);
+        glUniform1fv(location, x);
+    }
+
+    public void Uniform4fv(String name, FloatBuffer x) {
+        int location = getUniform(name);
+        glUniform4fv(location, x);
     }
 
     public void Uniform1iv(String name, IntBuffer x) {

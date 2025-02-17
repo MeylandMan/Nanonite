@@ -1,12 +1,9 @@
 import GameLayer.FPSMonitor;
+import GameLayer.Rendering.*;
 import GameLayer.Rendering.GUI.Text.Font;
 import GameLayer.Rendering.GUI.Text.FontLoader;
 import GameLayer.Rendering.GUI.Text.TextRenderer;
 import GameLayer.Rendering.Model.SpriteMesh;
-import GameLayer.Rendering.Renderer;
-import GameLayer.Rendering.Scene;
-import GameLayer.Rendering.Shader;
-import GameLayer.Rendering.Texture;
 import GameLayer.World;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -218,8 +215,6 @@ public class App {
             e.printStackTrace();
         }
 
-        int delayTime = 0;
-
         while ( !glfwWindowShouldClose(window) ) {
             int error;
             while ((error = glGetError()) != GL_NO_ERROR) {
@@ -252,18 +247,17 @@ public class App {
             glDepthFunc(GL_LESS);
 
             // Enable BackFace Culling
+/*
             glEnable(GL_CULL_FACE);
             glCullFace(GL_FRONT);
             glFrontFace(GL_CW);
-
+*/
             shader.Bind();
 
             shader.UniformMatrix4x4("view", camera.GetViewMatrix());
             shader.UniformMatrix4x4("projection", camera.GetProjectionMatrix(m_Width, m_Height));
 
-
             renderer.DrawScene(scene, shader);
-
             // Rendering something //
             Matrix4f orthoTextMatrix = new Matrix4f().identity()
                     .ortho(0, m_Width, m_Height, 0, -1, 1);

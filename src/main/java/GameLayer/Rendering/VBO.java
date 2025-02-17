@@ -87,8 +87,6 @@ public class VBO {
     }
     public void SubData(int offset, FloatBuffer data) {
         glBufferSubData(GL_ARRAY_BUFFER, offset, data);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        MemoryUtil.memFree(data);
     }
 
     public void SubData(int offset, byte[] data) {

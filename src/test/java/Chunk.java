@@ -3,16 +3,11 @@ import GameLayer._Object;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
 
 import static org.lwjgl.opengl.GL43.*;
 
@@ -85,16 +80,16 @@ public class Chunk extends _Object {
             texture.Delete();
     }
 
-    private int shouldRenderFace(int x, int y, int z, @NotNull Block.Faces face) {
+    private int shouldRenderFace(int x, int y, int z, int face) {
         int nx = x, ny = y, nz = z;
-
+        // 0 -- FRONT, 1 -- BACK, 2 -- RIGHT, 3 -- LEFT, 4 -- TOP, 5 -- BOTTOM
         switch (face) {
-            case RIGHT:  nx -= 1; break; // -X
-            case LEFT:   nx += 1; break; // +X
-            case FRONT:  nz -= 1; break; // -Z
-            case BACK:   nz += 1; break; // +Z
-            case BOTTOM: ny -= 1; break; // -Y
-            case TOP:    ny += 1; break; // +Y
+            case 0:   nz += 1; break; // +Z
+            case 1:   nz -= 1; break; // -Z
+            case 2:   nx -= 1; break; // -X
+            case 3:   nx += 1; break; // +X
+            case 4:   ny += 1; break; // +Y
+            case 5:   ny -= 1; break; // -Y
         }
 
         // Check if the current block is not AIR or VOID
@@ -116,14 +111,7 @@ public class Chunk extends _Object {
 
     @Override
     public void DrawMesh(Shader shader) {
-        /*
 
-
-        for(int i = 0; i < textures.length; i++) {
-
-
-        }
-        */
         int[] samplers = new int[textures.length];
         for(int i = 0; i < textures.length; i++) {
             samplers[i] = i;
@@ -133,37 +121,25 @@ public class Chunk extends _Object {
         blockdrawn = 0;
         facedrawn = 0;
 
-        int estimatedSize = X_DIMENSION * Y_DIMENSION * Z_DIMENSION * 4; // 3 position + 1 ID + 1 Opacity
+        int estimatedSize = X_DIMENSION * Y_DIMENSION * Z_DIMENSION * 8; // 4 position + 1 ID + 1 Opacity + 1 Face
         FloatBuffer buffer = MemoryUtil.memAllocFloat(estimatedSize);
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int y = 0; y < Y_DIMENSION; y++) {
                 for(int z = 0; z < Z_DIMENSION; z++) {
-
-                    int is_block_rendered = shouldRenderFace(x,y,z, Block.Faces.FRONT)+
-                            shouldRenderFace(x,y,z, Block.Faces.BACK)+
-                            shouldRenderFace(x,y,z, Block.Faces.RIGHT)+
-                            shouldRenderFace(x,y,z, Block.Faces.LEFT)+
-                            shouldRenderFace(x,y,z, Block.Faces.TOP)+
-                            shouldRenderFace(x,y,z, Block.Faces.BOTTOM);
-
-                    if(blocks[x][y][z].ID != -1 && is_block_rendered != 0) {
-                        blockdrawn++;
-                        buffer.put(blocks[x][y][z].getPosition().x);
-                        buffer.put(blocks[x][y][z].getPosition().y);
-                        buffer.put(blocks[x][y][z].getPosition().z);
-                        buffer.put(blocks[x][y][z].ID);
-                        //buffer.put(blocks[x][y][z].opacity);
-
-                        facedrawn = (shouldRenderFace(x,y,z, Block.Faces.FRONT) == 1)? facedrawn+1 : facedrawn;
-                        facedrawn = (shouldRenderFace(x,y,z, Block.Faces.BACK) == 1)? facedrawn+1 : facedrawn;
-                        facedrawn = (shouldRenderFace(x,y,z, Block.Faces.RIGHT) == 1)? facedrawn+1 : facedrawn;
-                        facedrawn = (shouldRenderFace(x,y,z, Block.Faces.LEFT) == 1)? facedrawn+1 : facedrawn;
-                        facedrawn = (shouldRenderFace(x,y,z, Block.Faces.TOP) == 1)? facedrawn+1 : facedrawn;
-                        facedrawn = (shouldRenderFace(x,y,z, Block.Faces.BOTTOM) == 1)? facedrawn+1 : facedrawn;
+                    for(int i = 0; i < 6; i++) {
+                        if(blocks[x][y][z].ID != -1 && shouldRenderFace(x,y,z, i) == 1) {
+                            buffer.put(blocks[x][y][z].getPosition().x);
+                            buffer.put(blocks[x][y][z].getPosition().y);
+                            buffer.put(blocks[x][y][z].getPosition().z);
+                            buffer.put(0.0f);
+                            int id = (i == 4 && blocks[x][y][z].ID == 1)? blocks[x][y][z].ID+1 : blocks[x][y][z].ID;
+                            buffer.put((float)id);
+                            buffer.put((float)blocks[x][y][z].opacity);
+                            buffer.put((float)i);
+                            buffer.put(0.0f);
+                            facedrawn++;
+                        }
                     }
-
-                    //int index = x + (y * X_DIMENSION) + (z * X_DIMENSION * Y_DIMENSION);
-
                 }
             }
         }
@@ -172,10 +148,13 @@ public class Chunk extends _Object {
         ssbo.Bind();
         ssbo.SubData(0, buffer);
         ssbo.BindBase(0);
+        ssbo.UnBind();
+        MemoryUtil.memFree(buffer);
 
         shader.Uniform1iv("u_Textures", samplers);
         shader.Uniform3f("Position", positionX, positionY, positionZ);
 
+        glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
         glDrawArrays(GL_TRIANGLES, 0, 6*facedrawn);
     }
 
@@ -185,7 +164,7 @@ public class Chunk extends _Object {
         }
         ssbo = new VBO(GL_DYNAMIC_DRAW, GL_SHADER_STORAGE_BUFFER);
         ssbo.InitSSBO(
-                X_DIMENSION*Y_DIMENSION*Z_DIMENSION * (4*Float.BYTES + 2*Integer.BYTES),
+                X_DIMENSION*Y_DIMENSION*Z_DIMENSION * (4*Float.BYTES + 3*Integer.BYTES),
                 0);
         textures = new Texture[texture_paths.length];
         for(int i = 0; i < textures.length; i++) {
