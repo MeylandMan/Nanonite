@@ -196,9 +196,9 @@ public class App {
         shader.CreateShader("Compute.vert", "Compute.frag");
 
 
-        for(int x = 0; x < 256; x+=16) {
-            for(int z = 0; z < 256; z+=16) {
-                Chunk chunk = new Chunk(scene, new Vector3f(x, 0, z));
+        for(int x = 0; x < 16; x++) {
+            for(int z = 0; z < 16; z++) {
+                Chunk chunk = new Chunk(scene, new Vector3f(x*16, 0, z*16));
             }
         }
 

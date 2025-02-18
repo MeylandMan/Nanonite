@@ -53,15 +53,14 @@ public class Chunk extends _Object {
             }
         }
 
-        // Fill void with Air and check if a
+        // check if threre's blocks at the top of the dirt
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int y = 0; y < Y_DIMENSION; y++) {
                 for(int z = 0; z < Z_DIMENSION; z++) {
                     if(blocks[x][y][z] == null)
-                        blocks[x][y][z] = new Block(new Vector3f(x, y, z));
-
+                        continue;
                     if(blocks[x][y][z].type == Block.BlockType.DIRT) {
-                        if(blocks[x][y+1][z].type == Block.BlockType.AIR)
+                        if(blocks[x][y+1][z] == null)
                             blocks[x][y][z].setType(Block.BlockType.GRASS);
                     }
                 }
@@ -87,6 +86,8 @@ public class Chunk extends _Object {
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int y = 0; y < Y_DIMENSION; y++) {
                 for(int z = 0; z < Z_DIMENSION; z++) {
+                    if(blocks[x][y][z] == null)
+                        continue;
                     for(int i = 0; i < 6; i++) {
                         if(blocks[x][y][z].ID != -1 && shouldRenderFace(x,y,z, i) == 1) {
                             buffer.put(blocks[x][y][z].getPosition().x);
@@ -125,7 +126,7 @@ public class Chunk extends _Object {
         }
 
         // Check if the current block is not AIR or VOID
-        if(blocks[x][y][z].ID == -1) {
+        if(blocks[x][y][z] == null) {
             return 0;
         }
 
@@ -133,6 +134,9 @@ public class Chunk extends _Object {
         if (nx < 0 || nx >= X_DIMENSION || ny < 0 || ny >= Y_DIMENSION || nz < 0 || nz >= Z_DIMENSION) {
             return 1; // Bordure -> Afficher la face
         }
+
+        if(blocks[nx][ny][nz] == null)
+            return 1;
 
         // Vérifier si le bloc adjacent est de type AIR
         if(blocks[nx][ny][nz].opacity == 0)

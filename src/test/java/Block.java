@@ -3,13 +3,11 @@ import org.joml.Vector3f;
 
 public class Block extends _Object {
 
-    // -1 = AIR
-    int ID = -1;
-    BlockType type = BlockType.AIR;
-    int opacity = 0;
+    int ID = 0;
+    BlockType type = BlockType.DIRT;
+    int opacity = 1;
 
     public enum BlockType {
-        AIR,
         DIRT,
         GRASS
     }
@@ -32,10 +30,6 @@ public class Block extends _Object {
     public void setType(BlockType type) {
         this.type = type;
         switch (type) {
-            case AIR:
-                ID = -1;
-                opacity = 0;
-                break;
             case DIRT:
                 ID = 0;
                 opacity = 1;
