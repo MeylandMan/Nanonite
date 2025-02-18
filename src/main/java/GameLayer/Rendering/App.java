@@ -48,7 +48,7 @@ public class App {
     Shader shader = new Shader();
     SpriteMesh surface2D;
 
-    Camera camera = new Camera(new Vector3f(0.f, 0.f, -3.f));
+    Camera camera = new Camera(new Vector3f(8));
     World world;
     float delta;
     float lastFrame;
@@ -203,13 +203,16 @@ public class App {
 
         GLCapabilities caps = GL.createCapabilities();
 
-        shader.CreateShader("Default.vert", "Default.frag");
+        shader.CreateShader("Chunk.comp", "Chunk.frag");
 
         Chunk chunk = new Chunk(scene, new Vector3f());
-        Chunk chunk2 = new Chunk(scene, new Vector3f(16, 0, 0));
-        Chunk chunk3 = new Chunk(scene, new Vector3f(0, 0, 16));
-        Chunk chunk4 = new Chunk(scene, new Vector3f(16, 0, 16));
-
+        /*
+        for(int x = 0; x < 16; x++) {
+            for(int z = 0; z < 16; z++) {
+                Chunk chunk = new Chunk(scene, new Vector3f(x*16, 0, z*16));
+            }
+        }
+        */
         //System.out.println("MAX TEXTURE YOU CAN LOAD : " + GL_MAX_TEXTURE_IMAGE_UNITS); 34930
         FPSMonitor fpsMonitor = new FPSMonitor();
 
@@ -230,10 +233,6 @@ public class App {
         world.addCollision(new CubeCollision(new Vector3f(-10, 3, 0), new Vector3f(1)));
 
         Raycast raycast = new Raycast(camera.Position, camera.getFront());
-
-        int delayTime = 0;
-
-        Query query = new Query();
         while ( !glfwWindowShouldClose(window) ) {
             int error;
             while ((error = glGetError()) != GL_NO_ERROR) {
@@ -261,12 +260,6 @@ public class App {
 
             renderer.ClearColor();
 
-
-            shader.Bind();
-
-            shader.UniformMatrix4x4("u_View", camera.GetViewMatrix());
-            shader.UniformMatrix4x4("u_Proj", camera.GetProjectionMatrix(m_Width, m_Height));
-
             // Depth render
             glEnable(GL_DEPTH_TEST);
             glDepthFunc(GL_LESS);
@@ -276,11 +269,16 @@ public class App {
             glCullFace(GL_FRONT);
             glFrontFace(GL_CW);
 
-            query.startVerticesQuery();
-            renderer.DrawScene(scene, shader);
-            query.endVerticesQuery();
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-            System.out.println("Number of vertices: " + query.getVerticesRendered());
+            shader.Bind();
+
+            shader.UniformMatrix4x4("view", camera.GetViewMatrix());
+            shader.UniformMatrix4x4("projection", camera.GetProjectionMatrix(m_Width, m_Height));
+
+            renderer.DrawScene(scene, shader);
+
             raycast.origin = camera.Position;
             raycast.direction = camera.getFront();
             raycast.drawRay(10);
@@ -301,17 +299,17 @@ public class App {
             if(Input.is_debug) {
                 textRenderer.renderText("MyCraft " + version + " Vanilla\n" +
                                 (int)fps[0] + " fps (avg: " + (int)fps[1] + ", min: " + (int)fps[2] + ", max: " + (int)fps[3] + ")",
-                                10, 10, 0.3f);
+                        10, 10, 0.3f);
 
                 textRenderer.renderText("XYZ: " + String.format("%.3f",camera.Position.x) + " / " + String.format("%.3f",camera.Position.y) + " / " + String.format("%.3f",camera.Position.z) +
                                 "\nBlocks: nah\nChunks: nah\n"+
                                 "Facing Direction: " + String.format("%.2f",camera.getFront().x) + " / " + String.format("%.2f",camera.getFront().y) + " / " + String.format("%.2f",camera.getFront().z),
                         10, 150, 0.3f);
             }
-
-            world.onUpdate(camera, delta);
             glfwSwapBuffers(window);
             glfwPollEvents();
+
+            world.onUpdate(camera, delta);
         }
 
     }

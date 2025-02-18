@@ -1,27 +1,15 @@
 package GameLayer;
 
-import GameLayer.Rendering.Model.CubeMesh;
-import org.joml.*;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.system.MemoryUtil;
-
-import java.nio.FloatBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
+import GameLayer._Object;
+import org.joml.Vector3f;
 
 public class Block extends _Object {
-    public enum Faces {
-        FRONT,
-        BACK,
-        RIGHT,
-        LEFT,
-        TOP,
-        BOTTOM
-    }
 
-    BlockType type = BlockType.AIR;
+    int ID = 0;
+    BlockType type = BlockType.DIRT;
+    int opacity = 1;
+
     public enum BlockType {
-        AIR,
         DIRT,
         GRASS
     }
@@ -41,5 +29,17 @@ public class Block extends _Object {
     public Block(Vector3f position, Vector3f rotation, Vector3f scale) {
         super(position, rotation, scale);
     }
-
+    public void setType(BlockType type) {
+        this.type = type;
+        switch (type) {
+            case DIRT:
+                ID = 0;
+                opacity = 1;
+                break;
+            case GRASS:
+                ID = 1;
+                opacity = 1;
+                break;
+        }
+    }
 }
