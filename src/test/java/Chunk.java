@@ -16,20 +16,20 @@ public class Chunk extends _Object {
     public final static byte X_DIMENSION = 16;
     public final static short Y_DIMENSION = 255;
     public final static byte Z_DIMENSION = 16;
-    int Y_MAX = 255;
+    int Y_MAX = 5;
     boolean updateChunk = true;
     private FloatBuffer buffer;
 
     private final Block[][][] blocks = new Block[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
-
     VBO ssbo;
     int facedrawn = 0;
-
     String[] texture_paths = {
             "blocks/dirt.png",
             "blocks/grass_block_side.png",
             "blocks/grass_block_top.png"
     };
+    int[] samplers = new int[texture_paths.length];
+
     public Texture[] textures;
 
     public Chunk(Scene scene, @NotNull Vector3f position) {
@@ -81,7 +81,9 @@ public class Chunk extends _Object {
     }
     private void updateMesh() {
         facedrawn = 0;
-        buffer.clear();
+        int estimatedSizeBuffer = (X_DIMENSION * Y_DIMENSION * Z_DIMENSION)/2 * 6 * 8; // 3 position + 1 ID + 1 Face + 2 padding
+        buffer = MemoryUtil.memAllocFloat(estimatedSizeBuffer);
+
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int y = 0; y < Y_DIMENSION; y++) {
                 for(int z = 0; z < Z_DIMENSION; z++) {
@@ -107,7 +109,7 @@ public class Chunk extends _Object {
         ssbo.Bind();
         ssbo.SubData(0, buffer);
         ssbo.UnBind();
-        buffer.clear();
+        MemoryUtil.memFree(buffer);
     }
 
     private int shouldRenderFace(int x, int y, int z, int face) {
@@ -142,7 +144,6 @@ public class Chunk extends _Object {
     @Override
     public void DrawMesh(Shader shader) {
 
-        int[] samplers = new int[textures.length];
         for(int i = 0; i < textures.length; i++) {
             samplers[i] = i;
             textures[i].Bind(i);
@@ -164,11 +165,9 @@ public class Chunk extends _Object {
         if (!GL.getCapabilities().OpenGL30) {
             throw new IllegalStateException("OpenGL 3.0 unavailable !");
         }
-        int estimatedSizeBuffer = (X_DIMENSION * Y_DIMENSION * Z_DIMENSION)/2 * 6 * 7; // 3 position + 1 ID + 1 Face + 2 padding
-        buffer = MemoryUtil.memAllocFloat(estimatedSizeBuffer);
 
         ssbo = new VBO(GL_DYNAMIC_DRAW, GL_SHADER_STORAGE_BUFFER);
-        int estimatedSize = ((X_DIMENSION*Y_DIMENSION*Z_DIMENSION)/2) * 6 * (7*Float.BYTES);
+        int estimatedSize = ((X_DIMENSION*Y_DIMENSION*Z_DIMENSION)/2) * 6 * (8*Float.BYTES);
         ssbo.InitSSBO(Math.round(estimatedSize*0.6f),0);
 
         textures = new Texture[texture_paths.length];

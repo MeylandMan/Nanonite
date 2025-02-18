@@ -101,7 +101,7 @@ public class Camera {
                 .perspective((float)Math.toRadians(Zoom),
                         (float)width / (float)Math.max(height, 1),
                         0.1f,
-                        100.f
+                        16*16
                 );
     }
     // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)

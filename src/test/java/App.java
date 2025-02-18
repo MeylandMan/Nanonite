@@ -39,7 +39,7 @@ public class App {
     Shader shader = new Shader();
     SpriteMesh surface2D;
 
-    Camera camera = new Camera(new Vector3f(0.f, 0.f, -3.f));
+    Camera camera = new Camera(new Vector3f(8.f, 8.f, 8.f));
     float delta;
     float lastFrame;
 
@@ -195,10 +195,12 @@ public class App {
 
         shader.CreateShader("Compute.vert", "Compute.frag");
 
-        Chunk chunk = new Chunk(scene, new Vector3f());
-        Chunk chunk2 = new Chunk(scene, new Vector3f(16, 0, 0));
-        Chunk chunk3 = new Chunk(scene, new Vector3f(0, 0, 16));
-        Chunk chunk4 = new Chunk(scene, new Vector3f(16, 0, 16));
+
+        for(int x = 0; x < 256; x+=16) {
+            for(int z = 0; z < 256; z+=16) {
+                Chunk chunk = new Chunk(scene, new Vector3f(x, 0, z));
+            }
+        }
 
         //System.out.println("MAX TEXTURE YOU CAN LOAD : " + GL_MAX_TEXTURE_IMAGE_UNITS); 34930
         FPSMonitor fpsMonitor = new FPSMonitor();
