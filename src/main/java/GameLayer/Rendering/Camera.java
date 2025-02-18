@@ -194,7 +194,6 @@ public class Camera {
         Position.add(speedPosition.mul(velocity));
     }
 
-
     // Getters
     public Vector3f getFront() { return Front; }
     public Vector3f getRight() { return Right; }

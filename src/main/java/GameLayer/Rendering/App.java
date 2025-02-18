@@ -236,7 +236,7 @@ public class App {
         */
         //System.out.println("MAX TEXTURE YOU CAN LOAD : " + GL_MAX_TEXTURE_IMAGE_UNITS); 34930
         FPSMonitor fpsMonitor = new FPSMonitor();
-
+        SpriteRenderer spriteRenderer = new SpriteRenderer();
         Font font;
         TextRenderer textRenderer = new TextRenderer();
         try {
@@ -307,14 +307,12 @@ public class App {
             world.onRender();
 
             // Rendering something //
-            Matrix4f orthoTextMatrix = new Matrix4f().identity()
+            Matrix4f orthoMatrix = new Matrix4f().identity()
                     .ortho(0, m_Width, m_Height, 0, -1, 1);
 
-            Matrix4f orthoSpriteMatrix = new Matrix4f().identity()
-                    .ortho(0, m_Width, 0, m_Height, -1, 1);
-            textRenderer.getProjectionMatrix(orthoTextMatrix);
-
-            //spriteRenderer.getMatrixProjection(orthoSpriteMatrix);
+            textRenderer.getProjectionMatrix(orthoMatrix);
+            spriteRenderer.getMatrixProjection(orthoMatrix);
+            spriteRenderer.drawRectangle(0, 0, 100, 100, new Vector3f(0.5f, 0.5f, 0.5f), 1);
             //spriteRenderer.drawRectangle(0, 0, 100, 100, new Vector3f(1.0f), 1);
 
             if(Input.is_debug) {
@@ -330,9 +328,6 @@ public class App {
             glfwSwapBuffers(window);
             glfwPollEvents();
 
-            System.out.println("position: " + camera.Position);
-            System.out.println("direction: " + camera.speedPosition);
-            System.out.println("target speed: " + camera.targetSpeed);
             camera.updateCameraVectors(delta);
             world.onUpdate(camera, delta);
         }
