@@ -76,7 +76,6 @@ public class Chunk extends _Object {
     public void Delete() {
         for(Texture texture : textures)
             texture.Delete();
-        MemoryUtil.memFree(buffer);
     }
     private void updateMesh() {
         facedrawn = 0;
