@@ -2,7 +2,9 @@
 out vec3 fragPos;
 //out vec2 v_TexCoords;
 
-//uniform mat4 projection;
+uniform mat4 projection;
+uniform mat4 model;
+
 //uniform vec4 transformation;
 
 /*
@@ -29,5 +31,5 @@ void main() {
     int vertexIndex = gl_VertexID % 6;
 
     fragPos = vertices[vertexIndex];
-    gl_Position = vec4(fragPos, 1.0);
+    gl_Position = projection * model * vec4(fragPos, 1.0);
 }

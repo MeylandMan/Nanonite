@@ -10,11 +10,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/shaders/Sprite.frag" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/shaders/Sprite.vert" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Camera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Camera.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/shaders/Sprite.comp" beforeDir="false" afterPath="$PROJECT_DIR$/assets/shaders/Sprite.comp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/shaders/Sprite.frag" beforeDir="false" afterPath="$PROJECT_DIR$/assets/shaders/Sprite.frag" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/SpriteRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/SpriteRenderer.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -189,7 +186,7 @@
       <workItem from="1739726223061" duration="18192000" />
       <workItem from="1739760430439" duration="3034000" />
       <workItem from="1739765002772" duration="10335000" />
-      <workItem from="1739891334232" duration="21580000" />
+      <workItem from="1739891334232" duration="21883000" />
     </task>
     <servers />
   </component>

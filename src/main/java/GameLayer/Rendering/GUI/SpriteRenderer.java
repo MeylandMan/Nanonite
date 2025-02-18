@@ -35,11 +35,16 @@ public class SpriteRenderer {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         shader.Bind();
-        //shader.Uniform3f("Color", color);
-        //shader.Uniform1f("Alpha", alpha);
+        Matrix4f model = new Matrix4f().identity()
+                .translate(x, y, 0)
+                .scale(width, height, 1);
+
         //shader.Uniform1i("textured", 0);
         //shader.Uniform4f("transformation", x, y, width, height);
-        //shader.UniformMatrix4x4("projection", matrix);
+        shader.Uniform1f("Alpha", alpha);
+        shader.Uniform3f("Color", color);
+        shader.UniformMatrix4x4("projection", matrix);
+        shader.UniformMatrix4x4("model", model);
         glDrawArrays(GL_TRIANGLES, 0,  6);
         shader.UnBind();
 

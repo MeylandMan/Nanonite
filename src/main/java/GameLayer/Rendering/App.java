@@ -312,7 +312,7 @@ public class App {
 
             textRenderer.getProjectionMatrix(orthoMatrix);
             spriteRenderer.getMatrixProjection(orthoMatrix);
-            spriteRenderer.drawRectangle(0, 0, 100, 100, new Vector3f(0.5f, 0.5f, 0.5f), 1);
+            spriteRenderer.drawRectangle(0, 0, 100, 100, new Vector3f(0.5f, 0.5f, 0.5f), 1.0f);
             //spriteRenderer.drawRectangle(0, 0, 100, 100, new Vector3f(1.0f), 1);
 
             if(Input.is_debug) {
