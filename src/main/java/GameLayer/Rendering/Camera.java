@@ -25,11 +25,11 @@ public class Camera {
     private static final float YAW = 90.0f;
     private static final float PITCH = 0.0f;
     public  static final float SPEED = 5.f;
-    public static final float MAX_SPEED = 10.0f; // Vitesse max en mode spectateur
+    public static final float MAX_SPEED = 7.0f; // Vitesse max en mode spectateur
     public static final float ACCELERATION_FACTOR = 5.0f; // Influence de l'accélération
     public static final float DRAG_FACTOR = 5.0f; // Influence du ralentissement
     private static final float SENSITIVITY = 0.1f;
-    private static final float ZOOM = 45.0f;
+    public  static final float ZOOM = 45.0f;
 
     // camera Attributes
     public CubeCollision collision;
@@ -45,8 +45,9 @@ public class Camera {
 
     // camera options
     public Vector3f speedPosition;
-    public float targetSpeed = SPEED; // Objectif de vitesse
-    public float currentSpeed = SPEED; // Vitesse interpolée
+    public float targetSpeed = SPEED;
+    public float currentSpeed = SPEED;
+    public float targetZoom = ZOOM;
     public float MouseSensitivity = SENSITIVITY;
     public float Zoom = ZOOM;
 
@@ -158,7 +159,6 @@ public class Camera {
         collision.position = new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f);
     }
 
-
     // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
     public void ProcessMouseMovement(float x_offset, float y_offset, boolean constrainPitch)
     {
@@ -174,13 +174,13 @@ public class Camera {
     }
 
     public void updateCameraVectors(float deltaTime) {
-        float yawRad = (float) Math.toRadians(Yaw);
-        float pitchRad = (float) Math.toRadians(Pitch);
+        float yawRad = toRadians(Yaw);
+        float pitchRad = toRadians(Pitch);
 
         Front.set(
-                (float) (Math.cos(yawRad) * Math.cos(pitchRad)),
-                (float) Math.sin(pitchRad),
-                (float) (Math.sin(yawRad) * Math.cos(pitchRad))
+                (cos(yawRad) * cos(pitchRad)),
+                sin(pitchRad),
+                (sin(yawRad) * cos(pitchRad))
         ).normalize();
 
         // also re-calculate the Right and Up vector
@@ -188,10 +188,10 @@ public class Camera {
         Up.set(Front).cross(Right).normalize();
 
         currentSpeed = lerp(currentSpeed, targetSpeed, deltaTime * ACCELERATION_FACTOR);
+        Zoom = lerp(Zoom, targetZoom, deltaTime * ACCELERATION_FACTOR);
         float velocity = currentSpeed * deltaTime;
 
         Position.add(speedPosition.mul(velocity));
-        currentSpeed = max(currentSpeed, 0);
     }
 
 

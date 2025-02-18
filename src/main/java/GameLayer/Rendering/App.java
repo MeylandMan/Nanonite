@@ -23,6 +23,7 @@ import java.lang.Math;
 import java.nio.IntBuffer;
 import java.util.*;
 
+import static org.joml.Math.*;
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -68,6 +69,10 @@ public class App {
         if (Input.is_locked) {
             if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
                 camera.targetSpeed = Camera.MAX_SPEED;
+                camera.targetZoom = Camera.ZOOM*1.4f;
+            } else {
+                camera.targetSpeed = Camera.SPEED;
+                camera.targetZoom = Camera.ZOOM;
             }
 
 
@@ -79,15 +84,8 @@ public class App {
                     glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE &&
                     glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
             {
-                camera.targetSpeed = 0;
-            } else {
-                if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE) {
-                    camera.targetSpeed = Camera.SPEED;
-                }
+                camera.targetSpeed = (0 - camera.targetSpeed)/25;
             }
-
-            System.out.println("camera target speed: " + camera.targetSpeed);
-            System.out.println("camera current speed: " + camera.currentSpeed);
 
             if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
                 camera.ProcessKeyboard(Camera.Camera_Movement.FORWARD, delta);
@@ -332,6 +330,9 @@ public class App {
             glfwSwapBuffers(window);
             glfwPollEvents();
 
+            System.out.println("position: " + camera.Position);
+            System.out.println("direction: " + camera.speedPosition);
+            System.out.println("target speed: " + camera.targetSpeed);
             camera.updateCameraVectors(delta);
             world.onUpdate(camera, delta);
         }
