@@ -66,6 +66,12 @@ public class App {
 
     private void ProcessInput(long window) {
         if (Input.is_locked) {
+            if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
+                camera.MovementSpeed = Camera.SPEED * 1.5f;
+            } else {
+                camera.MovementSpeed = Camera.SPEED;
+            }
+
             if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
                 camera.ProcessKeyboard(Camera.Camera_Movement.FORWARD, delta);
             if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)

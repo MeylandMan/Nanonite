@@ -22,7 +22,7 @@ public class Camera {
     // Default camera values
     private static final float YAW = 90.0f;
     private static final float PITCH = 0.0f;
-    private static final float SPEED = 5.f;
+    public  static final float SPEED = 5.f;
     private static final float SENSITIVITY = 0.1f;
     private static final float ZOOM = 45.0f;
 
@@ -128,14 +128,14 @@ public class Camera {
         float X = 0;
         float Y = 0;
         float Z = 0;
-
+        float pitchRad = (float) Math.toRadians(Pitch);
         if (direction == Camera_Movement.FORWARD) {
-            X += Front.x * velocity;
-            Z += Front.z * velocity;
+            X += (float) ((Front.x/Math.cos(pitchRad)) * velocity);
+            Z += (float) ((Front.z/Math.cos(pitchRad)) * velocity);
         }
         if (direction == Camera_Movement.BACKWARD) {
-            X -= Front.x * velocity;
-            Z -= Front.z * velocity;
+            X -= (float) ((Front.x/Math.cos(pitchRad)) * velocity);
+            Z -= (float) ((Front.z/Math.cos(pitchRad)) * velocity);
         }
         if (direction == Camera_Movement.LEFT) {
             X += Right.x * velocity;
