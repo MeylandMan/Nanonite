@@ -66,11 +66,28 @@ public class App {
 
     private void ProcessInput(long window) {
         if (Input.is_locked) {
-            if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
-                camera.MovementSpeed = Camera.SPEED * 1.5f;
-            } else {
-                camera.MovementSpeed = Camera.SPEED;
+            if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
+                camera.targetSpeed = Camera.MAX_SPEED;
             }
+
+
+
+            if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE &&
+                    glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE &&
+                    glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE &&
+                    glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE &&
+                    glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE &&
+                    glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
+            {
+                camera.targetSpeed = 0;
+            } else {
+                if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE) {
+                    camera.targetSpeed = Camera.SPEED;
+                }
+            }
+
+            System.out.println("camera target speed: " + camera.targetSpeed);
+            System.out.println("camera current speed: " + camera.currentSpeed);
 
             if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
                 camera.ProcessKeyboard(Camera.Camera_Movement.FORWARD, delta);
@@ -315,6 +332,7 @@ public class App {
             glfwSwapBuffers(window);
             glfwPollEvents();
 
+            camera.updateCameraVectors(delta);
             world.onUpdate(camera, delta);
         }
 

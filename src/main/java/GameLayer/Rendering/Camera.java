@@ -1,9 +1,11 @@
 package GameLayer.Rendering;
 
+
 import GameLayer.Physics.CubeCollision;
 import static GameLayer.World.*;
-import org.joml.*;
-import java.lang.Math;
+import static org.joml.Math.*;
+import org.joml.Vector3f;
+import org.joml.Matrix4f;
 
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 
@@ -23,6 +25,9 @@ public class Camera {
     private static final float YAW = 90.0f;
     private static final float PITCH = 0.0f;
     public  static final float SPEED = 5.f;
+    public static final float MAX_SPEED = 10.0f; // Vitesse max en mode spectateur
+    public static final float ACCELERATION_FACTOR = 5.0f; // Influence de l'accélération
+    public static final float DRAG_FACTOR = 5.0f; // Influence du ralentissement
     private static final float SENSITIVITY = 0.1f;
     private static final float ZOOM = 45.0f;
 
@@ -39,12 +44,11 @@ public class Camera {
     public float Pitch;
 
     // camera options
-    public float MovementSpeed = SPEED;
+    public Vector3f speedPosition;
+    public float targetSpeed = SPEED; // Objectif de vitesse
+    public float currentSpeed = SPEED; // Vitesse interpolée
     public float MouseSensitivity = SENSITIVITY;
     public float Zoom = ZOOM;
-
-    // Camera previous positions options
-    private Vector3f prev_position = new Vector3f();
 
     // Camera constructor
     public Camera() {
@@ -55,7 +59,7 @@ public class Camera {
         this.Pitch = PITCH;
         collision = new CubeCollision(new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f),
                 new Vector3f(1, 2, 1));
-        updateCameraVectors();
+        this.speedPosition = new Vector3f();
     }
     public Camera(Vector3f position) {
         this.Position = position;
@@ -64,7 +68,7 @@ public class Camera {
         this.Pitch = PITCH;
         collision = new CubeCollision(new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f),
                 new Vector3f(1, 2, 1));
-        updateCameraVectors();
+        this.speedPosition = new Vector3f();
     }
 
     public Camera(Vector3f position, Vector3f up) {
@@ -74,7 +78,7 @@ public class Camera {
         this.Pitch = PITCH;
         collision = new CubeCollision(new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f),
                                       new Vector3f(1, 2, 1));
-        updateCameraVectors();
+        this.speedPosition = new Vector3f();
     }
     public Camera(Vector3f position, Vector3f up, float yaw) {
         this.Position = position;
@@ -83,7 +87,7 @@ public class Camera {
         this.Pitch = PITCH;
         collision = new CubeCollision(new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f),
                 new Vector3f(1, 2, 1));
-        updateCameraVectors();
+        this.speedPosition = new Vector3f();
     }
 
     public Camera(Vector3f position, Vector3f up, float yaw, float pitch) {
@@ -93,7 +97,7 @@ public class Camera {
         this.Pitch = pitch;
         collision = new CubeCollision(new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f),
                 new Vector3f(1, 2, 1));
-        updateCameraVectors();
+        this.speedPosition = new Vector3f();
     }
     //Camera constructor with scalar values
     public Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) {
@@ -103,7 +107,7 @@ public class Camera {
         this.Pitch = pitch;
         collision = new CubeCollision(new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f),
                 new Vector3f(1, 2, 1));
-        updateCameraVectors();
+        this.speedPosition = new Vector3f();
     }
 
     // returns the view matrix calculated using Euler Angles and the LookAt Matrix
@@ -122,51 +126,36 @@ public class Camera {
     }
     // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
 
-    void ProcessKeyboard(Camera_Movement direction, float deltaTime)
-    {
-        float velocity = MovementSpeed * deltaTime;
-        float X = 0;
-        float Y = 0;
-        float Z = 0;
+    void ProcessKeyboard(Camera_Movement direction, float deltaTime) {
+
         float pitchRad = (float) Math.toRadians(Pitch);
+
         if (direction == Camera_Movement.FORWARD) {
-            X += (float) ((Front.x/Math.cos(pitchRad)) * velocity);
-            Z += (float) ((Front.z/Math.cos(pitchRad)) * velocity);
+            speedPosition.x += (float) (Front.x/Math.cos(pitchRad));
+            speedPosition.z += (float) (Front.z/Math.cos(pitchRad));
         }
         if (direction == Camera_Movement.BACKWARD) {
-            X -= (float) ((Front.x/Math.cos(pitchRad)) * velocity);
-            Z -= (float) ((Front.z/Math.cos(pitchRad)) * velocity);
-        }
+            speedPosition.x -= (float) (Front.x/Math.cos(pitchRad));
+            speedPosition.z -= (float) (Front.z/Math.cos(pitchRad));        }
         if (direction == Camera_Movement.LEFT) {
-            X += Right.x * velocity;
-            Z += Right.z * velocity;
+            speedPosition.x += Right.x;
+            speedPosition.z += Right.z;
         }
         if (direction == Camera_Movement.RIGHT) {
-            X -= Right.x * velocity;
-            Z -= Right.z * velocity;
+            speedPosition.x -= Right.x;
+            speedPosition.z -= Right.z;
         }
         if(direction == Camera_Movement.UP) {
-            Y += velocity;
+            speedPosition.y += SPEED / currentSpeed;
         }
         if(direction == Camera_Movement.DOWN) {
-            Y -= velocity;
+            speedPosition.y -= SPEED / currentSpeed;
         }
-
         
         for(CubeCollision collision : worldCollisions) {
-            if(collision == this.collision)
-                continue;
-
-            if(collision.intersects(this.collision)) {
-                X = Y = Z = 0;
-                break;
-            }
         }
 
-        Position.add(X, Y, Z);
         collision.position = new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f);
-
-        updateCameraVectors();
     }
 
 
@@ -182,18 +171,9 @@ public class Camera {
         // make sure that when pitch is out of bounds, screen doesn't get flipped
         if (constrainPitch)
             Pitch = Math.clamp(Pitch, -89.0f, 89.0f);
-
-        // update Front, Right and Up Vectors using the updated Euler angles
-        updateCameraVectors();
     }
 
-    // calculates the front vector from the Camera's (updated) Euler Angles
-    public void updateCameraPrev() {
-        prev_position = new Vector3f(Position);
-    }
-
-    public void updateCameraVectors()
-    {
+    public void updateCameraVectors(float deltaTime) {
         float yawRad = (float) Math.toRadians(Yaw);
         float pitchRad = (float) Math.toRadians(Pitch);
 
@@ -207,7 +187,13 @@ public class Camera {
         Right.set(WorldUp).cross(Front).normalize();
         Up.set(Front).cross(Right).normalize();
 
+        currentSpeed = lerp(currentSpeed, targetSpeed, deltaTime * ACCELERATION_FACTOR);
+        float velocity = currentSpeed * deltaTime;
+
+        Position.add(speedPosition.mul(velocity));
+        currentSpeed = max(currentSpeed, 0);
     }
+
 
     // Getters
     public Vector3f getFront() { return Front; }
