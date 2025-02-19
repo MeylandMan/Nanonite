@@ -215,6 +215,11 @@ public class App {
         UIButton button = new UIButton("Button",
                 new Vector3f(10, 20, -10),
                 new Vector2f(300, 100));
+
+        button.setOnClickAction(() -> {
+            System.out.println("Special button clicked");
+        });
+        
         user.addElement(button);
 
 
@@ -283,8 +288,9 @@ public class App {
             glfwSwapBuffers(window);
             glfwPollEvents();
 
-            user.update(delta);
+
             Input.Update(window, camera);
+            user.update(delta);
             camera.updateCameraVectors(delta);
             world.onUpdate(camera, delta);
 
