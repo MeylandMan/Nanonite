@@ -1,11 +1,26 @@
 package Core;
 
 import Core.Rendering.Camera;
+import org.joml.Vector2f;
 import org.lwjgl.glfw.*;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class Input {
 
+    //Mouse variables
+    private static boolean firstMouse = true;
+    public static float mouseX = 0.0f;
+    public static float mouseY = 0.0f;
+    public static float lastMouseX = 0.0f;
+    public static float lastMouseY = 0.0f;
+    public static float mouseDeltaX = 0.0f;
+    public static float mouseDeltaY = 0.0f;
+
+
+    //Window
+    private static int windoWwidth, windowHeight;
+
+    // Booleans
     public static boolean is_locked;
     public static boolean is_debug;
 
@@ -39,6 +54,15 @@ public class Input {
             GLFW_KEY_LEFT_CONTROL
     };
 
+
+
+    // Mouse Buttons
+    private static final InputState[] MouseButtons = {
+            InputState.NOTHING, // Left
+            InputState.NOTHING, // Right
+            InputState.NOTHING  // Middle
+    };
+
     // Keys
     private static final InputState[] Keys = {
             //UP
@@ -65,6 +89,7 @@ public class Input {
     };
 
     //Input Macros
+    // KEYBOARD
     public static final int KEY_UP = 0;
     public static final int KEY_DOWN = 1;
     public static final int KEY_LEFT = 2;
@@ -78,8 +103,13 @@ public class Input {
     public static final int KEY_SNEAK = 8;
     public static final int KEY_SPRINT = 9;
 
+    //MOUSE
+    public static final int MOUSE_LEFT = 0;
+    public static final int MOUSE_RIGHT = 1;
+    public static final int MOUSE_MIDDLE = 2;
+
     public void changeInputBinding(int key_binding, int key) {
-        if(key_binding > Input_bindings.length) {
+        if(key_binding >= Input_bindings.length) {
             System.out.println("Wrong key binding: " + key_binding);
             return;
         }
@@ -88,7 +118,7 @@ public class Input {
     }
 
     public static boolean isKeyNotUsed(int key) {
-        if(key > Input_bindings.length) {
+        if(key >= Input_bindings.length) {
             System.out.println("Wrong key: " + key);
             return false;
         }
@@ -96,7 +126,7 @@ public class Input {
     }
 
     public static boolean isKeyJustPressed(int key) {
-        if(key > Input_bindings.length) {
+        if(key >= Input_bindings.length) {
             System.out.println("Wrong key: " + key);
             return false;
         }
@@ -104,7 +134,7 @@ public class Input {
     }
 
     public static boolean isKeyPressed(int key) {
-        if(key > Input_bindings.length) {
+        if(key >= Input_bindings.length) {
             System.out.println("Wrong key: " + key);
             return false;
         }
@@ -112,7 +142,7 @@ public class Input {
     }
 
     public static boolean isKeyReleased(int key) {
-        if(key > Input_bindings.length) {
+        if(key >= Input_bindings.length) {
             System.out.println("Wrong key: " + key);
             return false;
         }
@@ -124,7 +154,52 @@ public class Input {
                 isKeyNotUsed(KEY_LEFT) && isKeyNotUsed(KEY_RIGHT));
     }
 
-    public static void Update(long window) {
+    public static boolean isMouseButtonJustPressed(int button) {
+        if (button >= MouseButtons.length) {
+            System.out.println("Wrong mouse button: " + button);
+            return false;
+        }
+        return (MouseButtons[button] == InputState.PRESSED);
+    }
+
+    public static boolean isMouseButtonPressed(int button) {
+        if (button >= MouseButtons.length) {
+            System.out.println("Wrong mouse button: " + button);
+            return false;
+        }
+        return (MouseButtons[button] == InputState.HOLDING);
+    }
+
+    public static boolean isMouseButtonReleased(int button) {
+        if (button >= MouseButtons.length) {
+            System.out.println("Wrong mouse button: " + button);
+            return false;
+        }
+        return (MouseButtons[button] == InputState.RELEASED);
+    }
+
+    public static boolean isMouseButtonNotUsed(int button) {
+        if (button >= MouseButtons.length) {
+            System.out.println("Wrong mouse button: " + button);
+            return false;
+        }
+        return (MouseButtons[button] == InputState.NOTHING);
+    }
+
+    public static void setMousePosition(long window, Vector2f position) {
+        glfwSetCursorPos(window, position.x, position.y);
+    }
+
+    public static void setMousePosition(long window, float x, float y) {
+        glfwSetCursorPos(window, x, y);
+    }
+
+    public static void getWindowSize(float x, float y) {
+        windoWwidth = (int)x;
+        windowHeight = (int)y;
+    }
+
+    public static void Update(long window, Camera camera) {
         if (is_locked) {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             if(isKeyJustPressed(KEY_DEBUG)) {
@@ -149,13 +224,50 @@ public class Input {
             }
         }
 
+        for (int i = 0; i < MouseButtons.length; i++) {
+            if (glfwGetMouseButton(window, i) == GLFW_PRESS) {
+                if (MouseButtons[i] == InputState.PRESSED)
+                    MouseButtons[i] = InputState.HOLDING;
+                else if (MouseButtons[i] != InputState.HOLDING)
+                    MouseButtons[i] = InputState.PRESSED;
+            } else {
+                if (MouseButtons[i] == InputState.RELEASED)
+                    MouseButtons[i] = InputState.NOTHING;
+                else if (MouseButtons[i] != InputState.NOTHING)
+                    MouseButtons[i] = InputState.RELEASED;
+            }
+        }
+
         if(isKeyJustPressed(KEY_ESCAPE)) {
             glfwSetWindowShouldClose(window, true);
         }
 
         if(isKeyJustPressed(KEY_LOCK)) {
+            Input.setMousePosition(window, (float) windoWwidth /2, (float) windowHeight /2);
             is_locked = !is_locked;
+
         }
+
+        glfwSetCursorPosCallback(window, (long win, double xposIn, double yposIn) -> {
+            float xpos = (float) xposIn;
+            float ypos = (float) yposIn;
+
+            // Calcul du déplacement de la souris
+            mouseDeltaX = xpos - lastMouseX;
+            mouseDeltaY = lastMouseY - ypos; // Inversé car l'axe Y va de bas en haut
+
+            // Mise à jour des coordonnées
+            lastMouseX = mouseX = xpos;
+            lastMouseY = mouseY = ypos;
+
+            // Si la souris est verrouillée, on transmet le mouvement à la caméra
+            if (is_locked) {
+                camera.ProcessMouseMovement(mouseDeltaX, mouseDeltaY, true);
+            }
+        });
+    }
+
+    public static void MouseEvent() {
 
     }
 }

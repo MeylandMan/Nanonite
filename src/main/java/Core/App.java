@@ -138,29 +138,6 @@ public class App {
             glViewport(0, 0, m_Width, m_Height);
         });
 
-        glfwSetCursorPosCallback(window, (long window, double xposIn, double yposIn) -> {
-            float xpos = (float)xposIn;
-            float ypos = (float)yposIn;
-
-            if (firstMouse)
-            {
-                lastX = xpos;
-                lastY = ypos;
-                firstMouse = false;
-            }
-
-            float xoffset = xpos - lastX;
-            float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-
-            lastX = xpos;
-            lastY = ypos;
-
-            if (Input.is_locked) {
-                camera.ProcessMouseMovement(xoffset, yoffset, true);
-            }
-
-        });
-
         IntBuffer pWidth;
         IntBuffer pHeight;
         // Get the thread stack and push a new frame
@@ -305,9 +282,11 @@ public class App {
             glfwSwapBuffers(window);
             glfwPollEvents();
 
-            Input.Update(window);
+            Input.getWindowSize(m_Width, m_Height);
+            Input.Update(window, camera);
             camera.updateCameraVectors(delta);
             world.onUpdate(camera, delta);
+
         }
 
     }
