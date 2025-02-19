@@ -26,7 +26,17 @@ public class Input {
             //RIGHT
             GLFW_KEY_D,
             //DEBUG
-            GLFW_KEY_F3
+            GLFW_KEY_F3,
+            //REMOVE LOCK IN
+            GLFW_KEY_Q,
+            //ESCAPE
+            GLFW_KEY_ESCAPE,
+            //JUMP
+            GLFW_KEY_SPACE,
+            //SNEAK
+            GLFW_KEY_LEFT_SHIFT,
+            //SPRINT
+            GLFW_KEY_LEFT_CONTROL
     };
 
     // Keys
@@ -41,6 +51,16 @@ public class Input {
             InputState.NOTHING,
 
             //DEBUG
+            InputState.NOTHING,
+            //REMOVE LOCK IN
+            InputState.NOTHING,
+            //ESCAPE
+            InputState.NOTHING,
+            //Jump
+            InputState.NOTHING,
+            //SNEAK
+            InputState.NOTHING,
+            //SPRINT
             InputState.NOTHING
     };
 
@@ -51,6 +71,12 @@ public class Input {
     public static final int KEY_RIGHT = 3;
 
     public static final int KEY_DEBUG = 4;
+    public static final int KEY_LOCK = 5;
+    public static final int KEY_ESCAPE = 6;
+
+    public static final int KEY_JUMP = 7;
+    public static final int KEY_SNEAK = 8;
+    public static final int KEY_SPRINT = 9;
 
     public void changeInputBinding(int key_binding, int key) {
         if(key_binding > Input_bindings.length) {
@@ -93,7 +119,20 @@ public class Input {
         return (Keys[key] == InputState.RELEASED);
     }
 
+    public static boolean isMoveKeyNotUsed() {
+        return (isKeyNotUsed(KEY_UP) && isKeyNotUsed(KEY_DOWN) &&
+                isKeyNotUsed(KEY_LEFT) && isKeyNotUsed(KEY_RIGHT));
+    }
+
     public static void Update(long window) {
+        if (is_locked) {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            if(isKeyJustPressed(KEY_DEBUG)) {
+                is_debug = !is_debug;
+            }
+        }
+        else
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
         for(int i = 0; i < Input_bindings.length; i++) {
             if (glfwGetKey(window, Input_bindings[i]) == GLFW_PRESS)
@@ -109,5 +148,14 @@ public class Input {
                     Keys[i] = InputState.RELEASED;
             }
         }
+
+        if(isKeyJustPressed(KEY_ESCAPE)) {
+            glfwSetWindowShouldClose(window, true);
+        }
+
+        if(isKeyJustPressed(KEY_LOCK)) {
+            is_locked = !is_locked;
+        }
+
     }
 }

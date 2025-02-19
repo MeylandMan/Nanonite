@@ -64,7 +64,7 @@ public class App {
 
     private void ProcessInput(long window) {
         if (Input.is_locked) {
-            if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
+            if (Input.isKeyPressed(Input.KEY_SPRINT) && !Input.isKeyNotUsed(Input.KEY_UP)) {
                 camera.targetSpeed = Camera.MAX_SPEED;
                 camera.targetZoom = Camera.ZOOM*1.4f;
             } else {
@@ -72,27 +72,21 @@ public class App {
                 camera.targetZoom = Camera.ZOOM;
             }
 
-            if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE &&
-                    glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE &&
-                    glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE &&
-                    glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE &&
-                    glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE &&
-                    glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
-            {
+            if (Input.isMoveKeyNotUsed()) {
                 camera.targetSpeed = 0;
             }
 
-            if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+            if (Input.isKeyPressed(Input.KEY_UP))
                 camera.ProcessKeyboard(Camera.Camera_Movement.FORWARD, delta);
-            if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+            if (Input.isKeyPressed(Input.KEY_DOWN))
                 camera.ProcessKeyboard(Camera.Camera_Movement.BACKWARD, delta);
-            if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+            if (Input.isKeyPressed(Input.KEY_LEFT))
                 camera.ProcessKeyboard(Camera.Camera_Movement.LEFT, delta);
-            if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+            if (Input.isKeyPressed(Input.KEY_RIGHT))
                 camera.ProcessKeyboard(Camera.Camera_Movement.RIGHT, delta);
-            if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+            if(Input.isKeyPressed(Input.KEY_JUMP))
                 camera.ProcessKeyboard(Camera.Camera_Movement.UP, delta);
-            if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+            if(Input.isKeyPressed(Input.KEY_SNEAK))
                 camera.ProcessKeyboard(Camera.Camera_Movement.DOWN, delta);
         }
     }
@@ -272,10 +266,6 @@ public class App {
             lastFrame = currentFrame;
 
             ProcessInput(window);
-            if (Input.is_locked)
-                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-            else
-                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
             renderer.ClearColor();
 
@@ -300,8 +290,6 @@ public class App {
             textRenderer.getProjectionMatrix(orthoMatrix);
             spriteRenderer.getMatrixProjection(orthoMatrix);
 
-            renderer.renderInterfaces();
-
             if(Input.is_debug) {
                 textRenderer.renderText("MyCraft " + version + " Vanilla\n" +
                                 (int)fps[0] + " fps (avg: " + (int)fps[1] + ", min: " + (int)fps[2] + ", max: " + (int)fps[3] + ")",
@@ -312,10 +300,12 @@ public class App {
                                 "Facing Direction: " + String.format("%.2f",camera.getFront().x) + " / " + String.format("%.2f",camera.getFront().y) + " / " + String.format("%.2f",camera.getFront().z),
                         10, 150, 0.3f);
             }
-            //spriteRenderer.drawRectangle(10, 50, 100, 100, new Vector3f(0.5f, 0.5f, 0.5f), 1.0f);
+            renderer.renderInterfaces();
+
             glfwSwapBuffers(window);
             glfwPollEvents();
 
+            Input.Update(window);
             camera.updateCameraVectors(delta);
             world.onUpdate(camera, delta);
         }
