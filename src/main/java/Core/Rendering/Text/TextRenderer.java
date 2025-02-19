@@ -6,6 +6,7 @@ import org.joml.Matrix4f;
 import static org.lwjgl.opengl.GL11C.glEnable;
 import static org.lwjgl.opengl.GL30.*;
 
+import org.joml.Vector3f;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
@@ -30,13 +31,15 @@ public class TextRenderer {
 
         glBindVertexArray(vao);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, 6 * 4 * 500, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, 6 * 4 * 5000, GL_DYNAMIC_DRAW);
 
         // Position (x, y) + UV (u, v)
-        glVertexAttribPointer(0, 2, GL_FLOAT, false, 4 * Float.BYTES, 0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, 8 * Float.BYTES, 0);
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(1, 2, GL_FLOAT, false, 4 * Float.BYTES, 2 * Float.BYTES);
+        glVertexAttribPointer(1, 2, GL_FLOAT, false, 8 * Float.BYTES, 3 * Float.BYTES);
         glEnableVertexAttribArray(1);
+        glVertexAttribPointer(2, 3, GL_FLOAT, false, 8 * Float.BYTES, 5 * Float.BYTES);
+        glEnableVertexAttribArray(2);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
@@ -46,19 +49,35 @@ public class TextRenderer {
         this.matrix = matrix;
     }
 
-    public void renderText(String text, float x, float y, float scale) {
+    private float getTextWidth(String text, float scale) {
+        float width = 0;
+        for (char c : text.toCharArray()) {
+            Font.CharInfo charInfo = font.getChar((int) c);
+            if (charInfo != null) {
+                width += charInfo.xAdvance * scale;
+            }
+        }
+        return width;
+    }
 
-        glDisable(GL_DEPTH_TEST);
+
+    public void renderText(String text, float x, float y, float scale, boolean centered) {
+        if (centered) {
+            float textWidth = getTextWidth(text, scale);
+            x -= textWidth / 2.5f; // Décale le texte vers la gauche pour qu'il soit centré
+        }
+
+        glDisable(GL_BLEND);
         glDisable(GL_CULL_FACE);
 
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
 
         shader.Bind();
         glBindVertexArray(vao);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-        FloatBuffer buffer = MemoryUtil.memAllocFloat(text.length() * 6 * 4); // 6 vertices par quad, 4 valeurs (x, y, u, v)
+        FloatBuffer buffer = MemoryUtil.memAllocFloat(text.length() * 6 * 8); // 6 vertices par quad, 4 valeurs (x, y, u, v)
 
         float cursorX = x;
 
@@ -85,13 +104,13 @@ public class TextRenderer {
             v1 = 1.0f - v1;
 
             buffer.put(new float[]{
-                    xpos,     ypos,     u0, v0,
-                    xpos,     ypos + h, u0, v1,
-                    xpos + w, ypos + h, u1, v1,
+                    xpos,     ypos,     -1,      u0, v0, 1, 1, 1,
+                    xpos,     ypos + h, -1,      u0, v1, 1, 1, 1,
+                    xpos + w, ypos + h, -1,      u1, v1, 1, 1, 1,
 
-                    xpos,     ypos,     u0, v0,
-                    xpos + w, ypos + h, u1, v1,
-                    xpos + w, ypos,     u1, v0
+                    xpos,     ypos,     -1,      u0, v0, 1, 1, 1,
+                    xpos + w, ypos + h, -1,      u1, v1, 1, 1, 1,
+                    xpos + w, ypos,     -1,      u1, v0, 1, 1, 1
             });
 
             cursorX += charInfo.xAdvance * scale;
@@ -113,7 +132,7 @@ public class TextRenderer {
         glBindVertexArray(0);
         shader.UnBind();
 
-        glDisable(GL_BLEND);
+        glDisable(GL_DEPTH_TEST);
     }
 }
 

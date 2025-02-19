@@ -24,7 +24,6 @@ import java.util.*;
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 
-import static org.lwjgl.opengl.GL11C.glEnable;
 import static org.lwjgl.opengl.GL11C.glViewport;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.system.MemoryStack.*;
@@ -36,7 +35,6 @@ public class App {
     private int m_Width = 0;
     private int m_Height = 0;
     private final String m_Title;
-    boolean firstMouse = true;
     float lastX;
     float lastY;
     public Renderer renderer;
@@ -119,12 +117,13 @@ public class App {
             throw new IllegalStateException("Unable to initialize GLFW");
 
         // Configure GLFW
-        glfwDefaultWindowHints(); // optional, the current window hints are already the default
-        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
+
         //glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         //glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+        glfwWindowHint(GLFW_COCOA_GRAPHICS_SWITCHING , GLFW_TRUE);
 
         window = glfwCreateWindow(DEFAULT_WIDTH, DEFAULT_HEIGHT, m_Title, NULL, NULL);
         if ( window == NULL )
@@ -213,7 +212,9 @@ public class App {
 
         // UI
         user = new UserInterface(spriteRenderer, textRenderer);
-        UIButton button = new UIButton(new Vector3f(10, 20, 0), new Vector2f(200, 200));
+        UIButton button = new UIButton("Button",
+                new Vector3f(10, 20, -10),
+                new Vector2f(300, 100));
         user.addElement(button);
 
 
@@ -262,7 +263,7 @@ public class App {
 
             // Rendering something //
             Matrix4f orthoMatrix = new Matrix4f().identity()
-                    .ortho(0, m_Width, m_Height, 0, -1, 1);
+                    .ortho(0, m_Width, m_Height, 0, 0.001f, 100);
 
             textRenderer.getProjectionMatrix(orthoMatrix);
             spriteRenderer.getMatrixProjection(orthoMatrix);
@@ -270,19 +271,19 @@ public class App {
             if(Input.is_debug) {
                 textRenderer.renderText("MyCraft " + version + " Vanilla\n" +
                                 (int)fps[0] + " fps (avg: " + (int)fps[1] + ", min: " + (int)fps[2] + ", max: " + (int)fps[3] + ")",
-                        10, 10, 0.3f);
+                        10, 10, 0.3f, false);
 
                 textRenderer.renderText("XYZ: " + String.format("%.3f",camera.Position.x) + " / " + String.format("%.3f",camera.Position.y) + " / " + String.format("%.3f",camera.Position.z) +
                                 "\nBlocks: nah\nChunks: nah\n"+
-                                "Facing Direction: " + String.format("%.2f",camera.getFront().x) + " / " + String.format("%.2f",camera.getFront().y) + " / " + String.format("%.2f",camera.getFront().z),
-                        10, 150, 0.3f);
+                                "Facing Direction: " + String.format("%.3f",camera.getFront().x) + " / " + String.format("%.3f",camera.getFront().y) + " / " + String.format("%.3f",camera.getFront().z),
+                        10, 150, 0.3f, false);
             }
             renderer.renderInterfaces();
 
             glfwSwapBuffers(window);
             glfwPollEvents();
 
-            Input.getWindowSize(m_Width, m_Height);
+            user.update(delta);
             Input.Update(window, camera);
             camera.updateCameraVectors(delta);
             world.onUpdate(camera, delta);

@@ -3,7 +3,12 @@ package Core;
 import Core.Rendering.Camera;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.*;
+import org.lwjgl.system.MemoryStack;
+
+import java.nio.IntBuffer;
+
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class Input {
 
@@ -15,10 +20,6 @@ public class Input {
     public static float lastMouseY = 0.0f;
     public static float mouseDeltaX = 0.0f;
     public static float mouseDeltaY = 0.0f;
-
-
-    //Window
-    private static int windoWwidth, windowHeight;
 
     // Booleans
     public static boolean is_locked;
@@ -194,11 +195,6 @@ public class Input {
         glfwSetCursorPos(window, x, y);
     }
 
-    public static void getWindowSize(float x, float y) {
-        windoWwidth = (int)x;
-        windowHeight = (int)y;
-    }
-
     public static void Update(long window, Camera camera) {
         if (is_locked) {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -206,8 +202,6 @@ public class Input {
                 is_debug = !is_debug;
             }
         }
-        else
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
         for(int i = 0; i < Input_bindings.length; i++) {
             if (glfwGetKey(window, Input_bindings[i]) == GLFW_PRESS)
@@ -243,9 +237,8 @@ public class Input {
         }
 
         if(isKeyJustPressed(KEY_LOCK)) {
-            Input.setMousePosition(window, (float) windoWwidth /2, (float) windowHeight /2);
             is_locked = !is_locked;
-
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         }
 
         glfwSetCursorPosCallback(window, (long win, double xposIn, double yposIn) -> {
@@ -267,7 +260,7 @@ public class Input {
         });
     }
 
-    public static void MouseEvent() {
-
+    public static Vector2f getMousePosition() {
+        return new Vector2f(mouseX, mouseY);
     }
 }

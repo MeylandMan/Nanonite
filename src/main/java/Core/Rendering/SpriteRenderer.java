@@ -4,6 +4,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
+import static org.lwjgl.opengl.GL11C.glEnable;
 import static org.lwjgl.opengl.GL30.*;
 
 public class SpriteRenderer {
@@ -44,8 +45,10 @@ public class SpriteRenderer {
 
     public void drawRectangle(Vector3f position, Vector2f size, Vector3f color, float alpha) {
 
-        glDisable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
+
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -63,6 +66,7 @@ public class SpriteRenderer {
         shader.UnBind();
 
         glDisable(GL_BLEND);
+        glDisable(GL_DEPTH_TEST);
     }
 
     public void drawSprite(Texture texture, int x, int y, int width, int height) {
