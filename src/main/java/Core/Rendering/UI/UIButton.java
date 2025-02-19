@@ -40,7 +40,7 @@ public class UIButton extends UIElement {
 
     @Override
     public void render(SpriteRenderer spriteRenderer, TextRenderer textRenderer) {
-        textRenderer.renderText(text, size.x/2, size.y/2, 0.01f, true);
+        textRenderer.renderText(text, size.x/2, size.y/2, 0.5f, true);
         spriteRenderer.drawRectangle(position, size, RectangleColor, RectangleAlpha);
     }
 
