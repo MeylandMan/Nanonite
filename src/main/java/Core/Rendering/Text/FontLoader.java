@@ -1,4 +1,4 @@
-package GameLayer.Rendering.GUI.Text;
+package Core.Rendering.Text;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

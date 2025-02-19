@@ -1,4 +1,4 @@
-package GameLayer.Rendering;
+package Core.Rendering;
 
 import static org.lwjgl.opengl.GL43.*;
 

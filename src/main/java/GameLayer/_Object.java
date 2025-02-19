@@ -1,17 +1,15 @@
 package GameLayer;
 
-import GameLayer.Rendering.*;
-import GameLayer.Rendering.Model.CubeMesh;
+import Core.Rendering.*;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class _Object {
+public abstract class _Object {
 
     protected int length;
     protected VAO vao;

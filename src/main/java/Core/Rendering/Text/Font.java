@@ -1,4 +1,4 @@
-package GameLayer.Rendering.GUI.Text;
+package Core.Rendering.Text;
 
 import java.util.HashMap;
 import java.util.Map;

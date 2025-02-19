@@ -10,9 +10,36 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/Core/Rendering/SpriteRenderer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/shaders/Sprite.comp" beforeDir="false" afterPath="$PROJECT_DIR$/assets/shaders/Sprite.comp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/shaders/Sprite.frag" beforeDir="false" afterPath="$PROJECT_DIR$/assets/shaders/Sprite.frag" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/SpriteRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/SpriteRenderer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Input/Input.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Input.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Chunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Chunk.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Physics/CubeCollision.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Physics/CubeCollision.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Physics/Raycast.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Physics/Raycast.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Physics/StaticBody.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Physics/StaticBody.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Camera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Rendering/Camera.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/EBO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Rendering/EBO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/SpriteRenderer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/Text/Font.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Rendering/Text/Font.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/Text/FontLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Rendering/Text/FontLoader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/GUI/Text/TextRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Rendering/Text/TextRenderer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Model/CubeMesh.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Rendering/CubeMesh.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Model/SpriteMesh.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Query.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Rendering/Query.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Renderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Rendering/Renderer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Scene.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Rendering/Scene.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Shader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Rendering/Shader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/Texture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Rendering/Texture.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/VAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Rendering/VAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/VBO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Rendering/VBO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/VertexBufferElement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Rendering/VertexBufferElement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Rendering/VertexBufferLayout.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Rendering/VertexBufferLayout.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/World.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/World.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/_Object.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/_Object.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,11 +75,11 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Interface" />
-        <option value="Class" />
         <option value="cs-template" />
         <option value="vs-template" />
         <option value="shader-template" />
         <option value="fs-template" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -186,7 +213,8 @@
       <workItem from="1739726223061" duration="18192000" />
       <workItem from="1739760430439" duration="3034000" />
       <workItem from="1739765002772" duration="10335000" />
-      <workItem from="1739891334232" duration="21883000" />
+      <workItem from="1739891334232" duration="27859000" />
+      <workItem from="1739967464421" duration="5044000" />
     </task>
     <servers />
   </component>

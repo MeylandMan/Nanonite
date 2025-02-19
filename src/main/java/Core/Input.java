@@ -1,6 +1,6 @@
-package Core.Input;
+package Core;
 
-import GameLayer.Rendering.Camera;
+import Core.Rendering.Camera;
 import org.lwjgl.glfw.*;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -40,5 +40,12 @@ public class Input extends GLFWKeyCallback {
     public static boolean isKeyJustPressed(int key) {
         boolean _isKeyPressed = isKeyPressed(key);
         return keys[key];
+    }
+
+    public enum Mapping {
+        NOTHING,
+        PRESSED,
+        HOLDING,
+        RELEASED
     }
 }

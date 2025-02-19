@@ -1,7 +1,7 @@
 package GameLayer;
 
-import GameLayer.Physics.CubeCollision;
-import GameLayer.Rendering.Camera;
+import Core.Physics.CubeCollision;
+import Core.Rendering.Camera;
 
 import java.util.ArrayList;
 

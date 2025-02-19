@@ -1,7 +1,5 @@
-package GameLayer.Physics;
+package Core.Physics;
 
-import GameLayer.Rendering.Model.CubeMesh;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 import static org.lwjgl.opengl.GL11.*;
 

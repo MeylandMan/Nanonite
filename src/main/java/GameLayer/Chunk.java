@@ -1,7 +1,9 @@
 package GameLayer;
 
-import GameLayer.Rendering.*;
-import GameLayer._Object;
+import Core.Rendering.Scene;
+import Core.Rendering.Shader;
+import Core.Rendering.Texture;
+import Core.Rendering.VBO;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -10,6 +12,7 @@ import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
 
+import static org.lwjgl.opengl.GL11C.glEnable;
 import static org.lwjgl.opengl.GL43.*;
 
 public class Chunk extends _Object {
@@ -156,6 +159,16 @@ public class Chunk extends _Object {
             updateMesh();
             updateChunk = false;
         }
+        glDisable(GL_BLEND);
+
+        // Depth render
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+
+        // Enable BackFace Culling
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT);
+        glFrontFace(GL_CW);
 
         ssbo.BindBase(0);
         shader.Uniform1iv("u_Textures", samplers);

@@ -1,12 +1,11 @@
-package GameLayer.Rendering.GUI.Text;
+package Core.Rendering.Text;
 
-import GameLayer.Rendering.Shader;
+import Core.Rendering.Shader;
 import org.joml.Matrix4f;
 
 import static org.lwjgl.opengl.GL11C.glEnable;
 import static org.lwjgl.opengl.GL30.*;
 
-import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;

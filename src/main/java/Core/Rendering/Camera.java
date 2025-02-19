@@ -1,7 +1,7 @@
-package GameLayer.Rendering;
+package Core.Rendering;
 
 
-import GameLayer.Physics.CubeCollision;
+import Core.Physics.CubeCollision;
 import static GameLayer.World.*;
 import static org.joml.Math.*;
 import org.joml.Vector3f;
@@ -127,7 +127,7 @@ public class Camera {
     }
     // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
 
-    void ProcessKeyboard(Camera_Movement direction, float deltaTime) {
+    public void ProcessKeyboard(Camera_Movement direction, float deltaTime) {
 
         float pitchRad = (float) Math.toRadians(Pitch);
 
@@ -137,7 +137,8 @@ public class Camera {
         }
         if (direction == Camera_Movement.BACKWARD) {
             speedPosition.x -= (float) (Front.x/Math.cos(pitchRad));
-            speedPosition.z -= (float) (Front.z/Math.cos(pitchRad));        }
+            speedPosition.z -= (float) (Front.z/Math.cos(pitchRad));
+        }
         if (direction == Camera_Movement.LEFT) {
             speedPosition.x += Right.x;
             speedPosition.z += Right.z;
@@ -155,8 +156,6 @@ public class Camera {
         
         for(CubeCollision collision : worldCollisions) {
         }
-
-        collision.position = new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f);
     }
 
     // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
@@ -191,7 +190,12 @@ public class Camera {
         Zoom = lerp(Zoom, targetZoom, deltaTime * ACCELERATION_FACTOR);
         float velocity = currentSpeed * deltaTime;
 
-        Position.add(speedPosition.mul(velocity));
+        if(targetSpeed == 0)
+            Position.add(new Vector3f(speedPosition.mul(velocity)));
+        else
+            Position.add(speedPosition.mul(velocity));
+
+        collision.position = new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f);
     }
 
     // Getters

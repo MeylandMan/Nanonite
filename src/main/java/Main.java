@@ -1,6 +1,4 @@
-import GameLayer.Rendering.App;
-
-import java.nio.IntBuffer;
+import Core.App;
 
 public class Main {
 

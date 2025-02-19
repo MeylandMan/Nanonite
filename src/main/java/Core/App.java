@@ -1,29 +1,26 @@
-package GameLayer.Rendering;
+package Core;
 
 
+import Core.Rendering.*;
+import Core.Rendering.UI.UIButton;
+import Core.Rendering.UI.UserInterface;
 import GameLayer.FPSMonitor;
 import GameLayer.Chunk;
-import GameLayer.Physics.CubeCollision;
-import GameLayer.Physics.Raycast;
-import GameLayer.Rendering.GUI.SpriteRenderer;
-import GameLayer.Rendering.GUI.Text.Font;
-import GameLayer.Rendering.GUI.Text.FontLoader;
-import GameLayer.Rendering.GUI.Text.TextRenderer;
-import GameLayer.Rendering.Model.SpriteMesh;
+import Core.Physics.CubeCollision;
+import Core.Physics.Raycast;
+import Core.Rendering.Text.Font;
+import Core.Rendering.Text.FontLoader;
+import Core.Rendering.Text.TextRenderer;
 import GameLayer.World;
 import org.joml.*;
-import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
-import Core.Input.Input;
 
 
-import java.lang.Math;
 import java.nio.IntBuffer;
 import java.util.*;
 
-import static org.joml.Math.*;
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -47,7 +44,6 @@ public class App {
     CubeCollision collision;
     Scene scene = new Scene();
     Shader shader = new Shader();
-    SpriteMesh surface2D;
 
     Camera camera = new Camera(new Vector3f(8));
     World world;
@@ -56,6 +52,8 @@ public class App {
 
     private final int DEFAULT_WIDTH;
     private final int DEFAULT_HEIGHT;
+
+    UserInterface user;
     public App(int width, int height, String title) {
         this.m_Title = title;
 
@@ -75,8 +73,6 @@ public class App {
                 camera.targetZoom = Camera.ZOOM;
             }
 
-
-
             if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE &&
                     glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE &&
                     glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE &&
@@ -84,7 +80,7 @@ public class App {
                     glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE &&
                     glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
             {
-                camera.targetSpeed = (0 - camera.targetSpeed)/25;
+                camera.targetSpeed = 0;
             }
 
             if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
@@ -249,9 +245,16 @@ public class App {
             e.printStackTrace();
         }
 
+        // UI
+        user = new UserInterface(spriteRenderer, textRenderer);
+        UIButton button = new UIButton(new Vector3f(10, 20, 0), new Vector2f(200, 200));
+        user.addElement(button);
+
+
+        renderer.addInterface(user);
         world = new World();
         world.addCollision(camera.collision);
-        world.addCollision(new CubeCollision(new Vector3f(-10, 3, 0), new Vector3f(1)));
+        world.addCollision(new CubeCollision(new Vector3f(8, 8, 16), new Vector3f(1)));
 
         Raycast raycast = new Raycast(camera.Position, camera.getFront());
         while ( !glfwWindowShouldClose(window) ) {
@@ -281,17 +284,7 @@ public class App {
 
             renderer.ClearColor();
 
-            // Depth render
-            glEnable(GL_DEPTH_TEST);
-            glDepthFunc(GL_LESS);
-
-            // Enable BackFace Culling
-            glEnable(GL_CULL_FACE);
-            glCullFace(GL_FRONT);
-            glFrontFace(GL_CW);
-
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            world.onRender();
 
             shader.Bind();
 
@@ -300,11 +293,10 @@ public class App {
 
             renderer.DrawScene(scene, shader);
 
-            raycast.origin = camera.Position;
-            raycast.direction = camera.getFront();
-            raycast.drawRay(10);
+            //raycast.origin = camera.Position;
+            //raycast.direction = camera.getFront();
+            //raycast.drawRay(10);
 
-            world.onRender();
 
             // Rendering something //
             Matrix4f orthoMatrix = new Matrix4f().identity()
@@ -312,8 +304,8 @@ public class App {
 
             textRenderer.getProjectionMatrix(orthoMatrix);
             spriteRenderer.getMatrixProjection(orthoMatrix);
-            spriteRenderer.drawRectangle(0, 0, 100, 100, new Vector3f(0.5f, 0.5f, 0.5f), 1.0f);
-            //spriteRenderer.drawRectangle(0, 0, 100, 100, new Vector3f(1.0f), 1);
+
+            renderer.renderInterfaces();
 
             if(Input.is_debug) {
                 textRenderer.renderText("MyCraft " + version + " Vanilla\n" +
@@ -325,6 +317,7 @@ public class App {
                                 "Facing Direction: " + String.format("%.2f",camera.getFront().x) + " / " + String.format("%.2f",camera.getFront().y) + " / " + String.format("%.2f",camera.getFront().z),
                         10, 150, 0.3f);
             }
+            //spriteRenderer.drawRectangle(10, 50, 100, 100, new Vector3f(0.5f, 0.5f, 0.5f), 1.0f);
             glfwSwapBuffers(window);
             glfwPollEvents();
 

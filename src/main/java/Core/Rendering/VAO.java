@@ -1,4 +1,4 @@
-package GameLayer.Rendering;
+package Core.Rendering;
 
 import java.util.ArrayList;
 

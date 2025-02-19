@@ -1,6 +1,5 @@
-package GameLayer.Rendering.Model;
+package Core.Rendering;
 
-import GameLayer.Rendering.*;
 import org.joml.*;
 import org.lwjgl.opengl.GL;
 

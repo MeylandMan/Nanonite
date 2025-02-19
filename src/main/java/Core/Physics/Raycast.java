@@ -1,4 +1,4 @@
-package GameLayer.Physics;
+package Core.Physics;
 
 
 import org.joml.Vector3f;

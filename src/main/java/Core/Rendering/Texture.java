@@ -1,4 +1,4 @@
-package GameLayer.Rendering;
+package Core.Rendering;
 
 import org.lwjgl.system.MemoryStack;
 
