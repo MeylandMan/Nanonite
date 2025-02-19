@@ -40,7 +40,6 @@ public class App {
     float lastX;
     float lastY;
     public Renderer renderer;
-    public Input input;
     CubeCollision collision;
     Scene scene = new Scene();
     Shader shader = new Shader();
@@ -138,16 +137,12 @@ public class App {
             throw new RuntimeException("Failed to create the GLFW window");
 
         renderer = new Renderer();
-        input = new Input(camera);
-
 
         glfwSetFramebufferSizeCallback(window, (window, width, height) -> {
             m_Width = width;
             m_Height = height;
             glViewport(0, 0, m_Width, m_Height);
         });
-
-        glfwSetKeyCallback(window, input);
 
         glfwSetCursorPosCallback(window, (long window, double xposIn, double yposIn) -> {
             float xpos = (float)xposIn;
