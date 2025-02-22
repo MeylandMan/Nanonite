@@ -13,7 +13,7 @@ public class Font {
     private Map<Integer, CharInfo> characters = new HashMap<>();
     private int textureID;
     protected int textureWidth, textureHeight;
-    protected int lineHeight, base;
+    public int lineHeight, base;
 
     public void addChar(CharInfo charInfo) {
         characters.put(charInfo.id, charInfo);

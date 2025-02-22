@@ -49,7 +49,10 @@ public class TextRenderer {
         this.matrix = matrix;
     }
 
-    private float getTextWidth(String text, float scale) {
+    public Font getFont() {
+        return font;
+    }
+    public float getTextWidth(String text, float scale) {
         float width = 0;
         for (char c : text.toCharArray()) {
             Font.CharInfo charInfo = font.getChar((int) c);

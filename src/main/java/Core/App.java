@@ -3,6 +3,7 @@ package Core;
 
 import Core.Rendering.*;
 import Core.Rendering.UI.UIButton;
+import Core.Rendering.UI.UILabel;
 import Core.Rendering.UI.UserInterface;
 import GameLayer.FPSMonitor;
 import GameLayer.Chunk;
@@ -212,15 +213,13 @@ public class App {
 
         // UI
         user = new UserInterface(spriteRenderer, textRenderer);
-        UIButton button = new UIButton("Button",
-                new Vector3f(10, 20, -10),
-                new Vector2f(300, 100));
 
-        button.setOnClickAction(() -> {
-            System.out.println("Special button clicked");
-        });
-        
-        user.addElement(button);
+        UILabel label = new UILabel("This is a \nmotherfucking thing",
+                new Vector3f(10, 50, -10),
+                0.5f,
+                false, true);
+        label.setRectangleColor(new Vector3f(0.5f));
+        user.addElement(label);
 
 
         renderer.addInterface(user);
