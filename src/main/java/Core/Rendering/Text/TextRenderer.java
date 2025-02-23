@@ -133,7 +133,6 @@ public class TextRenderer {
         glDrawArrays(GL_TRIANGLES, 0, text.length() * 6);
 
         glBindVertexArray(0);
-        shader.UnBind();
 
         glDisable(GL_DEPTH_TEST);
     }

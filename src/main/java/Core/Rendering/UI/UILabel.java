@@ -35,7 +35,7 @@ public class UILabel extends UIElement {
 
     @Override
     public void render(SpriteRenderer spriteRenderer, TextRenderer textRenderer) {
-        
+
         float maxTextWidth = 0;
         float textHeight = textRenderer.getFont().lineHeight * size.x;
         int lineCount = 1;

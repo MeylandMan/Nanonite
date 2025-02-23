@@ -2,16 +2,12 @@ package Core;
 
 
 import Core.Rendering.*;
-import Core.Rendering.UI.UIButton;
-import Core.Rendering.UI.UILabel;
-import Core.Rendering.UI.UserInterface;
+import Core.Rendering.UI.*;
 import GameLayer.FPSMonitor;
 import GameLayer.Chunk;
 import Core.Physics.CubeCollision;
 import Core.Physics.Raycast;
-import Core.Rendering.Text.Font;
-import Core.Rendering.Text.FontLoader;
-import Core.Rendering.Text.TextRenderer;
+import Core.Rendering.Text.*;
 import GameLayer.World;
 import org.joml.*;
 import org.lwjgl.glfw.*;
@@ -214,12 +210,16 @@ public class App {
         // UI
         user = new UserInterface(spriteRenderer, textRenderer);
 
-        UILabel label = new UILabel("This is a \nmotherfucking thing",
-                new Vector3f(10, 50, -10),
-                0.5f,
-                false, true);
-        label.setRectangleColor(new Vector3f(0.5f));
-        user.addElement(label);
+        float value = 0;
+        UISlider slider = new UISlider("Value of x: " + value,
+                new Vector3f(30, 10, -10),
+                new Vector2f(400, 50),
+                value);
+        slider.setRectangleColor(new Vector3f(0.5f));
+        slider.setSliderColor(new Vector3f(1));
+
+        user.addElement(slider);
+        System.out.println(value);
 
 
         renderer.addInterface(user);
@@ -271,6 +271,7 @@ public class App {
 
             textRenderer.getProjectionMatrix(orthoMatrix);
             spriteRenderer.getMatrixProjection(orthoMatrix);
+            renderer.renderInterfaces();
 
             if(Input.is_debug) {
                 textRenderer.renderText("MyCraft " + version + " Vanilla\n" +
@@ -282,7 +283,7 @@ public class App {
                                 "Facing Direction: " + String.format("%.3f",camera.getFront().x) + " / " + String.format("%.3f",camera.getFront().y) + " / " + String.format("%.3f",camera.getFront().z),
                         10, 150, 0.3f, false);
             }
-            renderer.renderInterfaces();
+
 
             glfwSwapBuffers(window);
             glfwPollEvents();
