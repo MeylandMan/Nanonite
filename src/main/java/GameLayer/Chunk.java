@@ -164,6 +164,7 @@ public class Chunk extends _Object {
         // Depth render
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         // Enable BackFace Culling
         glEnable(GL_CULL_FACE);

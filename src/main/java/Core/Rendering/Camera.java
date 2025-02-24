@@ -60,8 +60,7 @@ public class Camera {
         this.WorldUp = new Vector3f(0.f, 1.f, 0.f);
         this.Yaw = YAW;
         this.Pitch = PITCH;
-        collision = new CubeCollision(new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f),
-                new Vector3f(1, 2, 1));
+        collision = new CubeCollision(new Vector3f(), new Vector3f(1, 2, 1));
         this.raycast = new Raycast(new Vector3f(Position.x, Position.y+1, Position.z), getFront());
         this.velocity = new Vector3f();
     }

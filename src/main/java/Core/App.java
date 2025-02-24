@@ -236,7 +236,7 @@ public class App {
         //renderer.addInterface(user);
         world = new World();
         world.addCollision(camera.collision);
-        world.addCollision(new CubeCollision(new Vector3f(4, 4, 4), new Vector3f(1)));
+        world.addCollision(new CubeCollision(new Vector3f(8, 8, 8), new Vector3f(1)));
 
         Raycast raycast = new Raycast(camera.Position, camera.getFront());
         while ( !glfwWindowShouldClose(window) ) {

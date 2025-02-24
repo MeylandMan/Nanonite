@@ -11,15 +11,12 @@
   <component name="ChangeListManager">
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/shaders/Default.frag" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/shaders/Default.vert" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/shaders/Physics.frag" beforeDir="false" afterPath="$PROJECT_DIR$/assets/shaders/Physics.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/shaders/Physics.vert" beforeDir="false" afterPath="$PROJECT_DIR$/assets/shaders/Physics.vert" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Core/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Input.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Input.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Core/Physics/CubeCollision.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Physics/CubeCollision.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Physics/Raycast.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Physics/Raycast.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Core/Rendering/Camera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Rendering/Camera.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Rendering/Text/TextRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Rendering/Text/TextRenderer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Rendering/UI/UISlider.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Rendering/UI/UISlider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Chunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Chunk.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/World.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/World.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -199,7 +196,7 @@
       <workItem from="1739967464421" duration="29871000" />
       <workItem from="1740220691162" duration="9375000" />
       <workItem from="1740326413377" duration="11282000" />
-      <workItem from="1740399834368" duration="3953000" />
+      <workItem from="1740399834368" duration="8562000" />
     </task>
     <servers />
   </component>

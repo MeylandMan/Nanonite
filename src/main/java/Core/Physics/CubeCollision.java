@@ -1,17 +1,19 @@
 package Core.Physics;
 
 import org.joml.Vector3f;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL40.*;
 
 public class CubeCollision {
     public Vector3f position;
     public Vector3f min;
     public Vector3f max;
+    public Vector3f size;
 
     public CubeCollision(Vector3f position, Vector3f size) {
         this.min = new Vector3f(Math.min(0, size.x), Math.min(0, size.y), Math.min(0, size.z));
         this.max = new Vector3f(Math.max(0, size.x), Math.max(0, size.y), Math.max(0, size.z));
         this.position = position;
+        this.size = size;
     }
 
     public boolean intersects(CubeCollision other) {
@@ -40,49 +42,8 @@ public class CubeCollision {
         return "AABB3D[min=" + min + ", max=" + max + "]";
     }
 
-
-    Vector3f[] getVertices() {
-        return new Vector3f[]{
-                new Vector3f(min.x, min.y, min.z), // v0
-                new Vector3f(max.x, min.y, min.z), // v1
-                new Vector3f(max.x, max.y, min.z), // v2
-                new Vector3f(min.x, max.y, min.z), // v3
-                new Vector3f(min.x, min.y, max.z), // v4
-                new Vector3f(max.x, min.y, max.z), // v5
-                new Vector3f(max.x, max.y, max.z), // v6
-                new Vector3f(min.x, max.y, max.z)  // v7
-        };
-    }
-
     public void drawAABB() {
-        Vector3f[] vertices = getVertices();
-
-        glBegin(GL_LINES);
-
-        // Bas
-        drawLine(vertices[0], vertices[1]);
-        drawLine(vertices[1], vertices[2]);
-        drawLine(vertices[2], vertices[3]);
-        drawLine(vertices[3], vertices[0]);
-
-        // Haut
-        drawLine(vertices[4], vertices[5]);
-        drawLine(vertices[5], vertices[6]);
-        drawLine(vertices[6], vertices[7]);
-        drawLine(vertices[7], vertices[4]);
-
-        // Liens verticaux
-        drawLine(vertices[0], vertices[4]);
-        drawLine(vertices[1], vertices[5]);
-        drawLine(vertices[2], vertices[6]);
-        drawLine(vertices[3], vertices[7]);
-
-        glEnd();
-    }
-
-    private void drawLine(Vector3f v1, Vector3f v2) {
-        glVertex3f(v1.x + position.x, v1.y + position.y, v1.z + position.z);
-        glVertex3f(v2.x + position.x, v2.y + position.y, v2.z + position.z);
+        glDrawArrays(GL_LINE_LOOP, 0, 36);
     }
 
     public static Vector3f getIntersectionCenter(CubeCollision a, CubeCollision b) {

@@ -52,9 +52,10 @@ public class World {
 
         for(CubeCollision collision : worldCollisions) {
             Matrix4f model = new Matrix4f().identity()
-                    .translate(collision.position.div(2))
-                    .scale(1);
+                            .translate(collision.position)
+                            .scale(collision.size);
             shader.UniformMatrix4x4("model", model);
+            shader.Uniform1f("borderThickness", 1);
             collision.drawAABB();
         }
     }
