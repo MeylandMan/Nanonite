@@ -52,7 +52,9 @@ public class Input {
             //SNEAK
             GLFW_KEY_LEFT_SHIFT,
             //SPRINT
-            GLFW_KEY_LEFT_CONTROL
+            GLFW_KEY_LEFT_CONTROL,
+            //RESET POSITION
+            GLFW_KEY_R
     };
 
 
@@ -86,6 +88,8 @@ public class Input {
             //SNEAK
             InputState.NOTHING,
             //SPRINT
+            InputState.NOTHING,
+            //RESET POSITION
             InputState.NOTHING
     };
 
@@ -103,6 +107,7 @@ public class Input {
     public static final int KEY_JUMP = 7;
     public static final int KEY_SNEAK = 8;
     public static final int KEY_SPRINT = 9;
+    public static final int KEY_RESET_POSITION = 10;
 
     //MOUSE
     public static final int MOUSE_LEFT = 0;

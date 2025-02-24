@@ -17,6 +17,7 @@ public class UISlider extends UIElement {
     private String text;
     public Vector3f RectangleColor = new Vector3f();
     public Vector3f sliderColor = new Vector3f();
+    float sliderX = 0.9f;
     float RectangleAlpha = 1.0f;
 
     public Vector3f Textcolor = new Vector3f();
@@ -48,13 +49,15 @@ public class UISlider extends UIElement {
     public void render(SpriteRenderer spriteRenderer, TextRenderer textRenderer) {
         textRenderer.renderText(text, size.x/2, size.y/2, 0.5f, true);
         spriteRenderer.drawRectangle(new Vector3f(position), new Vector2f(size), RectangleColor, RectangleAlpha);
-        spriteRenderer.drawRectangle(new Vector3f(0, 0, 1), new Vector2f(0.1f, 1),
+        spriteRenderer.drawRectangle(new Vector3f(sliderX, 0, 1), new Vector2f(0.1f, 1),
                 sliderColor, RectangleAlpha);
     }
 
     private boolean intersects() {
-        return (Input.getMousePosition().x >= position.x && Input.getMousePosition().x <= position.x + (size.x*0.1f)
-                && Input.getMousePosition().y >= position.y && Input.getMousePosition().y <= position.x + (size.y*0.5f)
+        float x1 = position.x * (1+sliderX);
+        float x2 = (position.x + (size.x*0.1f)) * (1+sliderX);
+        return (Input.getMousePosition().x >= x1 && Input.getMousePosition().x <= x2
+                && Input.getMousePosition().y >= position.y && Input.getMousePosition().y <= x2
         );
     }
 

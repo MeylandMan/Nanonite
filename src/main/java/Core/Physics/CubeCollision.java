@@ -57,7 +57,6 @@ public class CubeCollision {
     public void drawAABB() {
         Vector3f[] vertices = getVertices();
 
-        glColor3f(1, 1,1);
         glBegin(GL_LINES);
 
         // Bas
@@ -100,11 +99,6 @@ public class CubeCollision {
                 (interMinY + interMaxY) / 2.0f,
                 (interMinZ + interMaxZ) / 2.0f
         );
-    }
-
-    public static void resolveCollision(CubeCollision blockA, CubeCollision blockB, float deltaTime) {
-        if (!blockA.intersects(blockB)) return; // Pas de collision
-
     }
 
     public Vector3f getCenter() {

@@ -47,7 +47,6 @@ public class App {
     private final int DEFAULT_WIDTH;
     private final int DEFAULT_HEIGHT;
 
-    UserInterface user;
     public App(int width, int height, String title) {
         this.m_Title = title;
 
@@ -61,11 +60,16 @@ public class App {
         if (Input.is_locked) {
             if (Input.isKeyPressed(Input.KEY_SPRINT) && !Input.isKeyNotUsed(Input.KEY_UP)) {
                 camera.targetSpeed = Camera.MAX_SPEED;
-                camera.targetZoom = Camera.ZOOM*1.4f;
+                camera.targetZoom = Camera.ZOOM*1.3f;
             } else {
                 camera.targetSpeed = Camera.SPEED;
                 camera.targetZoom = Camera.ZOOM;
             }
+
+            if(Input.isKeyJustPressed(Input.KEY_RESET_POSITION)) {
+                camera.Position = new Vector3f(8);
+            }
+
 
             if (Input.isMoveKeyNotUsed()) {
                 camera.targetSpeed = 0;
@@ -208,9 +212,10 @@ public class App {
         }
 
         // UI
-        user = new UserInterface(spriteRenderer, textRenderer);
+        //user = new UserInterface(spriteRenderer, textRenderer);
 
         float value = 0;
+        /*
         UISlider slider = new UISlider("Value of x: " + value,
                 new Vector3f(30, 10, -10),
                 new Vector2f(400, 50),
@@ -218,14 +223,20 @@ public class App {
         slider.setRectangleColor(new Vector3f(0.5f));
         slider.setSliderColor(new Vector3f(1));
 
-        user.addElement(slider);
-        System.out.println(value);
+        UIButton button = new UIButton(
+                "Press to", new Vector3f(30, 30, -10),
+                new Vector2f(300, 100)
+        );
+
+        user.addElement(button);
+        */
 
 
-        renderer.addInterface(user);
+
+        //renderer.addInterface(user);
         world = new World();
         world.addCollision(camera.collision);
-        world.addCollision(new CubeCollision(new Vector3f(8, 8, 16), new Vector3f(1)));
+        world.addCollision(new CubeCollision(new Vector3f(4, 4, 4), new Vector3f(1)));
 
         Raycast raycast = new Raycast(camera.Position, camera.getFront());
         while ( !glfwWindowShouldClose(window) ) {
@@ -250,8 +261,6 @@ public class App {
             ProcessInput(window);
 
             renderer.ClearColor();
-
-            world.onRender();
 
             shader.Bind();
 
@@ -280,17 +289,20 @@ public class App {
 
                 textRenderer.renderText("XYZ: " + String.format("%.3f",camera.Position.x) + " / " + String.format("%.3f",camera.Position.y) + " / " + String.format("%.3f",camera.Position.z) +
                                 "\nBlocks: nah\nChunks: nah\n"+
-                                "Facing Direction: " + String.format("%.3f",camera.getFront().x) + " / " + String.format("%.3f",camera.getFront().y) + " / " + String.format("%.3f",camera.getFront().z),
+                                "Facing Direction: " + String.format("%.3f",camera.getFront().x) + " / " + String.format("%.3f",camera.getFront().y) + " / " + String.format("%.3f",camera.getFront().z) +
+                                "\nVelocity: " + String.format("%.3f",camera.velocity.x) + " / " + String.format("%.3f",camera.velocity.y) + " / " + String.format("%.3f",camera.velocity.z) +
+                                "\ntarget speed: " + String.format("%.3f", camera.targetSpeed) + "\nCurrent Speed: " + String.format("%.3f", camera.currentSpeed),
                         10, 150, 0.3f, false);
             }
 
 
+            world.onRender(camera.GetViewMatrix(), camera.GetProjectionMatrix(m_Width, m_Height));
             glfwSwapBuffers(window);
             glfwPollEvents();
 
 
             Input.Update(window, camera);
-            user.update(delta);
+            //user.update(delta);
             camera.updateCameraVectors(delta);
             world.onUpdate(camera, delta);
 

@@ -13,6 +13,11 @@ public class Raycast {
         this.direction = new Vector3f(direction);
     }
 
+    public void update(Vector3f origin, Vector3f direction) {
+        this.origin = new Vector3f(origin);
+        this.direction = new Vector3f(direction);
+    }
+
     /**
      * Teste si le rayon intersecte une AABB
      * @param aabb La boîte AABB à tester

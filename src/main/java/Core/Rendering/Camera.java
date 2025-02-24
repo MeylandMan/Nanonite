@@ -4,6 +4,8 @@ package Core.Rendering;
 import Core.Physics.CubeCollision;
 import static GameLayer.World.*;
 import static org.joml.Math.*;
+
+import Core.Physics.Raycast;
 import org.joml.Vector3f;
 import org.joml.Matrix4f;
 
@@ -26,13 +28,14 @@ public class Camera {
     private static final float PITCH = 0.0f;
     public  static final float SPEED = 5.f;
     public static final float MAX_SPEED = 7.0f; // Vitesse max en mode spectateur
-    public static final float ACCELERATION_FACTOR = 5.0f; // Influence de l'accélération
+    public static final float ACCELERATION_FACTOR = 3.0f; // Influence de l'accélération
     public static final float DRAG_FACTOR = 5.0f; // Influence du ralentissement
     private static final float SENSITIVITY = 0.1f;
     public  static final float ZOOM = 45.0f;
 
     // camera Attributes
     public CubeCollision collision;
+    public Raycast raycast;
     public Vector3f Position;
     private Vector3f Front = new Vector3f(0.0f, 0.0f, -1.0f);
     private final Vector3f Up = new Vector3f();
@@ -44,7 +47,7 @@ public class Camera {
     public float Pitch;
 
     // camera options
-    public Vector3f speedPosition;
+    public Vector3f velocity;
     public float targetSpeed = SPEED;
     public float currentSpeed = SPEED;
     public float targetZoom = ZOOM;
@@ -52,16 +55,6 @@ public class Camera {
     public float Zoom = ZOOM;
 
     // Camera constructor
-    public Camera() {
-        this.Position = new Vector3f();
-        this.Front = new Vector3f();
-        this.WorldUp = new Vector3f(0.f, 1.f, 0.f);
-        this.Yaw = YAW;
-        this.Pitch = PITCH;
-        collision = new CubeCollision(new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f),
-                new Vector3f(1, 2, 1));
-        this.speedPosition = new Vector3f();
-    }
     public Camera(Vector3f position) {
         this.Position = position;
         this.WorldUp = new Vector3f(0.f, 1.f, 0.f);
@@ -69,46 +62,8 @@ public class Camera {
         this.Pitch = PITCH;
         collision = new CubeCollision(new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f),
                 new Vector3f(1, 2, 1));
-        this.speedPosition = new Vector3f();
-    }
-
-    public Camera(Vector3f position, Vector3f up) {
-        this. Position = position;
-        this.WorldUp = new Vector3f(up);
-        this.Yaw = YAW;
-        this.Pitch = PITCH;
-        collision = new CubeCollision(new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f),
-                                      new Vector3f(1, 2, 1));
-        this.speedPosition = new Vector3f();
-    }
-    public Camera(Vector3f position, Vector3f up, float yaw) {
-        this.Position = position;
-        this.WorldUp = new Vector3f(up);
-        this.Yaw = yaw;
-        this.Pitch = PITCH;
-        collision = new CubeCollision(new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f),
-                new Vector3f(1, 2, 1));
-        this.speedPosition = new Vector3f();
-    }
-
-    public Camera(Vector3f position, Vector3f up, float yaw, float pitch) {
-        this.Position = position;
-        this.WorldUp = new Vector3f(up);
-        this.Yaw = yaw;
-        this.Pitch = pitch;
-        collision = new CubeCollision(new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f),
-                new Vector3f(1, 2, 1));
-        this.speedPosition = new Vector3f();
-    }
-    //Camera constructor with scalar values
-    public Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) {
-        this.Position = new Vector3f(posX, posY, posZ);
-        this.WorldUp = new Vector3f(upX, upY, upZ);
-        this.Yaw = yaw;
-        this.Pitch = pitch;
-        collision = new CubeCollision(new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f),
-                new Vector3f(1, 2, 1));
-        this.speedPosition = new Vector3f();
+        this.raycast = new Raycast(new Vector3f(Position.x, Position.y+1, Position.z), getFront());
+        this.velocity = new Vector3f();
     }
 
     // returns the view matrix calculated using Euler Angles and the LookAt Matrix
@@ -125,33 +80,32 @@ public class Camera {
                         100.f
                 );
     }
-    // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
 
     public void ProcessKeyboard(Camera_Movement direction, float deltaTime) {
 
         float pitchRad = (float) Math.toRadians(Pitch);
 
         if (direction == Camera_Movement.FORWARD) {
-            speedPosition.x += (float) (Front.x/Math.cos(pitchRad));
-            speedPosition.z += (float) (Front.z/Math.cos(pitchRad));
+            velocity.x += (float) (Front.x/Math.cos(pitchRad));
+            velocity.z += (float) (Front.z/Math.cos(pitchRad));
         }
         if (direction == Camera_Movement.BACKWARD) {
-            speedPosition.x -= (float) (Front.x/Math.cos(pitchRad));
-            speedPosition.z -= (float) (Front.z/Math.cos(pitchRad));
+            velocity.x -= (float) (Front.x/Math.cos(pitchRad));
+            velocity.z -= (float) (Front.z/Math.cos(pitchRad));
         }
         if (direction == Camera_Movement.LEFT) {
-            speedPosition.x += Right.x;
-            speedPosition.z += Right.z;
+            velocity.x += Right.x;
+            velocity.z += Right.z;
         }
         if (direction == Camera_Movement.RIGHT) {
-            speedPosition.x -= Right.x;
-            speedPosition.z -= Right.z;
+            velocity.x -= Right.x;
+            velocity.z -= Right.z;
         }
         if(direction == Camera_Movement.UP) {
-            speedPosition.y += SPEED / currentSpeed;
+            velocity.y += SPEED/currentSpeed;
         }
         if(direction == Camera_Movement.DOWN) {
-            speedPosition.y -= SPEED / currentSpeed;
+            velocity.y -= SPEED/currentSpeed;
         }
         
         for(CubeCollision collision : worldCollisions) {
@@ -186,15 +140,20 @@ public class Camera {
         Right.set(WorldUp).cross(Front).normalize();
         Up.set(Front).cross(Right).normalize();
 
-        currentSpeed = lerp(currentSpeed, targetSpeed, deltaTime * ACCELERATION_FACTOR);
-        Zoom = lerp(Zoom, targetZoom, deltaTime * ACCELERATION_FACTOR);
-        float velocity = currentSpeed * deltaTime;
+        float acceleration = ACCELERATION_FACTOR * deltaTime;
 
+        Zoom = lerp(Zoom, targetZoom, acceleration*3);
         if(targetSpeed == 0)
-            Position.add(new Vector3f(speedPosition.mul(velocity)));
+            currentSpeed = lerp(currentSpeed, targetSpeed, acceleration/5);
         else
-            Position.add(speedPosition.mul(velocity));
+            currentSpeed = lerp(currentSpeed, targetSpeed, acceleration);
 
+        float speed = currentSpeed * deltaTime;
+        velocity.mul(speed);
+
+        Position.add(velocity);
+
+        raycast.update(new Vector3f(Position.x, Position.y+1, Position.z), getFront());
         collision.position = new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f);
     }
 

@@ -67,7 +67,7 @@ public class TextRenderer {
     public void renderText(String text, float x, float y, float scale, boolean centered) {
         if (centered) {
             float textWidth = getTextWidth(text, scale);
-            x -= textWidth / 2.5f; // Décale le texte vers la gauche pour qu'il soit centré
+            x -= textWidth / 3.9f; // Décale le texte vers la gauche pour qu'il soit centré
         }
 
         glDisable(GL_BLEND);
