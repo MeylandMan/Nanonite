@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "blocks/grass_block_top.png"
+      },
+      {
+        "model": "blocks/grass_block_top.png",
+        "y": 90
+      },
+      {
+        "model": "blocks/grass_block_top.png",
+        "y": 180
+      },
+      {
+        "model": "blocks/grass_block_top.png",
+        "y": 270
+      }
+    ]
+  }
+}

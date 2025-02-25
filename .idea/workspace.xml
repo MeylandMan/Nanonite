@@ -10,9 +10,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Chunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLayer/Chunk.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,7 +90,7 @@
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Client/Documents/GitHub/MyCraft/assets/shaders",
+    "last_opened_file_path": "C:/Users/Client/Documents/GitHub/MyCraft/assets/models/blocks",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -108,11 +106,11 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Client\Documents\GitHub\MyCraft\assets\models\blocks" />
       <recent name="C:\Users\Client\Documents\GitHub\MyCraft\assets\shaders" />
       <recent name="C:\Users\Client\Documents\GitHub\MyCraft\assets\textures\blocks" />
       <recent name="C:\Users\Client\Documents\GitHub\Minecraft-Clone\assets\textures\blocks" />
       <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\shaders" />
-      <recent name="C:\Users\Client\Documents\GitHub\MInecraft-Clone\shaders\Opengl" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Client\Documents\GitHub\MyCraft\assets\shaders" />
@@ -193,7 +191,7 @@
       <workItem from="1740326413377" duration="11282000" />
       <workItem from="1740399834368" duration="12459000" />
       <workItem from="1740469715596" duration="10151000" />
-      <workItem from="1740482624053" duration="15329000" />
+      <workItem from="1740482624053" duration="22838000" />
     </task>
     <servers />
   </component>

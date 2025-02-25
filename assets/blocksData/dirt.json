@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "blocks/dirt.png"
+      },
+      {
+        "model": "blocks/dirt.png",
+        "y": 90
+      },
+      {
+        "model": "blocks/dirt.png",
+        "y": 180
+      },
+      {
+        "model": "blocks/dirt.png",
+        "y": 270
+      }
+    ]
+  }
+}
