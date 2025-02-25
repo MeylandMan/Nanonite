@@ -1,11 +1,13 @@
 package Core;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class BlockModel {
     private String parent;
     private Map<String, String> textures;
-    private Map<String, Object> elements;
+    private List<Element> elements;
 
     public String getParent() {
         return parent;
@@ -23,11 +25,11 @@ public class BlockModel {
         this.textures = textures;
     }
 
-    public Map<String, Object> getElements() {
+    public List<Element> getElements() {
         return elements;
     }
 
-    public void setElements(Map<String, Object> elements) {
+    public void setElements(List<Element> elements) {
         this.elements = elements;
     }
 }

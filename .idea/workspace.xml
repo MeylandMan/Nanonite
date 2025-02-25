@@ -11,6 +11,12 @@
   <component name="ChangeListManager">
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/models/blocks/cube_all.json" beforeDir="false" afterPath="$PROJECT_DIR$/assets/models/blocks/cube_all.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/models/blocks/cube_top_bottom.json" beforeDir="false" afterPath="$PROJECT_DIR$/assets/models/blocks/cube_top_bottom.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Core/BlockModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/BlockModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Core/ModelLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Core/ModelLoader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,7 +84,7 @@
     "Gradle.MInecraft-Clone [:GameLayer.Rendering.GUI.GLFWDemo.main()].executor": "Run",
     "Gradle.MInecraft-Clone [:Main.main()].executor": "Run",
     "Gradle.MInecraft-Clone.executor": "Run",
-    "Gradle.MyCraft [:Main.main()].executor": "Run",
+    "Gradle.MyCraft [:Main.main()].executor": "Debug",
     "Gradle.OGL [:Main.main()].executor": "Run",
     "Java Scratch.MC 0.0.0.1.executor": "Run",
     "Repository.Attach.Annotations": "false",
@@ -191,7 +197,7 @@
       <workItem from="1740326413377" duration="11282000" />
       <workItem from="1740399834368" duration="12459000" />
       <workItem from="1740469715596" duration="10151000" />
-      <workItem from="1740482624053" duration="24462000" />
+      <workItem from="1740482624053" duration="29213000" />
     </task>
     <servers />
   </component>
@@ -238,6 +244,11 @@
           <url>file://$PROJECT_DIR$/assets/src/Main.java</url>
           <line>11</line>
           <option name="timeStamp" value="91" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/Main.java</url>
+          <line>21</line>
+          <option name="timeStamp" value="100" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

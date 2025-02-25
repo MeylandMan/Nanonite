@@ -60,6 +60,7 @@ dependencies {
     runtimeOnly("org.lwjgl", "lwjgl-stb", classifier = lwjglNatives)
     implementation("org.joml", "joml", jomlVersion)
     implementation("org.joml", "joml-primitives", `joml-primitivesVersion`)
+    implementation("com.google.code.gson:gson:2.12.1")
 }
 
 tasks.test {
