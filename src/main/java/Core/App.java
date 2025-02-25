@@ -22,7 +22,7 @@ import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 
 import static org.lwjgl.opengl.GL11C.glViewport;
-import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL43.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
@@ -114,7 +114,7 @@ public class App {
 
         // Initialize GLFW. Most GLFW functions will not work before doing this.
         if ( !glfwInit() )
-            throw new IllegalStateException("Unable to initialize GLFW");
+            Logger.log(Logger.Level.ERROR, "Unable to initialize GLFW");
 
         // Configure GLFW
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
@@ -126,8 +126,9 @@ public class App {
         glfwWindowHint(GLFW_COCOA_GRAPHICS_SWITCHING , GLFW_TRUE);
 
         window = glfwCreateWindow(DEFAULT_WIDTH, DEFAULT_HEIGHT, m_Title, NULL, NULL);
+
         if ( window == NULL )
-            throw new RuntimeException("Failed to create the GLFW window");
+            Logger.log(Logger.Level.ERROR, "Failed to create the GLFW window");
 
         renderer = new Renderer();
 
@@ -227,8 +228,6 @@ public class App {
         user.addElement(button);
         */
 
-
-
         world = new World();
         world.addCollision(camera.collision);
         world.addCollision(new CubeCollision(new Vector3f(8, 8, 8), new Vector3f(1)));
@@ -237,7 +236,7 @@ public class App {
         while ( !glfwWindowShouldClose(window) ) {
             int error;
             while ((error = glGetError()) != GL_NO_ERROR) {
-                System.out.println("OpenGL Error: " + error);
+                Logger.log(Logger.Level.WARNING, "OpenGL error: " + error);
             }
 
             fpsMonitor.update();
@@ -295,7 +294,7 @@ public class App {
             glfwPollEvents();
 
 
-            Input.Update(window, camera);
+            Input.Update(window, camera, delta);
             camera.updateCameraVectors(delta);
             world.onUpdate(camera, delta);
 

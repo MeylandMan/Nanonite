@@ -31,6 +31,8 @@ public class Input {
         HOLDING,
         RELEASED
     }
+    private static float debug_timestamp = 0, actual_debug_timestamp = 0;
+
     // Key Binding
     private static final int[] Input_bindings = {
             //UP
@@ -41,8 +43,6 @@ public class Input {
             GLFW_KEY_A,
             //RIGHT
             GLFW_KEY_D,
-            //DEBUG
-            GLFW_KEY_F3,
             //REMOVE LOCK IN
             GLFW_KEY_Q,
             //ESCAPE
@@ -56,7 +56,6 @@ public class Input {
             //RESET POSITION
             GLFW_KEY_R
     };
-
 
 
     // Mouse Buttons
@@ -77,8 +76,6 @@ public class Input {
             //RIGHT
             InputState.NOTHING,
 
-            //DEBUG
-            InputState.NOTHING,
             //REMOVE LOCK IN
             InputState.NOTHING,
             //ESCAPE
@@ -100,14 +97,13 @@ public class Input {
     public static final int KEY_LEFT = 2;
     public static final int KEY_RIGHT = 3;
 
-    public static final int KEY_DEBUG = 4;
-    public static final int KEY_LOCK = 5;
-    public static final int KEY_ESCAPE = 6;
+    public static final int KEY_LOCK = 4;
+    public static final int KEY_ESCAPE = 5;
 
-    public static final int KEY_JUMP = 7;
-    public static final int KEY_SNEAK = 8;
-    public static final int KEY_SPRINT = 9;
-    public static final int KEY_RESET_POSITION = 10;
+    public static final int KEY_JUMP = 6;
+    public static final int KEY_SNEAK = 7;
+    public static final int KEY_SPRINT = 8;
+    public static final int KEY_RESET_POSITION = 9;
 
     //MOUSE
     public static final int MOUSE_LEFT = 0;
@@ -200,14 +196,16 @@ public class Input {
         glfwSetCursorPos(window, x, y);
     }
 
-    public static void Update(long window, Camera camera) {
+    public static void Update(long window, Camera camera, float deltaTime) {
         if (is_locked) {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-            if(isKeyJustPressed(KEY_DEBUG)) {
-                is_debug = !is_debug;
-            }
+            //
         }
 
+        PressedDebugKey(window, deltaTime);
+        if(actual_debug_timestamp < 0.4 && actual_debug_timestamp != 0) {
+            is_debug = !is_debug;
+        }
         for(int i = 0; i < Input_bindings.length; i++) {
             if (glfwGetKey(window, Input_bindings[i]) == GLFW_PRESS)
             {
@@ -265,6 +263,19 @@ public class Input {
         });
     }
 
+    private static void PressedDebugKey(long window, float delta) {
+        if(glfwGetKey(window, GLFW_KEY_F3) == GLFW_PRESS) {
+            debug_timestamp += delta;
+            System.out.println("debug timestamp: " + debug_timestamp);
+        } else {
+            actual_debug_timestamp = debug_timestamp;
+            debug_timestamp = 0;
+            if(actual_debug_timestamp != 0) {
+                System.out.println("actual debug timestamp: " + actual_debug_timestamp);
+            }
+
+        }
+    }
     public static Vector2f getMousePosition() {
         return new Vector2f(mouseX, mouseY);
     }
