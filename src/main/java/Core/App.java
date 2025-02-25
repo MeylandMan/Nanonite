@@ -103,6 +103,7 @@ public class App {
         // Delete the buffers and shader we don't need anymore
         scene.Delete();
         shader.Clear();
+        Client.DeleteTextures();
 
         // Terminate GLFW and free the error callback
         glfwTerminate();
@@ -184,6 +185,7 @@ public class App {
         */
 
         GLCapabilities caps = GL.createCapabilities();
+        Client.LoadingBlockTextures();
 
         glEnable(GL43.GL_DEBUG_OUTPUT);
         glEnable(GL43.GL_DEBUG_OUTPUT_SYNCHRONOUS);

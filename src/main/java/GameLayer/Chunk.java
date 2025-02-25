@@ -1,5 +1,7 @@
 package GameLayer;
 
+import Core.Client;
+import Core.Logger;
 import Core.Rendering.Scene;
 import Core.Rendering.Shader;
 import Core.Rendering.Texture;
@@ -27,14 +29,10 @@ public class Chunk extends _Object {
     private final Block[][][] blocks = new Block[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
     VBO ssbo;
     int facedrawn = 0;
-    String[] texture_paths = {
-            "blocks/dirt.png",
-            "blocks/grass_block_side.png",
-            "blocks/grass_block_top.png"
-    };
-    int[] samplers = new int[texture_paths.length];
 
-    public Texture[] textures;
+    int[] samplers = new int[Client.blockTexturePath.length];
+
+
 
     public Chunk(Scene scene, Vector3f position) {
         this.positionX = (int)position.x;
@@ -78,8 +76,7 @@ public class Chunk extends _Object {
 
     @Override
     public void Delete() {
-        for(Texture texture : textures)
-            texture.Delete();
+
     }
     private void updateMesh() {
         facedrawn = 0;
@@ -151,9 +148,9 @@ public class Chunk extends _Object {
     @Override
     public void DrawMesh(Shader shader) {
 
-        for(int i = 0; i < textures.length; i++) {
+        for(int i = 0; i < Client.blockTextures.length; i++) {
             samplers[i] = i;
-            textures[i].Bind(i);
+            Client.blockTextures[i].Bind(i);
         }
         if(updateChunk) {
             updateMesh();
@@ -181,17 +178,12 @@ public class Chunk extends _Object {
 
     public void InitTextures() {
         if (!GL.getCapabilities().OpenGL30) {
-            throw new IllegalStateException("OpenGL 3.0 unavailable !");
+            Logger.log(Logger.Level.ERROR, "OpenGL 4.3 not supported");
         }
 
         ssbo = new VBO(GL_DYNAMIC_DRAW, GL_SHADER_STORAGE_BUFFER);
         int estimatedSize = ((X_DIMENSION*Y_DIMENSION*Z_DIMENSION)/2) * 6 * (8*Float.BYTES);
         ssbo.InitSSBO(Math.round(estimatedSize*0.6f),0);
-
-        textures = new Texture[texture_paths.length];
-        for(int i = 0; i < textures.length; i++) {
-            textures[i] = new Texture(texture_paths[i]);
-        }
     }
 
     public Block GetBlock(int x) {
