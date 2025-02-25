@@ -69,12 +69,11 @@ public class TextRenderer {
             float textWidth = getTextWidth(text, scale);
             x -= textWidth / 3.9f; // Décale le texte vers la gauche pour qu'il soit centré
         }
-
-        glDisable(GL_BLEND);
         glDisable(GL_CULL_FACE);
+        glDisable(GL_DEPTH_TEST);
 
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LESS);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         shader.Bind();
         glBindVertexArray(vao);
@@ -133,8 +132,6 @@ public class TextRenderer {
         glDrawArrays(GL_TRIANGLES, 0, text.length() * 6);
 
         glBindVertexArray(0);
-
-        glDisable(GL_DEPTH_TEST);
     }
 }
 

@@ -1,6 +1,8 @@
 package Core.Physics;
 
 import org.joml.Vector3f;
+
+import static org.lwjgl.opengl.GL11C.glEnable;
 import static org.lwjgl.opengl.GL40.*;
 
 public class CubeCollision {
@@ -43,6 +45,7 @@ public class CubeCollision {
     }
 
     public void drawAABB() {
+        glDisable(GL_BLEND);
         glDrawArrays(GL_LINE_LOOP, 0, 36);
     }
 

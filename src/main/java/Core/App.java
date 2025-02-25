@@ -38,7 +38,6 @@ public class App {
     CubeCollision collision;
     Scene scene = new Scene();
     Shader shader = new Shader();
-
     Camera camera = new Camera(new Vector3f(8));
     World world;
     float delta;
@@ -167,7 +166,7 @@ public class App {
         glfwMakeContextCurrent(window);
 
         // Enable v-sync
-        glfwSwapInterval(1);
+        glfwSwapInterval(0);
 
         // Make the window visible
         glfwShowWindow(window);
@@ -198,7 +197,6 @@ public class App {
         */
         //System.out.println("MAX TEXTURE YOU CAN LOAD : " + GL_MAX_TEXTURE_IMAGE_UNITS); 34930
         FPSMonitor fpsMonitor = new FPSMonitor();
-        SpriteRenderer spriteRenderer = new SpriteRenderer();
         Font font;
         TextRenderer textRenderer = new TextRenderer();
         try {
@@ -210,12 +208,11 @@ public class App {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        SpriteRenderer spriteRenderer = new SpriteRenderer();
 
         // UI
-        //user = new UserInterface(spriteRenderer, textRenderer);
-
-        float value = 0;
         /*
+        user = new UserInterface(spriteRenderer, textRenderer);
         UISlider slider = new UISlider("Value of x: " + value,
                 new Vector3f(30, 10, -10),
                 new Vector2f(400, 50),
@@ -227,13 +224,11 @@ public class App {
                 "Press to", new Vector3f(30, 30, -10),
                 new Vector2f(300, 100)
         );
-
         user.addElement(button);
         */
 
 
 
-        //renderer.addInterface(user);
         world = new World();
         world.addCollision(camera.collision);
         world.addCollision(new CubeCollision(new Vector3f(8, 8, 8), new Vector3f(1)));
@@ -268,6 +263,7 @@ public class App {
             shader.UniformMatrix4x4("projection", camera.GetProjectionMatrix(m_Width, m_Height));
 
             renderer.DrawScene(scene, shader);
+            //world.onRender(camera.GetViewMatrix(), camera.GetProjectionMatrix(m_Width, m_Height));
 
             //raycast.origin = camera.Position;
             //raycast.direction = camera.getFront();
@@ -295,14 +291,11 @@ public class App {
                         10, 150, 0.3f, false);
             }
 
-
-            world.onRender(camera.GetViewMatrix(), camera.GetProjectionMatrix(m_Width, m_Height));
             glfwSwapBuffers(window);
             glfwPollEvents();
 
 
             Input.Update(window, camera);
-            //user.update(delta);
             camera.updateCameraVectors(delta);
             world.onUpdate(camera, delta);
 

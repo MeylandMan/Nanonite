@@ -23,9 +23,7 @@ public class SpriteRenderer {
     public void drawRectangle(Vector3f position, Vector2f size, Vector3f color, float alpha) {
 
         glDisable(GL_CULL_FACE);
-
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LESS);
+        glDisable(GL_DEPTH_TEST);
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -42,6 +40,5 @@ public class SpriteRenderer {
         glDrawArrays(GL_TRIANGLES, 0,  6);
 
         glDisable(GL_BLEND);
-        glDisable(GL_DEPTH_TEST);
     }
 }
