@@ -9,6 +9,8 @@ import Core.Physics.Raycast;
 import org.joml.Vector3f;
 import org.joml.Matrix4f;
 
+import java.util.Objects;
+
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 
 
@@ -41,7 +43,7 @@ public class Camera {
     private final Vector3f Up = new Vector3f();
     private final Vector3f Right = new Vector3f();
     private final Vector3f WorldUp;
-
+    private boolean UP = true;
     // euler Angles
     public float Yaw;
     public float Pitch;
@@ -83,7 +85,7 @@ public class Camera {
     public void ProcessKeyboard(Camera_Movement direction, float deltaTime) {
 
         float pitchRad = (float) Math.toRadians(Pitch);
-
+        UP = false;
         if (direction == Camera_Movement.FORWARD) {
             velocity.x += (float) (Front.x/Math.cos(pitchRad));
             velocity.z += (float) (Front.z/Math.cos(pitchRad));
@@ -102,9 +104,11 @@ public class Camera {
         }
         if(direction == Camera_Movement.UP) {
             velocity.y += SPEED/currentSpeed;
+            UP = true;
         }
         if(direction == Camera_Movement.DOWN) {
             velocity.y -= SPEED/currentSpeed;
+            UP = true;
         }
         
         for(CubeCollision collision : worldCollisions) {
@@ -142,14 +146,16 @@ public class Camera {
         float acceleration = ACCELERATION_FACTOR * deltaTime;
 
         Zoom = lerp(Zoom, targetZoom, acceleration*3);
-        if(targetSpeed == 0)
-            currentSpeed = lerp(currentSpeed, targetSpeed, acceleration/5);
-        else
-            currentSpeed = lerp(currentSpeed, targetSpeed, acceleration);
+        currentSpeed = lerp(currentSpeed, targetSpeed, acceleration);
 
         float speed = currentSpeed * deltaTime;
-        velocity.mul(speed);
 
+        if(targetSpeed == 0 && !UP) {
+            velocity.x = lerp(velocity.x, 0, acceleration/5) ;
+            velocity.z = lerp(velocity.z, 0, acceleration/5);
+        } else {
+            velocity.mul(speed);
+        }
         Position.add(velocity);
 
         raycast.update(new Vector3f(Position.x, Position.y+1, Position.z), getFront());
