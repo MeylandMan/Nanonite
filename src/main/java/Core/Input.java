@@ -62,8 +62,21 @@ public class Input {
             //DEBUG MAIN BIND
             GLFW_KEY_F3,
             //SHOW DEBUG COMB
-            GLFW_KEY_A
+            GLFW_KEY_A,
             //RELOAD CHUNK
+            GLFW_KEY_Q,
+            //Copy player location
+            GLFW_KEY_C,
+            //Teleport player location
+            GLFW_KEY_V,
+            //Increase Render distance
+            GLFW_KEY_KP_ADD,
+            //Decrease Render distance
+            GLFW_KEY_KP_SUBTRACT,
+            //Toggle chunks border
+            GLFW_KEY_G,
+            //Pause
+            GLFW_KEY_P,
     };
 
 
@@ -101,9 +114,14 @@ public class Input {
 
     // Keys
     private static final InputState[] Debug_Keys = {
-            //DEBUG
             InputState.NOTHING,
-            //TEST
+            InputState.NOTHING,
+            InputState.NOTHING,
+            InputState.NOTHING,
+            InputState.NOTHING,
+            InputState.NOTHING,
+            InputState.NOTHING,
+            InputState.NOTHING,
             InputState.NOTHING
     };
 
@@ -124,7 +142,16 @@ public class Input {
 
     //DEBUG
     public static final int DEBUG_KEY = 0;
-    public static final int DEBUG_TEST = 1;
+    public static final int DEBUG_SHOW = 1;
+    public static final int DEBUG_CHUNKS = 2;
+
+    public static final int DEBUG_COPY = 3;
+    public static final int DEBUG_PASTE = 4;
+    public static final int DEBUG_INCREASE = 5;
+
+    public static final int DEBUG_DECREASE = 6;
+    public static final int DEBUG_CHUNK_BORDER = 7;
+    public static final int DEBUG_PAUSE = 8;
 
     //MOUSE
     public static final int MOUSE_LEFT = 0;
@@ -133,7 +160,7 @@ public class Input {
 
     public void changeInputBinding(int key_binding, int key) {
         if(key_binding >= Input_bindings.length) {
-            System.out.println("Wrong key binding: " + key_binding);
+            Logger.log(Logger.Level.WARNING, "Wrong key binding: " + key_binding);
             return;
         }
 
@@ -142,7 +169,7 @@ public class Input {
 
     public static boolean isKeyNotUsed(int key) {
         if(key >= Input_bindings.length) {
-            System.out.println("Wrong key: " + key);
+            WrongKey(key);
             return false;
         }
         return (Keys[key] == InputState.NOTHING);
@@ -150,7 +177,7 @@ public class Input {
 
     public static boolean isKeyJustPressed(int key) {
         if(key >= Input_bindings.length) {
-            System.out.println("Wrong key: " + key);
+            WrongKey(key);
             return false;
         }
         return (Keys[key] == InputState.PRESSED);
@@ -158,7 +185,7 @@ public class Input {
 
     public static boolean isKeyPressed(int key) {
         if(key >= Input_bindings.length) {
-            System.out.println("Wrong key: " + key);
+            WrongKey(key);
             return false;
         }
         return (Keys[key] == InputState.HOLDING);
@@ -166,7 +193,7 @@ public class Input {
 
     public static boolean isKeyReleased(int key) {
         if(key >= Input_bindings.length) {
-            System.out.println("Wrong key: " + key);
+            WrongKey(key);
             return false;
         }
         return (Keys[key] == InputState.RELEASED);
@@ -179,7 +206,7 @@ public class Input {
 
     public static boolean isDebugKeyNotUsed(int key) {
         if(key >= Debug_bindings.length) {
-            System.out.println("Wrong key: " + key);
+            WrongKey(key);
             return false;
         }
         return (Debug_Keys[key] == InputState.NOTHING);
@@ -187,7 +214,7 @@ public class Input {
 
     public static boolean isDebugKeyJustPressed(int key) {
         if(key >= Debug_bindings.length) {
-            System.out.println("Wrong key: " + key);
+            WrongKey(key);
             return false;
         }
         return (Debug_Keys[key] == InputState.PRESSED);
@@ -195,7 +222,7 @@ public class Input {
 
     public static boolean isDebugKeyPressed(int key) {
         if(key >= Debug_bindings.length) {
-            System.out.println("Wrong key: " + key);
+            WrongKey(key);
             return false;
         }
         return (Debug_Keys[key] == InputState.HOLDING);
@@ -203,7 +230,7 @@ public class Input {
 
     public static boolean isDebugKeyReleased(int key) {
         if(key >= Debug_bindings.length) {
-            System.out.println("Wrong key: " + key);
+            WrongKey(key);
             return false;
         }
         return (Debug_Keys[key] == InputState.RELEASED);
@@ -305,7 +332,7 @@ public class Input {
             glfwSetWindowShouldClose(window, true);
         }
 
-        if(isKeyJustPressed(KEY_LOCK)) {
+        if(isKeyJustPressed(KEY_LOCK) && debug_timestamp == 0) {
             is_locked = !is_locked;
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         }
@@ -329,6 +356,15 @@ public class Input {
         });
     }
 
+    private static void isDebugKeyAllReleased() {
+        for (InputState debugKey : Debug_Keys) {
+            if (debugKey == InputState.RELEASED) {
+                is_combined = false;
+                break;
+            }
+        }
+    }
+
     private static void PressedDebugKey(long window, float delta) {
         if(isDebugKeyPressed(DEBUG_KEY)) {
             debug_timestamp += delta;
@@ -336,30 +372,90 @@ public class Input {
             actual_debug_timestamp = debug_timestamp;
             debug_timestamp = 0;
         }
-
-        if(isDebugKeyReleased(DEBUG_KEY)) {
-            is_combined = false;
-        }
     }
 
     public static void PressedCombinaisonKey(long window) {
-        if(is_combined)
+        if(!is_locked)
             return;
 
         if(debug_timestamp != 0) {
-            if(isDebugKeyJustPressed(DEBUG_TEST)) {
+            if(is_combined)
+                return;
+
+            if(isDebugKeyJustPressed(DEBUG_SHOW)) {
                 debug_timestamp = actual_debug_timestamp = 0;
-                System.out.println("Combinaison !");
+                ShowAllCommands();
+                is_combined = true;
+            }
+
+            if(isDebugKeyJustPressed(DEBUG_CHUNKS)) {
+                debug_timestamp = actual_debug_timestamp = 0;
+                Logger.Debug("Reload Chunks");
+                is_combined = true;
+            }
+
+            if(isDebugKeyJustPressed(DEBUG_COPY)) {
+                debug_timestamp = actual_debug_timestamp = 0;
+                Logger.Debug("Copied position !");
+                is_combined = true;
+            }
+
+            if(isDebugKeyJustPressed(DEBUG_PASTE)) {
+                debug_timestamp = actual_debug_timestamp = 0;
+                Logger.Debug("Teleported to the copied position !");
+                is_combined = true;
+            }
+
+            if(isDebugKeyJustPressed(DEBUG_INCREASE)) {
+                debug_timestamp = actual_debug_timestamp = 0;
+                Logger.Debug("Increased Render distance");
+                is_combined = true;
+            }
+
+            if(isDebugKeyJustPressed(DEBUG_DECREASE)) {
+                debug_timestamp = actual_debug_timestamp = 0;
+                Logger.Debug("Decreased Render distance");
+                is_combined = true;
+            }
+
+            if(isDebugKeyJustPressed(DEBUG_CHUNK_BORDER)) {
+                debug_timestamp = actual_debug_timestamp = 0;
+                Logger.Debug("Show Chunk border");
+                is_combined = true;
+            }
+
+            if(isDebugKeyJustPressed(DEBUG_PAUSE)) {
+                debug_timestamp = actual_debug_timestamp = 0;
+                Logger.Debug("Paused the game");
                 is_combined = true;
             }
         }
+        isDebugKeyAllReleased();
 
         if(actual_debug_timestamp < 0.2 && actual_debug_timestamp != 0) {
             is_debug = !is_debug;
         }
     }
 
+    public static void WrongKey(int key) {
+        Logger.log(Logger.Level.WARNING, "Wrong Key: " + key);
+    }
+
     public static Vector2f getMousePosition() {
         return new Vector2f(mouseX, mouseY);
+    }
+
+    public static void ShowAllCommands() {
+        System.out.println("""
+                F3 Debug commands:
+                Show all commands: F3+A
+                Reload Chunks: F3+Q
+                Copy Player location: F3+C
+                Teleport to Copied location: F3+V
+                Increase Render distance: F3+(num +)
+                Decrease Render distance: F3+(num -)
+                Show Chunks Borders: F3+G
+                Pause the game: F3+P
+                """);
     }
 }
