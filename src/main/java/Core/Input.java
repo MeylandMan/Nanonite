@@ -13,7 +13,6 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 public class Input {
 
     //Mouse variables
-    private static boolean firstMouse = true;
     public static float mouseX = 0.0f;
     public static float mouseY = 0.0f;
     public static float lastMouseX = 0.0f;
@@ -24,6 +23,7 @@ public class Input {
     // Booleans
     public static boolean is_locked;
     public static boolean is_debug;
+    public static boolean is_combined;
 
     public enum InputState {
         NOTHING,
@@ -55,6 +55,15 @@ public class Input {
             GLFW_KEY_LEFT_CONTROL,
             //RESET POSITION
             GLFW_KEY_R
+    };
+
+    // Debug Binding
+    private static final int[] Debug_bindings = {
+            //DEBUG MAIN BIND
+            GLFW_KEY_F3,
+            //SHOW DEBUG COMB
+            GLFW_KEY_A
+            //RELOAD CHUNK
     };
 
 
@@ -90,6 +99,14 @@ public class Input {
             InputState.NOTHING
     };
 
+    // Keys
+    private static final InputState[] Debug_Keys = {
+            //DEBUG
+            InputState.NOTHING,
+            //TEST
+            InputState.NOTHING
+    };
+
     //Input Macros
     // KEYBOARD
     public static final int KEY_UP = 0;
@@ -104,6 +121,10 @@ public class Input {
     public static final int KEY_SNEAK = 7;
     public static final int KEY_SPRINT = 8;
     public static final int KEY_RESET_POSITION = 9;
+
+    //DEBUG
+    public static final int DEBUG_KEY = 0;
+    public static final int DEBUG_TEST = 1;
 
     //MOUSE
     public static final int MOUSE_LEFT = 0;
@@ -156,6 +177,38 @@ public class Input {
                 isKeyNotUsed(KEY_LEFT) && isKeyNotUsed(KEY_RIGHT));
     }
 
+    public static boolean isDebugKeyNotUsed(int key) {
+        if(key >= Debug_bindings.length) {
+            System.out.println("Wrong key: " + key);
+            return false;
+        }
+        return (Debug_Keys[key] == InputState.NOTHING);
+    }
+
+    public static boolean isDebugKeyJustPressed(int key) {
+        if(key >= Debug_bindings.length) {
+            System.out.println("Wrong key: " + key);
+            return false;
+        }
+        return (Debug_Keys[key] == InputState.PRESSED);
+    }
+
+    public static boolean isDebugKeyPressed(int key) {
+        if(key >= Debug_bindings.length) {
+            System.out.println("Wrong key: " + key);
+            return false;
+        }
+        return (Debug_Keys[key] == InputState.HOLDING);
+    }
+
+    public static boolean isDebugKeyReleased(int key) {
+        if(key >= Debug_bindings.length) {
+            System.out.println("Wrong key: " + key);
+            return false;
+        }
+        return (Debug_Keys[key] == InputState.RELEASED);
+    }
+
     public static boolean isMouseButtonJustPressed(int button) {
         if (button >= MouseButtons.length) {
             System.out.println("Wrong mouse button: " + button);
@@ -203,9 +256,22 @@ public class Input {
         }
 
         PressedDebugKey(window, deltaTime);
-        if(actual_debug_timestamp < 0.4 && actual_debug_timestamp != 0) {
-            is_debug = !is_debug;
+        PressedCombinaisonKey(window);
+        for(int i = 0; i < Debug_bindings.length; i++) {
+            if (glfwGetKey(window, Debug_bindings[i]) == GLFW_PRESS)
+            {
+                if (Debug_Keys[i] == InputState.PRESSED)
+                    Debug_Keys[i] = InputState.HOLDING;
+                else if (Debug_Keys[i] !=InputState.HOLDING)
+                    Debug_Keys[i] = InputState.PRESSED;
+            } else {
+                if (Debug_Keys[i] == InputState.RELEASED)
+                    Debug_Keys[i] = InputState.NOTHING;
+                else if (Debug_Keys[i] !=InputState.NOTHING)
+                    Debug_Keys[i] = InputState.RELEASED;
+            }
         }
+
         for(int i = 0; i < Input_bindings.length; i++) {
             if (glfwGetKey(window, Input_bindings[i]) == GLFW_PRESS)
             {
@@ -264,18 +330,35 @@ public class Input {
     }
 
     private static void PressedDebugKey(long window, float delta) {
-        if(glfwGetKey(window, GLFW_KEY_F3) == GLFW_PRESS) {
+        if(isDebugKeyPressed(DEBUG_KEY)) {
             debug_timestamp += delta;
-            System.out.println("debug timestamp: " + debug_timestamp);
         } else {
             actual_debug_timestamp = debug_timestamp;
             debug_timestamp = 0;
-            if(actual_debug_timestamp != 0) {
-                System.out.println("actual debug timestamp: " + actual_debug_timestamp);
-            }
+        }
 
+        if(isDebugKeyReleased(DEBUG_KEY)) {
+            is_combined = false;
         }
     }
+
+    public static void PressedCombinaisonKey(long window) {
+        if(is_combined)
+            return;
+
+        if(debug_timestamp != 0) {
+            if(isDebugKeyJustPressed(DEBUG_TEST)) {
+                debug_timestamp = actual_debug_timestamp = 0;
+                System.out.println("Combinaison !");
+                is_combined = true;
+            }
+        }
+
+        if(actual_debug_timestamp < 0.2 && actual_debug_timestamp != 0) {
+            is_debug = !is_debug;
+        }
+    }
+
     public static Vector2f getMousePosition() {
         return new Vector2f(mouseX, mouseY);
     }
