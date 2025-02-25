@@ -90,14 +90,14 @@
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Client/Documents/GitHub/MyCraft/assets/models/blocks",
+    "last_opened_file_path": "C:/Users/Client/Documents/GitHub/MyCraft/lib/lwjglx-debug-1.0.0.jar",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "onboarding.tips.debug.path": "C:/Users/Client/Documents/GitHub/Minecraft-Clone/assets/src/Main.java",
-    "project.structure.last.edited": "Artifacts",
+    "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.34827587",
     "settings.editor.selected.configurable": "preferences.applicationServers",
@@ -191,7 +191,7 @@
       <workItem from="1740326413377" duration="11282000" />
       <workItem from="1740399834368" duration="12459000" />
       <workItem from="1740469715596" duration="10151000" />
-      <workItem from="1740482624053" duration="22838000" />
+      <workItem from="1740482624053" duration="24462000" />
     </task>
     <servers />
   </component>
