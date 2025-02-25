@@ -16,6 +16,7 @@ import org.lwjgl.system.*;
 
 
 import java.nio.IntBuffer;
+import java.text.DecimalFormat;
 import java.util.*;
 
 import static org.lwjgl.glfw.Callbacks.*;
@@ -43,6 +44,7 @@ public class App {
     float delta;
     float lastFrame;
 
+    private static final DecimalFormat df = new DecimalFormat("#.###");
     private final int DEFAULT_WIDTH;
     private final int DEFAULT_HEIGHT;
 
@@ -186,7 +188,7 @@ public class App {
         glEnable(GL43.GL_DEBUG_OUTPUT);
         glEnable(GL43.GL_DEBUG_OUTPUT_SYNCHRONOUS);
         glDebugMessageCallback((source, type, id, severity, length, message, userParam) -> {
-            System.err.println("GL DEBUG MESSAGE: " + GL20.glGetShaderInfoLog(id));
+            System.err.println("GL DEBUG MESSAGE: " + glGetShaderInfoLog(id));
         }, 0);
 
         shader.CreateShader("Chunk.comp", "Chunk.frag");
@@ -281,19 +283,30 @@ public class App {
             spriteRenderer.getMatrixProjection(orthoMatrix);
             renderer.renderInterfaces();
 
+
             if(Input.is_debug) {
-                textRenderer.renderText("MyCraft " + version + " Vanilla\n" +
-                                (int)fps[0] + " fps (avg: " + (int)fps[1] + ", min: " + (int)fps[2] + ", max: " + (int)fps[3] + ")",
-                        10, 10, 0.3f, false);
+                String stateInfo = Client.name + Client.version + " " + Client.type + "\n" +
+                        (int)fps[0] + " fps (avg: " + (int)fps[1] + ", min: " + (int)fps[2] + ", max: " + (int)fps[3] + ")";
+                textRenderer.renderText(stateInfo,10, 10, 0.3f, false);
 
-                textRenderer.renderText("XYZ: " + String.format("%.3f",camera.Position.x) + " / " + String.format("%.3f",camera.Position.y) + " / " + String.format("%.3f",camera.Position.z) +
-                                "\nBlocks: nah\nChunks: nah\n"+
-                                "Facing Direction: " + String.format("%.3f",camera.getFront().x) + " / " + String.format("%.3f",camera.getFront().y) + " / " + String.format("%.3f",camera.getFront().z) +
-                                "\nVelocity: " + String.format("%.3f",camera.velocity.x) + " / " + String.format("%.3f",camera.velocity.y) + " / " + String.format("%.3f",camera.velocity.z) +
-                                "\ntarget speed: " + String.format("%.3f", camera.targetSpeed) + "\nCurrent Speed: " + String.format("%.3f", camera.currentSpeed),
-                        10, 150, 0.3f, false);
+                String gameInfo = "XYZ: " + df.format(camera.Position.x) +
+                        " / " + df.format(camera.Position.y) +
+                        " / " + df.format(camera.Position.z) +
+                        "\nBlocks: nah\nChunks: nah\nFacing Direction: " +
+                        df.format(camera.getFront().x) + " / " +
+                        df.format(camera.getFront().y) + " / " +
+                        df.format(camera.getFront().z) +
+                        "\nVelocity: " +
+                        df.format(camera.velocity.x) + " / " +
+                        df.format(camera.velocity.y) + " / " +
+                        df.format(camera.velocity.z) +
+                        "\ntarget speed: " + df.format(camera.targetSpeed) +
+                        "\nCurrent Speed: " + df.format(camera.currentSpeed);
+
+                textRenderer.renderText(gameInfo,10, 150, 0.3f, false);
             }
-
+            spriteRenderer.drawRectangle(new Vector3f(10, 10, 0),
+                    new Vector2f(300, 100), new Vector3f(1), 1);
             glfwSwapBuffers(window);
             glfwPollEvents();
 
