@@ -78,6 +78,8 @@ public class Chunk extends _Object {
     public void Delete() {
 
     }
+
+
     private void updateMesh() {
         facedrawn = 0;
         int estimatedSizeBuffer = (X_DIMENSION * Y_DIMENSION * Z_DIMENSION)/2 * 6 * 8; // 3 position + 1 ID + 1 Face + 2 padding

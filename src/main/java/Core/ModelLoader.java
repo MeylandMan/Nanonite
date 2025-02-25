@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class ModelLoader {
     private static final Gson gson = new Gson();
-    private final Map<String, BlockModel> models = new HashMap<>(); //Model cache
+    private final Map<String, BlockModel> models = new HashMap<>();
 
     public BlockModel loadModel(String modelName) throws IOException {
         // Check if the model is already loaded
