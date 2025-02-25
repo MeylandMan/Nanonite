@@ -1,0 +1,73 @@
+#version 330 core
+
+out vec2 v_TexCoord;
+out vec3 v_Color;
+
+uniform float cursorX;
+uniform float cursorY;
+
+uniform float CharX;
+uniform float CharY;
+uniform float CharXOffset;
+uniform float CharYOffset;
+
+uniform float CharWidth;
+uniform float CharHeight;
+
+uniform float textureWidth;
+uniform float textureHeight;
+uniform float scale;
+
+uniform mat4 projection;
+
+void main() {
+    float xpos = cursorX + CharXOffset * scale;
+    float ypos = cursorY + CharYOffset * scale;
+    float w = CharWidth * scale;
+    float h = CharHeight * scale;
+
+    float u0 = CharX / textureWidth;
+    float v0 = CharY / textureHeight;
+    float u1 = (CharX + CharWidth) / textureWidth;
+    float v1 = (CharY + CharHeight) / textureHeight;
+
+    // Inverse Y coordinates
+    v0 = 1.0 - v0;
+    v1 = 1.0 - v1;
+
+    vec3 vertices[6] = vec3[] (
+        vec3(xpos,     ypos,     -1),
+        vec3(xpos,     ypos + h, -1),
+        vec3(xpos + w, ypos + h, -1),
+
+        vec3(xpos,     ypos,     -1),
+        vec3(xpos + w, ypos + h, -1),
+        vec3(xpos + w, ypos,     -1)
+    );
+
+    vec2 texCoords[6] = vec2[] (
+        vec2(u0, v0),
+        vec2(u0, v1),
+        vec2(u1, v1),
+
+        vec2(u0, v0),
+        vec2(u1, v1),
+        vec2(u1, v0)
+    );
+
+    vec3 color[6] = vec3[] (
+        vec3(1, 1, 1),
+        vec3(1, 1, 1),
+        vec3(1, 1, 1),
+
+        vec3(1, 1, 1),
+        vec3(1, 1, 1),
+        vec3(1, 1, 1)
+    );
+
+    //int vertexIndex = gl_VertexID % 6;
+    v_TexCoord = texCoords[gl_VertexID];
+    v_Color = color[gl_VertexID];
+
+    gl_Position = projection * vec4(vertices[gl_VertexID], 1.0);
+}

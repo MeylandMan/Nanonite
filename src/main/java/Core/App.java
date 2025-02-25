@@ -166,9 +166,6 @@ public class App {
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
 
-        // Enable v-sync
-        glfwSwapInterval(0);
-
         // Make the window visible
         glfwShowWindow(window);
 
@@ -185,6 +182,12 @@ public class App {
         */
 
         GLCapabilities caps = GL.createCapabilities();
+
+        glEnable(GL43.GL_DEBUG_OUTPUT);
+        glEnable(GL43.GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        glDebugMessageCallback((source, type, id, severity, length, message, userParam) -> {
+            System.err.println("GL DEBUG MESSAGE: " + GL20.glGetShaderInfoLog(id));
+        }, 0);
 
         shader.CreateShader("Chunk.comp", "Chunk.frag");
 
@@ -238,6 +241,7 @@ public class App {
             while ((error = glGetError()) != GL_NO_ERROR) {
                 Logger.log(Logger.Level.WARNING, "OpenGL error: " + error);
             }
+            glfwSwapInterval(Client.Vsync);
 
             fpsMonitor.update();
 

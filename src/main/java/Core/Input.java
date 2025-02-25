@@ -2,11 +2,13 @@ package Core;
 
 import Core.Rendering.Camera;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.lwjgl.glfw.*;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
 
+import static org.joml.Math.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
@@ -24,6 +26,10 @@ public class Input {
     public static boolean is_locked;
     public static boolean is_debug;
     public static boolean is_combined;
+
+
+    //Datas
+    private static Vector3f copyPosition;
 
     public enum InputState {
         NOTHING,
@@ -77,6 +83,8 @@ public class Input {
             GLFW_KEY_G,
             //Pause
             GLFW_KEY_P,
+            //UNABLE V-SYNC
+            GLFW_KEY_S
     };
 
 
@@ -122,6 +130,7 @@ public class Input {
             InputState.NOTHING,
             InputState.NOTHING,
             InputState.NOTHING,
+            InputState.NOTHING,
             InputState.NOTHING
     };
 
@@ -152,6 +161,7 @@ public class Input {
     public static final int DEBUG_DECREASE = 6;
     public static final int DEBUG_CHUNK_BORDER = 7;
     public static final int DEBUG_PAUSE = 8;
+    public static final int DEBUG_VSYNC = 9;
 
     //MOUSE
     public static final int MOUSE_LEFT = 0;
@@ -283,7 +293,7 @@ public class Input {
         }
 
         PressedDebugKey(window, deltaTime);
-        PressedCombinaisonKey(window);
+        PressedCombinaisonKey(window, camera);
         for(int i = 0; i < Debug_bindings.length; i++) {
             if (glfwGetKey(window, Debug_bindings[i]) == GLFW_PRESS)
             {
@@ -374,7 +384,7 @@ public class Input {
         }
     }
 
-    public static void PressedCombinaisonKey(long window) {
+    public static void PressedCombinaisonKey(long window, Camera camera) {
         if(!is_locked)
             return;
 
@@ -397,24 +407,36 @@ public class Input {
             if(isDebugKeyJustPressed(DEBUG_COPY)) {
                 debug_timestamp = actual_debug_timestamp = 0;
                 Logger.Debug("Copied position !");
+                copyPosition = new Vector3f(camera.Position);
                 is_combined = true;
             }
 
             if(isDebugKeyJustPressed(DEBUG_PASTE)) {
+                if(copyPosition == null) {
+                    Logger.Debug("You have not copied position !");
+                    return;
+                }
+
                 debug_timestamp = actual_debug_timestamp = 0;
                 Logger.Debug("Teleported to the copied position !");
+                camera.Position = new Vector3f(copyPosition);
+
                 is_combined = true;
             }
 
             if(isDebugKeyJustPressed(DEBUG_INCREASE)) {
                 debug_timestamp = actual_debug_timestamp = 0;
-                Logger.Debug("Increased Render distance");
+                Client.renderDistance++;
+                Client.renderDistance = min(Client.renderDistance, Client.MAX_RENDER_DISTANCE);
+                Logger.Debug("Increased Render distance: " + Client.renderDistance);
                 is_combined = true;
             }
 
             if(isDebugKeyJustPressed(DEBUG_DECREASE)) {
                 debug_timestamp = actual_debug_timestamp = 0;
-                Logger.Debug("Decreased Render distance");
+                Client.renderDistance--;
+                Client.renderDistance = max(Client.renderDistance, Client.MIN_RENDER_DISTANCE);
+                Logger.Debug("Decreased Render distance: " + Client.renderDistance);
                 is_combined = true;
             }
 
@@ -429,12 +451,27 @@ public class Input {
                 Logger.Debug("Paused the game");
                 is_combined = true;
             }
-        }
-        isDebugKeyAllReleased();
 
-        if(actual_debug_timestamp < 0.2 && actual_debug_timestamp != 0) {
-            is_debug = !is_debug;
+            if(isDebugKeyJustPressed(DEBUG_VSYNC)) {
+                debug_timestamp = actual_debug_timestamp = 0;
+                Client.Vsync = (Client.Vsync == 1)? 0:1;
+                if(Client.Vsync == 1)
+                    Logger.Debug("Disabled Vsync");
+                else
+                    Logger.Debug("Enabled Vsync");
+
+                is_combined = true;
+            }
+
         }
+
+        if(!is_combined) {
+            if(actual_debug_timestamp < 0.2 && actual_debug_timestamp != 0) {
+                is_debug = !is_debug;
+            }
+        }
+
+        isDebugKeyAllReleased();
     }
 
     public static void WrongKey(int key) {
