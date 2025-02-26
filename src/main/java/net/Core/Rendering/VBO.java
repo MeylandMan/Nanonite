@@ -82,6 +82,15 @@ public class VBO {
         glBindBuffer(data_type, 0);
     }
 
+    public void InitSSBO(FloatBuffer data, int binding) {
+        m_ID = glGenBuffers();
+        glBindBuffer(data_type, m_ID);
+        glBufferData(data_type, data, drawing_state);
+        glBindBufferBase(data_type, binding, m_ID);
+
+        glBindBuffer(data_type, 0);
+    }
+
     public void SubData(int offset, float[] data) {
         glBufferSubData(GL_ARRAY_BUFFER, offset, data);
     }

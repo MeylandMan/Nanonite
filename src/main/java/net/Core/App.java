@@ -25,6 +25,7 @@ import static org.lwjgl.opengl.GL11C.glViewport;
 import static org.lwjgl.opengl.GL43.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
+import static net.Core.Debugger.*;
 
 public class App {
     private long window;
@@ -202,12 +203,13 @@ public class App {
 
         Chunk chunk = new Chunk(scene, new Vector3f());
         /*
-        for(int x = 0; x < 16; x++) {
-            for(int z = 0; z < 16; z++) {
+        for(int x = 0; x < 32; x++) {
+            for(int z = 0; z < 32; z++) {
                 Chunk chunk = new Chunk(scene, new Vector3f(x*16, 0, z*16));
             }
         }
         */
+
         //System.out.println("MAX TEXTURE YOU CAN LOAD : " + GL_MAX_TEXTURE_IMAGE_UNITS); 34930
         FPSMonitor fpsMonitor = new FPSMonitor();
         Font font;
@@ -254,7 +256,7 @@ public class App {
 
             fpsMonitor.update();
 
-            float[] fps =  {
+           fps =  new float[] {
                     fpsMonitor.getFPS(),
                     fpsMonitor.getAverageFPS(),
                     fpsMonitor.getMinFPS(),
@@ -312,8 +314,6 @@ public class App {
 
                 textRenderer.renderText(gameInfo,10, 150, 0.3f, false);
             }
-            spriteRenderer.drawRectangle(new Vector3f(10, 10, 0),
-                    new Vector2f(300, 100), new Vector3f(1), 1);
             glfwSwapBuffers(window);
             glfwPollEvents();
 

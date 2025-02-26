@@ -19,13 +19,15 @@ public class Client {
     public static String version = "Alpha1.0";
 
 
-    private static String[] modelPaths = {
+    public static final String[] modelPaths = {
             "blocks/dirt",
             "blocks/grass_block"
     };
     public static ModelLoader modelLoader = new ModelLoader();
     public static ArrayList<String> blockTexturePath = new ArrayList<>();
     public static Texture[] blockTextures;
+
+    public static int[] samplers;
 
     public static void loadModels() {
         try {
@@ -71,7 +73,10 @@ public class Client {
             }
         }
 
-        int x = 0;
+        samplers = new int[blockTexturePath.size()];
+        for(int i = 0; i < blockTexturePath.size(); i++) {
+            samplers[i] = i;
+        }
     }
 
     private static boolean CheckTexturePath(BlockModel model, String key) {

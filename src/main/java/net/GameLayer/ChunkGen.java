@@ -6,27 +6,21 @@ public class ChunkGen {
     public final static byte Z_DIMENSION = 16;
     public final static int Y_MAX = 5;
 
+
     public enum BlockType {
-        DIRT(0, "dirt"),
-        GRASS(1, "grass_block");
+        DIRT((byte)0),
+        GRASS((byte)1);
 
-        private final int id;
-        private final String name;
+        private final byte id;
 
-        BlockType(int id, String name) {
+        BlockType(byte id) {
             this.id = id;
-            this.name = name;
         }
 
         public int getID() {
             return id;
         }
-
-        public String getName() {
-            return name;
-        }
     }
-
 
     public void AddSurface() {
 
