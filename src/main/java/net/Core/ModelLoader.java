@@ -59,6 +59,6 @@ public class ModelLoader {
     }
 
     public BlockModel getModel(String modelName) {
-        return models.get("blocks/"+modelName);
+        return models.get(modelName);
     }
 }

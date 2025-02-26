@@ -1,7 +1,6 @@
 package net.GameLayer;
 
-import net.Core.Client;
-import net.Core.Logger;
+import net.Core.*;
 import net.Core.Rendering.Scene;
 import net.Core.Rendering.Shader;
 import net.Core.Rendering.VBO;
@@ -15,21 +14,19 @@ import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL11C.glEnable;
 import static org.lwjgl.opengl.GL43.*;
+import static net.GameLayer.ChunkGen.*;
+
 
 public class Chunk extends _Object {
-
-    public final static byte X_DIMENSION = 16;
-    public final static short Y_DIMENSION = 255;
-    public final static byte Z_DIMENSION = 16;
-    int Y_MAX = 5;
     boolean updateChunk = true;
     private FloatBuffer buffer;
 
-    private final Block[][][] blocks = new Block[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
+    private final BlockType[][][] blocks = new BlockType[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
     VBO ssbo;
     int facedrawn = 0;
 
     int[] samplers = new int[Client.blockTexturePath.length];
+
 
 
 
@@ -47,9 +44,7 @@ public class Chunk extends _Object {
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int y = 0; y < Y_MAX; y++) {
                 for(int z = 0; z < Z_DIMENSION; z++) {
-                    blocks[x][y][z] = new Block( new Vector3f(x, y, z));
-                    Block.BlockType type =  ( y == Y_MAX-1 )? Block.BlockType.GRASS : Block.BlockType.DIRT;
-                    blocks[x][y][z].setType(type);
+                    blocks[x][y][z] = (y == Y_MAX-1)? BlockType.GRASS : BlockType.DIRT;
                 }
             }
         }
@@ -60,9 +55,9 @@ public class Chunk extends _Object {
                 for(int z = 0; z < Z_DIMENSION; z++) {
                     if(blocks[x][y][z] == null)
                         continue;
-                    if(blocks[x][y][z].type == Block.BlockType.DIRT) {
+                    if(blocks[x][y][z] == BlockType.DIRT) {
                         if(blocks[x][y+1][z] == null)
-                            blocks[x][y][z].setType(Block.BlockType.GRASS);
+                            blocks[x][y][z] = BlockType.GRASS;
                     }
                 }
             }
@@ -89,28 +84,33 @@ public class Chunk extends _Object {
                 for(int z = 0; z < Z_DIMENSION; z++) {
                     if(blocks[x][y][z] == null)
                         continue;
-                    for(int i = 0; i < 6; i++) {
-                        if(blocks[x][y][z].ID != -1 && shouldRenderFace(x,y,z, i) == 1) {
-                            // Position
-                            buffer.put(blocks[x][y][z].getPosition().x);
-                            buffer.put(blocks[x][y][z].getPosition().y);
-                            buffer.put(blocks[x][y][z].getPosition().z);
-                            // Minimum AABB
-                            buffer.put(0);
-                            buffer.put(0);
-                            buffer.put(0);
-                            //Maximum AABB
-                            buffer.put(16);
-                            buffer.put(16);
-                            buffer.put(16);
-                            int id = (i == 4 && blocks[x][y][z].ID == 1)? blocks[x][y][z].ID+1 : blocks[x][y][z].ID;
-                            //Texture Index
-                            buffer.put((float)id);
-                            // Face ID
-                            buffer.put((float)i);
-                            facedrawn++;
+
+                    BlockModel model = Client.modelLoader.getModel("blocks/"+blocks[x][y][z].getName());
+                    for(Element element : model.getElements()) {
+                        for(int i = 0; i < 6; i++) {
+                            if(blocks[x][y][z] != null && shouldRenderFace(element, x,y,z, i) == 1) {
+                                // Position
+                                buffer.put(x);
+                                buffer.put(y);
+                                buffer.put(z);
+                                // Minimum AABB
+                                buffer.put(element.getFrom(0));
+                                buffer.put(element.getFrom(1));
+                                buffer.put(element.getFrom(2));
+                                //Maximum AABB
+                                buffer.put(element.getTo(0));
+                                buffer.put(element.getTo(1));
+                                buffer.put(element.getTo(2));
+                                int id = (i == 4 && blocks[x][y][z].getID() == 1)? blocks[x][y][z].getID()+1 : blocks[x][y][z].getID();
+                                //Texture Index
+                                buffer.put((float)id);
+                                // Face ID
+                                buffer.put((float)i);
+                                facedrawn++;
+                            }
                         }
                     }
+
                 }
             }
         }
@@ -122,7 +122,7 @@ public class Chunk extends _Object {
         MemoryUtil.memFree(buffer);
     }
 
-    private int shouldRenderFace(int x, int y, int z, int face) {
+    private int shouldRenderFace(Element element, int x, int y, int z, int face) {
         int nx = x, ny = y, nz = z;
         // 0 -- FRONT, 1 -- BACK, 2 -- RIGHT, 3 -- LEFT, 4 -- TOP, 5 -- BOTTOM
         switch (face) {
@@ -148,8 +148,9 @@ public class Chunk extends _Object {
             return 1;
 
         // Vérifier si le bloc adjacent est de type AIR
-        if(blocks[nx][ny][nz].opacity == 0)
-            return 1;
+
+        if(!element.isOpacity())
+           return 1;
 
         return 0;
     }
@@ -195,19 +196,4 @@ public class Chunk extends _Object {
         ssbo.InitSSBO(Math.round(estimatedSize*0.6f),0);
     }
 
-    public Block GetBlock(int x) {
-        return blocks[x][0][0];
-    }
-    public Block GetBlock(int x, int y) {
-        return blocks[x][y][0];
-    }
-    public Block GetBlock(Vector2f position) {
-        return blocks[(int)position.x][(int)position.y][0];
-    }
-    public Block GetBlock(int x, int y, int z) {
-        return blocks[x][y][z];
-    }
-    public Block GetBlock(Vector3f position) {
-        return blocks[(int)position.x][(int)position.y][(int)position.z];
-    }
 }
