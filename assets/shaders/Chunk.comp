@@ -67,8 +67,8 @@ void main() {
         // BACK
         case 1:
             FaceVertices = vec3[](
-            vec3(mx.x, mx.y, mx.z), vec3(mx.x, mx.y, mx.z), vec3(mx.x, mx.y, mx.z),
-            vec3(mx.x, mx.y, mx.z), vec3(mx.x, mx.y, mx.z), vec3(mx.x, mx.y, mx.z)
+            vec3(mx.x, mn.y, mn.z), vec3(mn.x, mn.y, mn.z), vec3(mn.x, mx.y, mn.z),
+            vec3(mx.x, mn.y, mn.z), vec3(mn.x, mx.y, mn.z), vec3(mx.x, mx.y, mn.z)
             );
             break;
         // RIGHT

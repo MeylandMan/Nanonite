@@ -10,53 +10,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/Mycraft_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/Mycraft_main_jar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/META-INF/MANIFEST.MF" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/shaders/Chunk.comp" beforeDir="false" afterPath="$PROJECT_DIR$/assets/shaders/Chunk.comp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/settings.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/BlockModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/BlockModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Debugger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Debugger.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Element.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Element.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Face.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Face.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Input.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Input.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Logger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Logger.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/ModelLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/ModelLoader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Physics/CubeCollision.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Physics/CubeCollision.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Physics/Raycast.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Physics/Raycast.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Physics/StaticBody.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Physics/StaticBody.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Rendering/Camera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Rendering/Camera.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Rendering/CubeMesh.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Rendering/CubeMesh.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Rendering/EBO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Rendering/EBO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Rendering/Query.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Rendering/Query.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Rendering/Renderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Rendering/Renderer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Rendering/Scene.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Rendering/Scene.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Rendering/Shader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Rendering/Shader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Rendering/SpriteRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Rendering/SpriteRenderer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Rendering/Text/Font.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Rendering/Text/Font.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Rendering/Text/FontLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Rendering/Text/FontLoader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Rendering/Text/TextRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Rendering/Text/TextRenderer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Rendering/Texture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Rendering/Texture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Rendering/UI/UIButton.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Rendering/UI/UIButton.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Rendering/UI/UIElement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Rendering/UI/UIElement.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Rendering/UI/UILabel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Rendering/UI/UILabel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Rendering/UI/UISlider.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Rendering/UI/UISlider.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Rendering/UI/UserInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Rendering/UI/UserInterface.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Rendering/VAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Rendering/VAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Rendering/VBO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Rendering/VBO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Rendering/VertexBufferElement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Rendering/VertexBufferElement.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Core/Rendering/VertexBufferLayout.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Rendering/VertexBufferLayout.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Block.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/GameLayer/Block.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/Chunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/GameLayer/Chunk.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/ChunkGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/GameLayer/ChunkGen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/FPSMonitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/GameLayer/FPSMonitor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/World.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/GameLayer/World.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GameLayer/_Object.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/GameLayer/_Object.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/net/GameLayer/Chunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/GameLayer/Chunk.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -238,7 +194,7 @@
       <workItem from="1740326413377" duration="11282000" />
       <workItem from="1740399834368" duration="12459000" />
       <workItem from="1740469715596" duration="10151000" />
-      <workItem from="1740482624053" duration="40450000" />
+      <workItem from="1740482624053" duration="41061000" />
     </task>
     <servers />
   </component>

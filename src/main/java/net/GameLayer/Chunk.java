@@ -173,9 +173,9 @@ public class Chunk extends _Object {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         // Enable BackFace Culling
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_FRONT);
-        glFrontFace(GL_CW);
+        glDisable(GL_CULL_FACE);
+        //glCullFace(GL_FRONT);
+        //glFrontFace(GL_CW);
 
         ssbo.BindBase(0);
         shader.Uniform1iv("u_Textures", samplers);
