@@ -12,8 +12,6 @@ public class Client {
     public static final int MAX_RENDER_DISTANCE = 16;
     public static final int MIN_RENDER_DISTANCE = 1;
 
-    public static final int GENERIC_MODELS = 3;
-
     public static int Vsync = 1;
 
     public static String name = "Mycraft ";
@@ -89,7 +87,6 @@ public class Client {
         blockTextures = new Texture[blockTexturePath.size()];
         for(int i = 0; i < blockTextures.length; i++) {
             blockTextures[i] = new Texture(blockTexturePath.get(i));
-
         }
     }
 

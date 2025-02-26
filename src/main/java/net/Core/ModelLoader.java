@@ -78,6 +78,18 @@ public class ModelLoader {
                 }
             }
         }
+
+        for(Element element : model.getElements()) {
+            Map<String, Face> faces = element.getFaces();
+            for (Map.Entry<String, Face> entry : faces.entrySet()) {
+                String key = entry.getKey();
+                Face value = entry.getValue();
+                String textureResult = textures.getOrDefault(key, null);
+
+                value.setTexture(textureResult);
+            }
+
+        }
     }
 
     public BlockModel getModel(String modelName) {

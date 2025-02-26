@@ -11,6 +11,7 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
+import java.util.Map;
 
 import static org.lwjgl.opengl.GL11C.glEnable;
 import static org.lwjgl.opengl.GL43.*;
@@ -87,30 +88,37 @@ public class Chunk extends _Object {
 
                     BlockModel model = Client.modelLoader.getModel("blocks/"+blocks[x][y][z].getName());
                     for(Element element : model.getElements()) {
-                        for(int i = 0; i < 6; i++) {
-                            if(blocks[x][y][z] != null && shouldRenderFace(element, x,y,z, i) == 1) {
-                                // Position
-                                buffer.put(x);
-                                buffer.put(y);
-                                buffer.put(z);
-                                // Minimum AABB
-                                buffer.put(element.getFrom(0));
-                                buffer.put(element.getFrom(1));
-                                buffer.put(element.getFrom(2));
-                                //Maximum AABB
-                                buffer.put(element.getTo(0));
-                                buffer.put(element.getTo(1));
-                                buffer.put(element.getTo(2));
-                                int id = (i == 4 && blocks[x][y][z].getID() == 1)? blocks[x][y][z].getID()+1 : blocks[x][y][z].getID();
-                                //Texture Index
-                                buffer.put((float)id);
-                                // Face ID
-                                buffer.put((float)i);
-                                facedrawn++;
-                            }
+                        Map<String, Face> faces = element.getFaces();
+                        for(Map.Entry<String, Face> face : faces.entrySet()) {
+                            if(blocks[x][y][z] == null)
+                                continue;
+
+                            int FaceID = face.getValue().getCullFace();
+                            if(shouldRenderFace(element, x,y,z, FaceID) == 0)
+                                continue;
+
+
+                            String textureName = face.getValue().getTexture();
+
+                            // Position
+                            buffer.put(x);
+                            buffer.put(y);
+                            buffer.put(z);
+                            // Minimum AABB
+                            buffer.put(element.getFrom(0));
+                            buffer.put(element.getFrom(1));
+                            buffer.put(element.getFrom(2));
+                            //Maximum AABB
+                            buffer.put(element.getTo(0));
+                            buffer.put(element.getTo(1));
+                            buffer.put(element.getTo(2));
+                            //Texture Index
+                            buffer.put(getTextureID(textureName));
+                            // Face ID
+                            buffer.put((float)FaceID);
+                            facedrawn++;
                         }
                     }
-
                 }
             }
         }
@@ -120,6 +128,15 @@ public class Chunk extends _Object {
         ssbo.SubData(0, buffer);
         ssbo.UnBind();
         MemoryUtil.memFree(buffer);
+    }
+
+    private float getTextureID(String texture) {
+        for(int i = 0; i < Client.blockTexturePath.size(); i++) {
+            if(texture.equals(Client.blockTexturePath.get(i))) {
+                return (float)i;
+            }
+        }
+        return -1.0f; // In case the path is not found
     }
 
     private int shouldRenderFace(Element element, int x, int y, int z, int face) {
