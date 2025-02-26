@@ -25,7 +25,7 @@ public class Chunk extends _Object {
     VBO ssbo;
     int facedrawn = 0;
 
-    int[] samplers = new int[Client.blockTexturePath.length];
+    int[] samplers = new int[Client.blockTexturePath.size()];
 
 
 

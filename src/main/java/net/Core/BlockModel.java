@@ -24,6 +24,13 @@ public class BlockModel {
         this.textures = textures;
     }
 
+    public String getTexture(String key) {
+        return this.textures.get(key);
+    }
+
+    public String[] TexturesToArray() {
+        return this.textures.values().toArray(new String[0]);
+    }
     public List<Element> getElements() {
         return elements;
     }

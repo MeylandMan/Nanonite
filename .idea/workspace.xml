@@ -11,12 +11,12 @@
   <component name="ChangeListManager">
     <list default="true" id="eebce70d-cd23-42dc-921c-cb3ff955cf10" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/models/blocks/cube.json" beforeDir="false" afterPath="$PROJECT_DIR$/assets/models/blocks/cube.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/Core/Element.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Element.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/models/blocks/grass_block.json" beforeDir="false" afterPath="$PROJECT_DIR$/assets/models/blocks/grass_block.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/net/Core/BlockModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/BlockModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/net/Core/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Client.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/net/Core/ModelLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/ModelLoader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/GameLayer/Block.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/net/Core/Rendering/Texture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/Core/Rendering/Texture.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/net/GameLayer/Chunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/GameLayer/Chunk.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/GameLayer/ChunkGen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/GameLayer/ChunkGen.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,7 +85,7 @@
     "Gradle.MInecraft-Clone [:Main.main()].executor": "Run",
     "Gradle.MInecraft-Clone.executor": "Run",
     "Gradle.MyCraft [:Main.main()].executor": "Run",
-    "Gradle.MyCraft [:net.Main.main()].executor": "Run",
+    "Gradle.MyCraft [:net.Main.main()].executor": "Debug",
     "Gradle.OGL [:Main.main()].executor": "Run",
     "Java Scratch.MC 0.0.0.1.executor": "Run",
     "Repository.Attach.Annotations": "false",
@@ -198,7 +198,7 @@
       <workItem from="1740326413377" duration="11282000" />
       <workItem from="1740399834368" duration="12459000" />
       <workItem from="1740469715596" duration="10151000" />
-      <workItem from="1740482624053" duration="44947000" />
+      <workItem from="1740482624053" duration="52057000" />
     </task>
     <servers />
   </component>
@@ -255,6 +255,11 @@
           <url>file://$PROJECT_DIR$/assets/src/Main.java</url>
           <line>11</line>
           <option name="timeStamp" value="103" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/net/Core/Client.java</url>
+          <line>94</line>
+          <option name="timeStamp" value="134" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

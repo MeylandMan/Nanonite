@@ -1,5 +1,6 @@
 package net.Core.Rendering;
 
+import net.Core.Logger;
 import org.lwjgl.system.MemoryStack;
 
 import static org.lwjgl.opengl.GL30.*;
@@ -16,6 +17,7 @@ public class Texture {
     public Texture(String path) {
 
         this.m_FilePath = "assets/textures/" + path;
+        Logger.log(Logger.Level.INFO, "Loading texture: " + path);
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
 

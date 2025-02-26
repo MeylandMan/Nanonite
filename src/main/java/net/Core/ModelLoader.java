@@ -32,6 +32,8 @@ public class ModelLoader {
             mergeModels(model, parentModel); // Merge the parent datas to the actual Model
         }
 
+        resolveTextures(model);
+
         Logger.log(Logger.Level.INFO, "Loading model " + modelName);
         models.put(modelName, model); // Put the Model in cache
         return model;
@@ -58,7 +60,31 @@ public class ModelLoader {
         }
     }
 
+    private void resolveTextures(BlockModel model) {
+        if (model.getTextures() == null) {
+            return;
+        }
+
+        Map<String, String> textures = model.getTextures();
+        for (Map.Entry<String, String> entry : textures.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+
+            // Check if the value is an # (start with #)
+            if (value.startsWith("#")) {
+                String alias = value.substring(1); // Remove the #
+                if (textures.containsKey(alias)) {
+                    textures.put(key, textures.get(alias)); // Replace the ref with the true texture
+                }
+            }
+        }
+    }
+
     public BlockModel getModel(String modelName) {
         return models.get(modelName);
+    }
+
+    public Map<String, BlockModel> getModels() {
+        return models;
     }
 }
