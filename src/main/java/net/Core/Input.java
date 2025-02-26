@@ -19,12 +19,9 @@ public class Input {
 
     // Booleans
     public static boolean is_locked;
-    public static boolean is_debug;
-    public static boolean is_combined;
-
 
     //Datas
-    private static Vector3f copyPosition;
+
 
     public enum InputState {
         NOTHING,
@@ -32,7 +29,6 @@ public class Input {
         HOLDING,
         RELEASED
     }
-    private static float debug_timestamp = 0, actual_debug_timestamp = 0;
 
     // Key Binding
     private static final int[] Input_bindings = {
@@ -116,7 +112,7 @@ public class Input {
     };
 
     // Keys
-    private static final InputState[] Debug_Keys = {
+    protected static final InputState[] Debug_Keys = {
             InputState.NOTHING,
             InputState.NOTHING,
             InputState.NOTHING,
@@ -287,8 +283,8 @@ public class Input {
             //
         }
 
-        PressedDebugKey(window, deltaTime);
-        PressedCombinaisonKey(window, camera);
+        Debugger.PressedDebugKey(window, deltaTime);
+        Debugger.PressedCombinaisonKey(window, camera);
         for(int i = 0; i < Debug_bindings.length; i++) {
             if (glfwGetKey(window, Debug_bindings[i]) == GLFW_PRESS)
             {
@@ -337,7 +333,7 @@ public class Input {
             glfwSetWindowShouldClose(window, true);
         }
 
-        if(isKeyJustPressed(KEY_LOCK) && debug_timestamp == 0) {
+        if(isKeyJustPressed(KEY_LOCK) && Debugger.debug_timestamp == 0) {
             is_locked = !is_locked;
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         }
@@ -361,114 +357,6 @@ public class Input {
         });
     }
 
-    private static void isDebugKeyAllReleased() {
-        for (InputState debugKey : Debug_Keys) {
-            if (debugKey == InputState.RELEASED) {
-                is_combined = false;
-                break;
-            }
-        }
-    }
-
-    private static void PressedDebugKey(long window, float delta) {
-        if(isDebugKeyPressed(DEBUG_KEY)) {
-            debug_timestamp += delta;
-        } else {
-            actual_debug_timestamp = debug_timestamp;
-            debug_timestamp = 0;
-        }
-    }
-
-    public static void PressedCombinaisonKey(long window, Camera camera) {
-        if(!is_locked)
-            return;
-
-        if(debug_timestamp != 0) {
-            if(is_combined)
-                return;
-
-            if(isDebugKeyJustPressed(DEBUG_SHOW)) {
-                debug_timestamp = actual_debug_timestamp = 0;
-                ShowAllCommands();
-                is_combined = true;
-            }
-
-            if(isDebugKeyJustPressed(DEBUG_CHUNKS)) {
-                debug_timestamp = actual_debug_timestamp = 0;
-                Logger.Debug("Reload Chunks");
-                is_combined = true;
-            }
-
-            if(isDebugKeyJustPressed(DEBUG_COPY)) {
-                debug_timestamp = actual_debug_timestamp = 0;
-                Logger.Debug("Copied position !");
-                copyPosition = new Vector3f(camera.Position);
-                is_combined = true;
-            }
-
-            if(isDebugKeyJustPressed(DEBUG_PASTE)) {
-                if(copyPosition == null) {
-                    Logger.Debug("You have not copied position !");
-                    return;
-                }
-
-                debug_timestamp = actual_debug_timestamp = 0;
-                Logger.Debug("Teleported to the copied position !");
-                camera.Position = new Vector3f(copyPosition);
-
-                is_combined = true;
-            }
-
-            if(isDebugKeyJustPressed(DEBUG_INCREASE)) {
-                debug_timestamp = actual_debug_timestamp = 0;
-                Client.renderDistance++;
-                Client.renderDistance = min(Client.renderDistance, Client.MAX_RENDER_DISTANCE);
-                Logger.Debug("Increased Render distance: " + Client.renderDistance);
-                is_combined = true;
-            }
-
-            if(isDebugKeyJustPressed(DEBUG_DECREASE)) {
-                debug_timestamp = actual_debug_timestamp = 0;
-                Client.renderDistance--;
-                Client.renderDistance = max(Client.renderDistance, Client.MIN_RENDER_DISTANCE);
-                Logger.Debug("Decreased Render distance: " + Client.renderDistance);
-                is_combined = true;
-            }
-
-            if(isDebugKeyJustPressed(DEBUG_CHUNK_BORDER)) {
-                debug_timestamp = actual_debug_timestamp = 0;
-                Logger.Debug("Show Chunk border");
-                is_combined = true;
-            }
-
-            if(isDebugKeyJustPressed(DEBUG_PAUSE)) {
-                debug_timestamp = actual_debug_timestamp = 0;
-                Logger.Debug("Paused the game");
-                is_combined = true;
-            }
-
-            if(isDebugKeyJustPressed(DEBUG_VSYNC)) {
-                debug_timestamp = actual_debug_timestamp = 0;
-                Client.Vsync = (Client.Vsync == 1)? 0:1;
-                if(Client.Vsync == 1)
-                    Logger.Debug("Disabled Vsync");
-                else
-                    Logger.Debug("Enabled Vsync");
-
-                is_combined = true;
-            }
-
-        }
-
-        if(!is_combined) {
-            if(actual_debug_timestamp < 0.2 && actual_debug_timestamp != 0) {
-                is_debug = !is_debug;
-            }
-        }
-
-        isDebugKeyAllReleased();
-    }
-
     public static void WrongKey(int key) {
         Logger.log(Logger.Level.WARNING, "Wrong Key: " + key);
     }
@@ -477,17 +365,5 @@ public class Input {
         return new Vector2f(mouseX, mouseY);
     }
 
-    public static void ShowAllCommands() {
-        System.out.println("""
-                F3 Debug commands:
-                Show all commands: F3+A
-                Reload Chunks: F3+Q
-                Copy Player location: F3+C
-                Teleport to Copied location: F3+V
-                Increase Render distance: F3+(num +)
-                Decrease Render distance: F3+(num -)
-                Show Chunks Borders: F3+G
-                Pause the game: F3+P
-                """);
-    }
+
 }

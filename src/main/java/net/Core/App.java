@@ -44,7 +44,6 @@ public class App {
     float delta;
     float lastFrame;
 
-    private static final DecimalFormat df = new DecimalFormat("#.###");
     private final int DEFAULT_WIDTH;
     private final int DEFAULT_HEIGHT;
 
@@ -293,27 +292,7 @@ public class App {
             renderer.renderInterfaces();
 
 
-            if(Input.is_debug) {
-                String stateInfo = Client.name + Client.version + " " + Client.type + "\n" +
-                        (int)fps[0] + " fps (avg: " + (int)fps[1] + ", min: " + (int)fps[2] + ", max: " + (int)fps[3] + ")";
-                textRenderer.renderText(stateInfo,10, 10, 0.3f, false);
-
-                String gameInfo = "XYZ: " + df.format(camera.Position.x) +
-                        " / " + df.format(camera.Position.y) +
-                        " / " + df.format(camera.Position.z) +
-                        "\nBlocks: nah\nChunks: nah\nFacing Direction: " +
-                        df.format(camera.getFront().x) + " / " +
-                        df.format(camera.getFront().y) + " / " +
-                        df.format(camera.getFront().z) +
-                        "\nVelocity: " +
-                        df.format(camera.velocity.x) + " / " +
-                        df.format(camera.velocity.y) + " / " +
-                        df.format(camera.velocity.z) +
-                        "\ntarget speed: " + df.format(camera.targetSpeed) +
-                        "\nCurrent Speed: " + df.format(camera.currentSpeed);
-
-                textRenderer.renderText(gameInfo,10, 150, 0.3f, false);
-            }
+            Debugger.render(camera, textRenderer);
             glfwSwapBuffers(window);
             glfwPollEvents();
 
