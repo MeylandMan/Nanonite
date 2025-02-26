@@ -113,7 +113,7 @@ public class Chunk extends _Object {
                             buffer.put(element.getTo(1));
                             buffer.put(element.getTo(2));
                             //Texture Index
-                            buffer.put(getTextureID(textureName));
+                            buffer.put(getTextureID(model, face));
                             // Face ID
                             buffer.put((float)FaceID);
                             facedrawn++;
@@ -130,7 +130,11 @@ public class Chunk extends _Object {
         MemoryUtil.memFree(buffer);
     }
 
-    private float getTextureID(String texture) {
+    private float getTextureID(BlockModel model, Map.Entry<String, Face> face) {
+
+        String modelTexture = model.getTexture(face.getKey());
+        face.getValue().setTexture(modelTexture);
+        String texture = face.getValue().getTexture();
         for(int i = 0; i < Client.blockTexturePath.size(); i++) {
             if(texture.equals(Client.blockTexturePath.get(i))) {
                 return (float)i;
@@ -191,9 +195,9 @@ public class Chunk extends _Object {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         // Enable BackFace Culling
-        glDisable(GL_CULL_FACE);
-        //glCullFace(GL_FRONT);
-        //glFrontFace(GL_CW);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT);
+        glFrontFace(GL_CW);
 
         ssbo.BindBase(0);
         shader.Uniform1iv("u_Textures", samplers);
