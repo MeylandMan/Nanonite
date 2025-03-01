@@ -8,21 +8,22 @@ import java.util.Objects;
 import java.util.Set;
 
 public class Client {
-    public static int renderDistance = 8;
-    public static final int MAX_RENDER_DISTANCE = 16;
-    public static final int MIN_RENDER_DISTANCE = 1;
+    public static int renderDistance = 2;
+    public static final int MAX_RENDER_DISTANCE = 32;
+    public static final int MIN_RENDER_DISTANCE = 2;
 
     public static int Vsync = 1;
-
     public static String name = "Mycraft ";
     public static String type = "Vanilla";
     public static String version = "Alpha1.0";
+
 
 
     public static final String[] modelPaths = {
             "blocks/dirt",
             "blocks/grass_block"
     };
+
     public static ModelLoader modelLoader = new ModelLoader();
     public static ArrayList<String> blockTexturePath = new ArrayList<>();
     public static Texture[] blockTextures;

@@ -11,6 +11,10 @@ public class Scene {
         objects.add(object);
     }
 
+    public void RemoveObject(_Object object) {
+        objects.remove(object);
+    }
+
     public void Delete() {
         for(_Object obj : objects) {
             obj.Delete();
@@ -24,9 +28,6 @@ public class Scene {
             obj.DrawMesh(shader);
 
         }
-
-
-
     }
 
 

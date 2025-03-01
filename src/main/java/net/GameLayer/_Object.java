@@ -28,6 +28,8 @@ public abstract class _Object {
     private float scaleY;
     private float scaleZ;
 
+
+    public boolean in_scene = false;
     public _Object() {
         this.positionX = 0; this.positionY = 0; this.positionZ = 0;
         this.rotationX = 0; this.rotationY = 0; this.rotationZ = 0;
@@ -89,6 +91,12 @@ public abstract class _Object {
 
     public void AddToScene(Scene scene) {
         scene.AddObject(this);
+        in_scene = true;
+    }
+
+    public void RemoveToScene(Scene scene) {
+        in_scene = false;
+        scene.RemoveObject(this);
     }
     public static void AddObjectToScene(_Object obj, Scene scene) {
         scene.AddObject(obj);

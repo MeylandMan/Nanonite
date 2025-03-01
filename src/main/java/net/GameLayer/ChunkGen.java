@@ -1,11 +1,20 @@
 package net.GameLayer;
 
+import net.Core.BlockModel;
+import net.Core.Client;
+import net.Core.Element;
+import net.Core.Face;
+import org.lwjgl.system.MemoryUtil;
+
+import java.util.Map;
+
 public class ChunkGen {
     public final static byte X_DIMENSION = 16;
     public final static short Y_DIMENSION = 255;
     public final static byte Z_DIMENSION = 16;
     public final static int Y_MAX = 5;
 
+    public final static int Y_CHUNK = 0;
 
     public enum BlockType {
         DIRT((byte)0),
@@ -22,9 +31,57 @@ public class ChunkGen {
         }
     }
 
-    public void AddSurface() {
+    public static void AddChunkSurface(Chunk chunk) {
+        for(int x = 0; x < X_DIMENSION; x++) {
+            for(int y = 0; y < Y_MAX; y++) {
+                for(int z = 0; z < Z_DIMENSION; z++) {
+                    chunk.blocks[x][y][z] = (y == Y_MAX-1)? BlockType.GRASS : BlockType.DIRT;
 
+                    BlockModel model = Client.modelLoader.getModel(Client.modelPaths[chunk.blocks[x][y][z].getID()]);
+                    for(Element element : model.getElements()) {
+                        chunk.blockDrawn += element.getFaces().size();
+                    }
+                }
+            }
+        }
     }
 
+    public static void ResolveChunkSurface(Chunk chunk) {
+        for(int x = 0; x < X_DIMENSION; x++) {
+            for(int y = 0; y < Y_DIMENSION; y++) {
+                for(int z = 0; z < Z_DIMENSION; z++) {
+                    if(chunk.blocks[x][y][z] == null)
+                        continue;
+                    if(chunk.blocks[x][y][z] == BlockType.DIRT) {
+                        if(chunk.blocks[x][y+1][z] == null)
+                            chunk.blocks[x][y][z] = BlockType.GRASS;
+                    }
+                }
+            }
+        }
+    }
 
+    protected static float getTextureID(BlockModel model, Map.Entry<String, Face> face) {
+
+        String modelTexture = model.getTexture(face.getKey());
+        face.getValue().setTexture(modelTexture);
+        String texture = face.getValue().getTexture();
+        for(int i = 0; i < Client.blockTexturePath.size(); i++) {
+            if(texture.equals(Client.blockTexturePath.get(i))) {
+                return (float)i;
+            }
+        }
+        return -1.0f; // In case the path is not found
+    }
+
+    protected static void setupChunk(Chunk chunk) {
+
+        // Add Blocks inside the chunk
+        AddChunkSurface(chunk);
+
+        // check if there's blocks at the top of the dirt
+        ResolveChunkSurface(chunk);
+
+        chunk.Init();
+    }
 }

@@ -2,7 +2,7 @@ package net.Core;
 
 
 import net.Core.Rendering.*;
-import net.GameLayer.Chunk;
+import net.GameLayer.Camera;
 import net.GameLayer.FPSMonitor;
 import net.Core.Physics.CubeCollision;
 import net.Core.Physics.Raycast;
@@ -15,7 +15,6 @@ import org.lwjgl.system.*;
 
 
 import java.nio.IntBuffer;
-import java.text.DecimalFormat;
 import java.util.*;
 
 import static org.lwjgl.glfw.Callbacks.*;
@@ -194,13 +193,7 @@ public class App {
 
         shader.CreateShader("Chunk.comp", "Chunk.frag");
 
-        for(int x = 0; x < Client.renderDistance; x++) {
-            for(int z = 0; z < Client.renderDistance; z++) {
-
-            }
-        }
-
-        Chunk chunk = new Chunk(scene, new Vector3f());
+        //Chunk chunk = new Chunk(scene, new Vector2f());
         /*
         for(int x = 0; x < 32; x++) {
             for(int z = 0; z < 32; z++) {
@@ -253,15 +246,6 @@ public class App {
             }
             glfwSwapInterval(Client.Vsync);
 
-            fpsMonitor.update();
-
-           fps =  new float[] {
-                    fpsMonitor.getFPS(),
-                    fpsMonitor.getAverageFPS(),
-                    fpsMonitor.getMinFPS(),
-                    fpsMonitor.getMaxFPS(),
-            };
-
             float currentFrame = (float)(glfwGetTime());
             delta = currentFrame - lastFrame;
             lastFrame = currentFrame;
@@ -275,6 +259,10 @@ public class App {
             shader.UniformMatrix4x4("view", camera.GetViewMatrix());
             shader.UniformMatrix4x4("projection", camera.GetProjectionMatrix(m_Width, m_Height));
 
+            //Draw chunks
+            world.renderChunks(shader);
+
+            //Draw entities
             renderer.DrawScene(scene, shader);
             //world.onRender(camera.GetViewMatrix(), camera.GetProjectionMatrix(m_Width, m_Height));
 
@@ -297,10 +285,17 @@ public class App {
             glfwPollEvents();
 
 
-            Input.Update(window, camera, delta);
-            camera.updateCameraVectors(delta);
             world.onUpdate(camera, delta);
+            fpsMonitor.update();
 
+            fps =  new float[] {
+                    fpsMonitor.getFPS(),
+                    fpsMonitor.getAverageFPS(),
+                    fpsMonitor.getMinFPS(),
+                    fpsMonitor.getMaxFPS(),
+            };
+            Input.Update(window, camera, scene, delta);
+            camera.updateCameraVectors(delta);
         }
 
     }

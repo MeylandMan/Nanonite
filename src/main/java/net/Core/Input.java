@@ -1,10 +1,9 @@
 package net.Core;
 
-import net.Core.Rendering.Camera;
+import net.GameLayer.Camera;
+import net.Core.Rendering.Scene;
 import org.joml.Vector2f;
-import org.joml.Vector3f;
 
-import static org.joml.Math.*;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class Input {
@@ -277,14 +276,14 @@ public class Input {
         glfwSetCursorPos(window, x, y);
     }
 
-    public static void Update(long window, Camera camera, float deltaTime) {
+    public static void Update(long window, Camera camera, Scene scene, float deltaTime) {
         if (is_locked) {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             //
         }
 
         Debugger.PressedDebugKey(window, deltaTime);
-        Debugger.PressedCombinaisonKey(window, camera);
+        Debugger.PressedCombinaisonKey(scene, camera);
         for(int i = 0; i < Debug_bindings.length; i++) {
             if (glfwGetKey(window, Debug_bindings[i]) == GLFW_PRESS)
             {

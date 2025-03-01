@@ -1,20 +1,23 @@
 package net.Core;
 
-import net.Core.Rendering.Camera;
+import net.GameLayer.Camera;
+import net.Core.Rendering.Scene;
 import net.Core.Rendering.Text.TextRenderer;
+import net.GameLayer.ChunkGen;
+import net.GameLayer.World;
 import org.joml.Vector3f;
 
 import java.text.DecimalFormat;
 
 import static net.Core.Input.*;
-import static org.joml.Math.max;
-import static org.joml.Math.min;
+import static org.joml.Math.*;
 
 public class Debugger {
     private static final boolean debug = true;
-    public static boolean is_debug;
+    public static boolean is_debug = true;
     public static boolean is_combined;
     private static final DecimalFormat df = new DecimalFormat("#.###");
+    private static final DecimalFormat iFormat = new DecimalFormat("#");
 
     private static Vector3f copyPosition;
 
@@ -23,7 +26,7 @@ public class Debugger {
     public static float[] fps = new float[4];
 
 
-    public static void PressedCombinaisonKey(long window, Camera camera) {
+    public static void PressedCombinaisonKey(Scene scene, Camera camera) {
         if(!debug || !is_locked)
             return;
 
@@ -40,6 +43,8 @@ public class Debugger {
             if(isDebugKeyJustPressed(DEBUG_CHUNKS)) {
                 debug_timestamp = actual_debug_timestamp = 0;
                 Logger.Debug("Reload Chunks");
+
+                World.loadChunks = true;
                 is_combined = true;
             }
 
@@ -68,6 +73,8 @@ public class Debugger {
                 Client.renderDistance++;
                 Client.renderDistance = min(Client.renderDistance, Client.MAX_RENDER_DISTANCE);
                 Logger.Debug("Increased Render distance: " + Client.renderDistance);
+
+                World.loadChunks = true;
                 is_combined = true;
             }
 
@@ -76,6 +83,8 @@ public class Debugger {
                 Client.renderDistance--;
                 Client.renderDistance = max(Client.renderDistance, Client.MIN_RENDER_DISTANCE);
                 Logger.Debug("Decreased Render distance: " + Client.renderDistance);
+
+                World.loadChunks = true;
                 is_combined = true;
             }
 
@@ -157,10 +166,30 @@ public class Debugger {
                 (int)fps[0] + " fps (avg: " + (int)fps[1] + ", min: " + (int)fps[2] + ", max: " + (int)fps[3] + ")";
         textRenderer.renderText(stateInfo,10, 10, 0.3f, false);
 
+        Vector3f chunkPosition = new Vector3f(
+                floor(camera.Position.x / ChunkGen.X_DIMENSION),
+                floor(camera.Position.y / ChunkGen.Y_DIMENSION),
+                floor(camera.Position.z / ChunkGen.Z_DIMENSION)
+        );
+
+        Vector3f blockPosition = new Vector3f(
+                floor(camera.Position.x),
+                floor(camera.Position.y),
+                floor(camera.Position.z)
+        );
+
         String gameInfo = "XYZ: " + df.format(camera.Position.x) +
                 " / " + df.format(camera.Position.y) +
                 " / " + df.format(camera.Position.z) +
-                "\nBlocks: nah\nChunks: nah\nFacing Direction: " +
+                "\nBlocks: " +
+                df.format(blockPosition.x) + " " +
+                df.format(blockPosition.y) + " " +
+                df.format(blockPosition.z) +
+                "\nChunks: " +
+                df.format(chunkPosition.x) + " " +
+                df.format(chunkPosition.y) + " " +
+                df.format(chunkPosition.z) +
+                "\nFacing Direction: " +
                 df.format(camera.getFront().x) + " / " +
                 df.format(camera.getFront().y) + " / " +
                 df.format(camera.getFront().z) +
@@ -169,7 +198,8 @@ public class Debugger {
                 df.format(camera.velocity.y) + " / " +
                 df.format(camera.velocity.z) +
                 "\ntarget speed: " + df.format(camera.targetSpeed) +
-                "\nCurrent Speed: " + df.format(camera.currentSpeed);
+                "\nCurrent Speed: " + df.format(camera.currentSpeed) +
+                "\nDrag Factor: " + df.format(camera.dragFactor);
 
         textRenderer.renderText(gameInfo,10, 150, 0.3f, false);
     }

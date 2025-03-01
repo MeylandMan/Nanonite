@@ -6,14 +6,6 @@ out vec3 fragPos;
 out vec2 v_TexCoords;
 out float TextureIndex;
 
-uniform mat4 projection;
-uniform mat4 view;
-uniform vec3 Position;
-
-const int CHUNK_SIZE_X = 16;
-const int CHUNK_SIZE_Y = 255;
-const int CHUNK_SIZE_Z = 16;
-
 // Positions locales des sommets d’un cube
 
 const vec2 texCoords[6] = vec2[](
@@ -42,11 +34,13 @@ layout(std430, binding = 0) buffer BlockData {
     BlockFace faces[];
 };
 
+uniform mat4 projection;
+uniform mat4 view;
+uniform vec3 Position;
+
 void main() {
 
     int faceIndex = int(gl_VertexID/6);
-
-    vec3 FaceVertices[6];
 
     vec3 mn = vec3(faces[faceIndex].minAABBX/BLOCK_SIZE,
     faces[faceIndex].minAABBY/BLOCK_SIZE,
@@ -56,6 +50,7 @@ void main() {
     faces[faceIndex].maxAABBY/BLOCK_SIZE,
     faces[faceIndex].maxAABBZ/BLOCK_SIZE);
 
+    vec3 FaceVertices[6];
     switch(int(faces[faceIndex].FaceID)) {
         // FRONT
         case 0:

@@ -13,5 +13,4 @@ public class EntryPoint {
         App app = new App(1280, 720, Client.name);
         app.run();
     }
-
 }

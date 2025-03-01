@@ -1,6 +1,7 @@
-package net.Core.Rendering;
+package net.GameLayer;
 
 
+import net.Core.Client;
 import net.Core.Physics.CubeCollision;
 import static net.GameLayer.World.*;
 import static org.joml.Math.*;
@@ -24,14 +25,18 @@ public class Camera {
     }
 
     // Default camera values
-    private static final float YAW = 90.0f;
+    private static final float YAW = -90.0f;
     private static final float PITCH = 0.0f;
     public  static final float SPEED = 5.f;
-    public static final float MAX_SPEED = 7.0f; // Vitesse max en mode spectateur
+    public static final float MAX_SPEED = 15.0f; // Vitesse max en mode spectateur 7
     public static final float ACCELERATION_FACTOR = 3.0f; // Influence de l'accélération
-    public static final float DRAG_FACTOR = 5.0f; // Influence du ralentissement
+    public static final float DRAG_FACTOR = 10.0f; // Influence du ralentissement
     private static final float SENSITIVITY = 0.1f;
     public  static final float ZOOM = 45.0f;
+
+    // Multiplier
+    public static final float FLYING_SPEED = 10;
+    public static final float RUNNING_SPEED = 0.5f;
 
     // camera Attributes
     public CubeCollision collision;
@@ -53,6 +58,7 @@ public class Camera {
     public float targetZoom = ZOOM;
     public float MouseSensitivity = SENSITIVITY;
     public float Zoom = ZOOM;
+    public float dragFactor = 1;
 
     // Camera constructor
     public Camera(Vector3f position) {
@@ -76,7 +82,7 @@ public class Camera {
                 .perspective((float)Math.toRadians(Zoom),
                         (float)width / (float)Math.max(height, 1),
                         0.1f,
-                        100.f
+                        ChunkGen.X_DIMENSION * Client.renderDistance
                 );
     }
 
@@ -101,11 +107,11 @@ public class Camera {
             velocity.z -= Right.z;
         }
         if(direction == Camera_Movement.UP) {
-            velocity.y += SPEED/currentSpeed;
+            velocity.y += SPEED;
             UP = true;
         }
         if(direction == Camera_Movement.DOWN) {
-            velocity.y -= SPEED/currentSpeed;
+            velocity.y -= SPEED;
             UP = true;
         }
         
@@ -146,14 +152,26 @@ public class Camera {
         Zoom = lerp(Zoom, targetZoom, acceleration*3);
         currentSpeed = lerp(currentSpeed, targetSpeed, acceleration);
 
-        float speed = currentSpeed * deltaTime;
+            float speed = currentSpeed * deltaTime;
 
         if(targetSpeed == 0 && !UP) {
-            velocity.x = lerp(velocity.x, 0, acceleration/5) ;
-            velocity.z = lerp(velocity.z, 0, acceleration/5);
+            velocity.x = lerp(velocity.x, 0, acceleration/dragFactor);
+            velocity.z = lerp(velocity.z, 0, acceleration/dragFactor);
+            dragFactor -= deltaTime * DRAG_FACTOR;
+            dragFactor = max(dragFactor, 1);
+
         } else {
-            velocity.mul(speed);
+            dragFactor = DRAG_FACTOR;
+            velocity.x *= speed;
+            velocity.x = clamp(velocity.x, -1, 1);
+
+            velocity.z *= speed;
+            velocity.z = clamp(velocity.z, -1, 1);
+
+            velocity.y *= deltaTime;
         }
+
+
         Position.add(velocity);
 
         raycast.update(new Vector3f(Position.x, Position.y+1, Position.z), getFront());
