@@ -4,9 +4,13 @@ import net.Core.BlockModel;
 import net.Core.Client;
 import net.Core.Element;
 import net.Core.Face;
+import org.joml.Random;
 import org.lwjgl.system.MemoryUtil;
 
 import java.util.Map;
+import java.util.random.*;
+
+import static org.joml.Math.*;
 
 public class ChunkGen {
     public final static byte X_DIMENSION = 16;
@@ -32,8 +36,11 @@ public class ChunkGen {
     }
 
     public static void AddChunkSurface(Chunk chunk) {
+        Random rand = new Random();
+        int temp = rand.nextInt(Y_MAX);
+
         for(int x = 0; x < X_DIMENSION; x++) {
-            for(int y = 0; y < Y_MAX; y++) {
+            for(int y = 0; y < Y_MAX + temp; y++) {
                 for(int z = 0; z < Z_DIMENSION; z++) {
                     chunk.blocks[x][y][z] = (y == Y_MAX-1)? BlockType.GRASS : BlockType.DIRT;
 

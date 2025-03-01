@@ -7,6 +7,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3i;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
 import java.util.*;
@@ -106,6 +107,19 @@ public class World {
                         String.format("%.3f", (chunkRenderSpeed[1] - chunkRenderSpeed[0])) +
                         " seconds");
                 chunkRenderSpeed[0] = chunkRenderSpeed[1] = 0;
+
+                for(Chunk[] loadedchunk : loadedChunks) {
+                    for(Chunk chunk : loadedchunk) {
+                        if(chunk == null)
+                            continue;
+
+                        int radius = Client.renderDistance / 2;
+                        int x = chunk.dx + radius;
+                        int z = chunk.dz + radius;
+
+                        chunk.updateChunk(x, z);
+                    }
+                }
             }
             return;
         }
@@ -123,37 +137,8 @@ public class World {
 
             loadedChunks[x][z] = queuedChunk;
             ChunkGen.setupChunk(loadedChunks[x][z]);
-            loadedChunks[x][z].updateChunk(x, z);
+            //loadedChunks[x][z].updateChunk(x, z);
         }
-
-
-
-        //loadedChunks[dx + radius][dz + radius]
-        /*
-        boolean foundSpace = false;
-        int distance = (Client.renderDistance*2)-1;
-
-        Chunk queuedChunk = chunks.poll();
-
-
-        for(int x = 0; x < distance; x++) {
-            if(foundSpace)
-                break;
-            for(int z = 0; z < distance; z++) {
-                if(loadedChunks[x][z] == null) {
-                    loadedChunks[x][z] = queuedChunk;
-
-                    assert queuedChunk != null;
-                    assert loadedChunks[x] != null;
-                    ChunkGen.setupChunk(loadedChunks[x][z]);
-                    loadedChunks[x][z].updateChunk(x, z);
-
-                    foundSpace = true;
-                    break;
-                }
-            }
-        }
-        */
     }
 
     protected static FloatBuffer getChunkData(int xx, int zz) {
@@ -162,6 +147,7 @@ public class World {
         // 3 positions + 3 min + 3 max + 1 texID + 1 FaceID
         int estimatedSizeBuffer = chunk.blockDrawn * 11;
         FloatBuffer buffer = BufferUtils.createFloatBuffer(estimatedSizeBuffer);
+
 
         for(int x = 0; x < ChunkGen.X_DIMENSION; x++) {
             for(int y = 0; y < ChunkGen.Y_DIMENSION; y++) {
@@ -177,6 +163,9 @@ public class World {
                                 continue;
 
                             int FaceID = face.getValue().getCullFace();
+                            if(FaceID == -1) // Check if there's a face
+                                continue;
+
                             if(shouldRenderFace(xx, zz, element, x,y,z, FaceID) == 0)
                                 continue;
 
@@ -297,13 +286,34 @@ public class World {
         }
 
         // Check if the current block is not AIR or VOID
-        if(actualChunk.blocks[x][y][z] == null) {
+        if(actualChunk == null || actualChunk.blocks[x][y][z] == null) {
             return 0;
         }
 
+        // Check if the nearby chunk is out of length
+
+
         // Check if the face is in a Chunk's border
         if(nx < 0 || nx >= ChunkGen.X_DIMENSION || nz < 0 || nz >= ChunkGen.Z_DIMENSION || ny < 0 || ny >= ChunkGen.Y_DIMENSION) {
-            return 1;
+            if (cnx < 0 || cnx >= loadedChunks.length || cnz < 0 || cnz >= loadedChunks[0].length) {
+                return 0;
+            } else {
+                Chunk nextChunk = loadedChunks[cnx][cnz];
+                if(nextChunk != null) {
+                    int nnx = 0, nnz = 0;
+                    if(nx < 0)
+                        nnx = ChunkGen.X_DIMENSION-1;
+                    if(nz < 0)
+                        nz = ChunkGen.Z_DIMENSION-1;
+
+                    ChunkGen.BlockType nextBlock = nextChunk.blocks[nnx][y][nnz];
+
+                    if(nextBlock == null) {
+                        return 1;
+                    }
+                }
+                return 0;
+            }
         }
 
 

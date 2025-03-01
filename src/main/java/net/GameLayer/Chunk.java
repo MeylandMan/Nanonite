@@ -7,6 +7,7 @@ import net.Core.Rendering.VBO;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryUtil;
 
@@ -50,11 +51,11 @@ public class Chunk {
 
 
 
-    public void updateChunk(int x, int z) {
+    public void updateChunk(int xx, int zz) {
         if(!updateChunk)
             return;
 
-        buffer = World.getChunkData(x, z);
+        buffer = World.getChunkData(xx, zz);
         faceDrawn = buffer.limit()/11;
 
         Ssbo.Bind();
