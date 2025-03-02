@@ -5,7 +5,6 @@ import net.Core.Physics.CubeCollision;
 import net.Core.Rendering.Shader;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
-import org.joml.Vector3i;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.system.MemoryUtil;
 
@@ -14,9 +13,6 @@ import java.util.*;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.GL_LESS;
-import static org.lwjgl.opengl.GL11C.glEnable;
-import static org.joml.Math.*;
 
 public class World {
     public static ArrayList<CubeCollision> worldCollisions;
@@ -26,9 +22,10 @@ public class World {
     static double[] chunkQueueSpeed = new double[2];
 
     // Chunks datas
+    public static boolean firstLoad = true;
     public static boolean loadChunks = true;
-    static Queue<Chunk> chunks;
-    private static Chunk[][] loadedChunks;
+    public static Queue<Chunk> chunks = new LinkedList<>();
+    public static Chunk[][] loadedChunks;
 
 
     public static float genPlayerPosX;
@@ -58,27 +55,27 @@ public class World {
         chunkQueueSpeed[0] = chunkQueueSpeed[1] = 0;
         chunkQueueSpeed[0] = glfwGetTime();
 
-        if(loadedChunks != null && reset) {
-            for (Chunk[] loadedChunk : loadedChunks) {
-                for(Chunk chunk : loadedChunk) {
-                    if(chunk == null) {
-                        System.out.println("Skipped chunk row");
-                        continue;
-                    }
 
+        if(loadedChunks != null && reset) {
+            for(Chunk[] loadedChunk : World.loadedChunks) {
+                for(Chunk chunk : loadedChunk) {
                     chunk.Delete();
                 }
             }
+            System.gc();
+
             loadedChunks = null;
-            chunks = null;
+            chunks.clear();
+            System.gc();
+
+            Logger.log(Logger.Level.INFO, "Deleted previous chunks");
         }
 
         Logger.log(Logger.Level.INFO, "Loading chunks...");
 
         if(loadedChunks == null) {
-            int size = (Client.renderDistance*2)-1;
+            int size = Client.renderDistance+1;
             loadedChunks = new Chunk[size][size];
-            chunks = new LinkedList<>();
         }
 
         genPlayerPosX = camera.Position.x;
@@ -108,7 +105,7 @@ public class World {
     }
 
     public void loadChunks(Camera camera) {
-        if(chunks.isEmpty()) {
+        if(chunks == null || chunks.isEmpty()) {
             if(chunkRenderSpeed[1] != 0) {
                 Logger.log(Logger.Level.INFO, "Rendered chunks in " +
                         String.format("%.3f", (chunkRenderSpeed[1] - chunkRenderSpeed[0])) +
@@ -123,7 +120,7 @@ public class World {
         for(int i = 0; i < Client.renderDistance / 2; i++) {
             Chunk queuedChunk = chunks.poll();
             if(queuedChunk == null)
-                continue;
+                break;
 
             int radius = Client.renderDistance / 2;
             int x = queuedChunk.dx + radius;
@@ -190,14 +187,21 @@ public class World {
     }
 
     public void onUpdate(Camera camera, float deltaTime) {
-        addChunksToQueue(camera, true);
+        if(firstLoad) {
+            firstLoad = false;
+            addChunksToQueue(camera, true);
+        }
+
         loadChunks(camera);
     }
 
 
     public void renderChunks(Shader shader) {
-        if(loadedChunks == null)
+        if(loadedChunks == null) {
+            glFinish();
             return;
+        }
+
 
         for(int i = 0; i < Client.blockTextures.length; i++) {
             Client.blockTextures[i].Bind(i);
@@ -222,7 +226,7 @@ public class World {
             for(Chunk chunk : _loadedChunks) {
                 if(chunk == null) continue;
                 if(chunk.Ssbo == null) continue;
-                
+
                 shader.Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
                 chunk.DrawMesh();
             }

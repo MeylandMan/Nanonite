@@ -12,7 +12,7 @@ public class Logger {
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public enum Level {
-        INFO, WARNING, ERROR
+        INFO, WARNING, DEBUG, ERROR
     }
 
     public static void log(Level level, String message) {
@@ -24,13 +24,6 @@ public class Logger {
         if(level == Level.ERROR) {
             writeToFile(logMessage);
         }
-    }
-
-    public static void Debug(String message) {
-        String timestamp = DATE_FORMAT.format(new Date());
-        String logMessage = String.format("[%s] %s", timestamp, "[DEBUG]: " + message);
-
-        System.out.println(logMessage);
     }
 
     private static void writeToFile(String message) {

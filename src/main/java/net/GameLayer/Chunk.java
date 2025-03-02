@@ -23,7 +23,7 @@ public class Chunk {
     boolean updateChunk = true;
     protected FloatBuffer buffer;
 
-    protected final BlockType[][][] blocks = new BlockType[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
+    public BlockType[][][] blocks;
     VBO Ssbo;
     int faceDrawn = 0;
     int blockDrawn = 0;
@@ -47,6 +47,7 @@ public class Chunk {
 
     public void Delete() {
         Ssbo.Delete();
+        blocks = null;
     }
 
 

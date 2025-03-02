@@ -182,25 +182,16 @@ public class App {
          bindings available for use.
         */
 
-        GLCapabilities caps = GL.createCapabilities();
+        GL.createCapabilities();
         Client.LoadingBlockTextures();
 
         glEnable(GL43.GL_DEBUG_OUTPUT);
         glEnable(GL43.GL_DEBUG_OUTPUT_SYNCHRONOUS);
         glDebugMessageCallback((source, type, id, severity, length, message, userParam) -> {
-            System.err.println("GL DEBUG MESSAGE: " + glGetShaderInfoLog(id));
+            Logger.log(Logger.Level.WARNING, "GL DEBUG MESSAGE: " + glGetShaderInfoLog(id));
         }, 0);
 
         shader.CreateShader("Chunk.comp", "Chunk.frag");
-
-        //Chunk chunk = new Chunk(scene, new Vector2f());
-        /*
-        for(int x = 0; x < 32; x++) {
-            for(int z = 0; z < 32; z++) {
-                Chunk chunk = new Chunk(scene, new Vector3f(x*16, 0, z*16));
-            }
-        }
-        */
 
         //System.out.println("MAX TEXTURE YOU CAN LOAD : " + GL_MAX_TEXTURE_IMAGE_UNITS); 34930
         FPSMonitor fpsMonitor = new FPSMonitor();

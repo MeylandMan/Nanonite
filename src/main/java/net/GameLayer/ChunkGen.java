@@ -96,6 +96,8 @@ public class ChunkGen {
 
     protected static void setupChunk(Chunk chunk) {
 
+       chunk.blocks = new BlockType[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
+
         // Add Blocks inside the chunk
         AddChunkSurface(chunk);
 

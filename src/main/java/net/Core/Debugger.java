@@ -3,6 +3,7 @@ package net.Core;
 import net.GameLayer.Camera;
 import net.Core.Rendering.Scene;
 import net.Core.Rendering.Text.TextRenderer;
+import net.GameLayer.Chunk;
 import net.GameLayer.ChunkGen;
 import net.GameLayer.World;
 import org.joml.Vector3f;
@@ -42,27 +43,28 @@ public class Debugger {
 
             if(isDebugKeyJustPressed(DEBUG_CHUNKS)) {
                 debug_timestamp = actual_debug_timestamp = 0;
-                Logger.Debug("Reload Chunks");
+                Logger.log(Logger.Level.DEBUG,"Reload Chunks");
 
                 World.loadChunks = true;
+                World.addChunksToQueue(camera, true);
                 is_combined = true;
             }
 
             if(isDebugKeyJustPressed(DEBUG_COPY)) {
                 debug_timestamp = actual_debug_timestamp = 0;
-                Logger.Debug("Copied position !");
+                Logger.log(Logger.Level.DEBUG,"Copied position !");
                 copyPosition = new Vector3f(camera.Position);
                 is_combined = true;
             }
 
             if(isDebugKeyJustPressed(DEBUG_PASTE)) {
                 if(copyPosition == null) {
-                    Logger.Debug("You have not copied position !");
+                    Logger.log(Logger.Level.DEBUG,"You have not copied position !");
                     return;
                 }
 
                 debug_timestamp = actual_debug_timestamp = 0;
-                Logger.Debug("Teleported to the copied position !");
+                Logger.log(Logger.Level.DEBUG,"Teleported to the copied position !");
                 camera.Position = new Vector3f(copyPosition);
 
                 is_combined = true;
@@ -72,9 +74,10 @@ public class Debugger {
                 debug_timestamp = actual_debug_timestamp = 0;
                 Client.renderDistance++;
                 Client.renderDistance = min(Client.renderDistance, Client.MAX_RENDER_DISTANCE);
-                Logger.Debug("Increased Render distance: " + Client.renderDistance);
+                Logger.log(Logger.Level.DEBUG,"Increased Render distance: " + Client.renderDistance);
 
                 World.loadChunks = true;
+                World.addChunksToQueue(camera, true);
                 is_combined = true;
             }
 
@@ -82,7 +85,7 @@ public class Debugger {
                 debug_timestamp = actual_debug_timestamp = 0;
                 Client.renderDistance--;
                 Client.renderDistance = max(Client.renderDistance, Client.MIN_RENDER_DISTANCE);
-                Logger.Debug("Decreased Render distance: " + Client.renderDistance);
+                Logger.log(Logger.Level.DEBUG,"Decreased Render distance: " + Client.renderDistance);
 
                 World.loadChunks = true;
                 is_combined = true;
@@ -90,13 +93,13 @@ public class Debugger {
 
             if(isDebugKeyJustPressed(DEBUG_CHUNK_BORDER)) {
                 debug_timestamp = actual_debug_timestamp = 0;
-                Logger.Debug("Show Chunk border");
+                Logger.log(Logger.Level.DEBUG,"Show Chunk border");
                 is_combined = true;
             }
 
             if(isDebugKeyJustPressed(DEBUG_PAUSE)) {
                 debug_timestamp = actual_debug_timestamp = 0;
-                Logger.Debug("Paused the game");
+                Logger.log(Logger.Level.DEBUG,"Paused the game");
                 is_combined = true;
             }
 
@@ -104,9 +107,9 @@ public class Debugger {
                 debug_timestamp = actual_debug_timestamp = 0;
                 Client.Vsync = (Client.Vsync == 1)? 0:1;
                 if(Client.Vsync == 1)
-                    Logger.Debug("Disabled Vsync");
+                    Logger.log(Logger.Level.DEBUG,"Disabled Vsync");
                 else
-                    Logger.Debug("Enabled Vsync");
+                    Logger.log(Logger.Level.DEBUG,"Enabled Vsync");
 
                 is_combined = true;
             }
