@@ -45,14 +45,27 @@ public class ChunkGen {
                     chunk.blocks[x][y][z] = (y == Y_MAX-1)? BlockType.GRASS : BlockType.DIRT;
 
                     BlockModel model = Client.modelLoader.getModel(Client.modelPaths[chunk.blocks[x][y][z].getID()]);
-                    for(Element element : model.getElements()) {
-                        chunk.blockDrawn += element.getFaces().size();
-                    }
+                    chunk.blockDrawn += model.getElements().size();
                 }
             }
         }
     }
 
+    public static int getBlocks(Chunk chunk) {
+        int x = 0;
+        for(BlockType[][] blocks : chunk.blocks) {
+            for(BlockType[] block : blocks) {
+                for(BlockType block1 : block) {
+                    if(block1 == null) continue;
+
+                    BlockModel model = Client.modelLoader.getModel(Client.modelPaths[block1.getID()]);
+                    x+= model.getElements().size();
+                }
+            }
+
+        }
+        return x;
+    }
     public static void ResolveChunkSurface(Chunk chunk) {
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int y = 0; y < Y_DIMENSION; y++) {

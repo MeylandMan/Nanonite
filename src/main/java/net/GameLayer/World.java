@@ -107,17 +107,22 @@ public class World {
                         String.format("%.3f", (chunkRenderSpeed[1] - chunkRenderSpeed[0])) +
                         " seconds");
                 chunkRenderSpeed[0] = chunkRenderSpeed[1] = 0;
+            }
 
-                for(Chunk[] loadedchunk : loadedChunks) {
-                    for(Chunk chunk : loadedchunk) {
-                        if(chunk == null)
-                            continue;
+            int radius = Client.renderDistance / 2;
+            for(Chunk[] loadChunk : loadedChunks) {
+                for(Chunk chunk : loadChunk) {
+                    if(chunk == null) continue;
 
-                        int radius = Client.renderDistance / 2;
+
+                    if(chunk.updateChunk) {
                         int x = chunk.dx + radius;
                         int z = chunk.dz + radius;
-
                         chunk.updateChunk(x, z);
+                        if(x == loadedChunks.length-1 && z == loadedChunks.length-1 ) {
+                            System.out.println("Done");
+                        }
+                        break;
                     }
                 }
             }
@@ -137,7 +142,6 @@ public class World {
 
             loadedChunks[x][z] = queuedChunk;
             ChunkGen.setupChunk(loadedChunks[x][z]);
-            //loadedChunks[x][z].updateChunk(x, z);
         }
     }
 
@@ -145,7 +149,7 @@ public class World {
         Chunk chunk = loadedChunks[xx][zz];
 
         // 3 positions + 3 min + 3 max + 1 texID + 1 FaceID
-        int estimatedSizeBuffer = chunk.blockDrawn * 11;
+        int estimatedSizeBuffer = ChunkGen.getBlocks(chunk) * 11;
         FloatBuffer buffer = BufferUtils.createFloatBuffer(estimatedSizeBuffer);
 
 
@@ -195,18 +199,6 @@ public class World {
         return buffer;
     }
 
-    public void addCollision(CubeCollision collision) {
-        worldCollisions.add(collision);
-    }
-
-    public ArrayList<CubeCollision> getCollisions() {
-        return worldCollisions;
-    }
-
-    public CubeCollision getCollisions(int index) {
-        return worldCollisions.get(index);
-    }
-
     public void onUpdate(Camera camera, float deltaTime) {
         addChunksToQueue(camera, true);
         loadChunks(camera);
@@ -235,37 +227,14 @@ public class World {
 
         shader.Uniform1iv("u_Textures", Client.samplers);
 
-        for(Chunk[] loadedChunks : loadedChunks) {
-            if(loadedChunks == null)
-                continue;
+        for(Chunk[] _loadedChunks : loadedChunks) {
 
-            for(Chunk chunk : loadedChunks) {
+            for(Chunk chunk : _loadedChunks) {
                 if(chunk == null)
                     continue;
                 shader.Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
                 chunk.DrawMesh();
             }
-        }
-    }
-
-    public void renderCollisions(Matrix4f view, Matrix4f projection) {
-        glDisable(GL_BLEND);
-        glDisable(GL_CULL_FACE);
-
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LESS);
-
-        shader.Bind();
-        shader.UniformMatrix4x4("view", view);
-        shader.UniformMatrix4x4("projection", projection);
-
-        for(CubeCollision collision : worldCollisions) {
-            Matrix4f model = new Matrix4f().identity()
-                            .translate(collision.position)
-                            .scale(collision.size);
-            shader.UniformMatrix4x4("model", model);
-            shader.Uniform1f("borderThickness", 1);
-            collision.drawAABB();
         }
     }
 
@@ -325,5 +294,38 @@ public class World {
             return 1;
 
         return 0;
+    }
+
+    public void addCollision(CubeCollision collision) {
+        worldCollisions.add(collision);
+    }
+
+    public ArrayList<CubeCollision> getCollisions() {
+        return worldCollisions;
+    }
+
+    public CubeCollision getCollisions(int index) {
+        return worldCollisions.get(index);
+    }
+
+    public void renderCollisions(Matrix4f view, Matrix4f projection) {
+        glDisable(GL_BLEND);
+        glDisable(GL_CULL_FACE);
+
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+
+        shader.Bind();
+        shader.UniformMatrix4x4("view", view);
+        shader.UniformMatrix4x4("projection", projection);
+
+        for(CubeCollision collision : worldCollisions) {
+            Matrix4f model = new Matrix4f().identity()
+                    .translate(collision.position)
+                    .scale(collision.size);
+            shader.UniformMatrix4x4("model", model);
+            shader.Uniform1f("borderThickness", 1);
+            collision.drawAABB();
+        }
     }
 }
