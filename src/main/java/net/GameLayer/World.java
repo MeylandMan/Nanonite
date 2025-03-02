@@ -93,7 +93,14 @@ public class World {
                 int worldX = (chunkX + dx) * ChunkGen.X_DIMENSION;
                 int worldZ = (chunkZ + dz) * ChunkGen.Z_DIMENSION;
 
-                chunks.add(new Chunk(new Vector2f(worldX, worldZ), (byte)dx, (byte)dz));
+                Chunk chunk = new Chunk(new Vector2f(worldX, worldZ), (byte)dx, (byte)dz);
+                chunks.add(chunk);
+
+                int x = dx + radius;
+                int z = dz + radius;
+
+                loadedChunks[x][z] = chunk;
+                ChunkGen.setupChunk(loadedChunks[x][z]);
             }
         }
 
@@ -107,24 +114,6 @@ public class World {
                         String.format("%.3f", (chunkRenderSpeed[1] - chunkRenderSpeed[0])) +
                         " seconds");
                 chunkRenderSpeed[0] = chunkRenderSpeed[1] = 0;
-            }
-
-            int radius = Client.renderDistance / 2;
-            for(Chunk[] loadChunk : loadedChunks) {
-                for(Chunk chunk : loadChunk) {
-                    if(chunk == null) continue;
-
-
-                    if(chunk.updateChunk) {
-                        int x = chunk.dx + radius;
-                        int z = chunk.dz + radius;
-                        chunk.updateChunk(x, z);
-                        if(x == loadedChunks.length-1 && z == loadedChunks.length-1 ) {
-                            System.out.println("Done");
-                        }
-                        break;
-                    }
-                }
             }
             return;
         }
@@ -140,8 +129,9 @@ public class World {
             int x = queuedChunk.dx + radius;
             int z = queuedChunk.dz + radius;
 
-            loadedChunks[x][z] = queuedChunk;
-            ChunkGen.setupChunk(loadedChunks[x][z]);
+            loadedChunks[x][z].Init();
+            loadedChunks[x][z].updateChunk(x, z);
+            //ChunkGen.setupChunk(loadedChunks[x][z]);
         }
     }
 
@@ -230,8 +220,9 @@ public class World {
         for(Chunk[] _loadedChunks : loadedChunks) {
 
             for(Chunk chunk : _loadedChunks) {
-                if(chunk == null)
-                    continue;
+                if(chunk == null) continue;
+                if(chunk.Ssbo == null) continue;
+                
                 shader.Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
                 chunk.DrawMesh();
             }

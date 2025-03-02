@@ -102,6 +102,5 @@ public class ChunkGen {
         // check if there's blocks at the top of the dirt
         ResolveChunkSurface(chunk);
 
-        chunk.Init();
     }
 }

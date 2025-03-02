@@ -17,7 +17,7 @@ public class Input {
     public static float mouseDeltaY = 0.0f;
 
     // Booleans
-    public static boolean is_locked = true;
+    public static boolean is_locked;
 
     //Datas
 
