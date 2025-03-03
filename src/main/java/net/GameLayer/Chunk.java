@@ -46,7 +46,8 @@ public class Chunk {
     }
 
     public void Delete() {
-        Ssbo.Delete();
+        if(Ssbo != null)
+            Ssbo.Delete();
         blocks = null;
         buffer = null;
     }

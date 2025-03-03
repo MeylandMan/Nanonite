@@ -88,6 +88,7 @@ public class Debugger {
                 Logger.log(Logger.Level.DEBUG,"Decreased Render distance: " + Client.renderDistance);
 
                 World.loadChunks = true;
+                World.addChunksToQueue(camera, true);
                 is_combined = true;
             }
 
@@ -171,7 +172,7 @@ public class Debugger {
 
         Vector3f chunkPosition = new Vector3f(
                 floor(camera.Position.x / ChunkGen.X_DIMENSION),
-                floor(camera.Position.y / ChunkGen.Y_DIMENSION),
+                floor(camera.Position.y / ChunkGen.Z_DIMENSION),
                 floor(camera.Position.z / ChunkGen.Z_DIMENSION)
         );
 
