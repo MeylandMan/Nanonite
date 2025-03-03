@@ -57,6 +57,8 @@ public class World {
 
 
         if(loadedChunks != null && reset) {
+            glFinish();
+
             for(Chunk[] loadedChunk : World.loadedChunks) {
                 for(Chunk chunk : loadedChunk) {
                     chunk.Delete();
@@ -66,7 +68,6 @@ public class World {
 
             loadedChunks = null;
             chunks.clear();
-            System.gc();
 
             Logger.log(Logger.Level.INFO, "Deleted previous chunks");
         }
@@ -128,7 +129,6 @@ public class World {
 
             loadedChunks[x][z].Init();
             loadedChunks[x][z].updateChunk(x, z);
-            //ChunkGen.setupChunk(loadedChunks[x][z]);
         }
     }
 
@@ -137,7 +137,7 @@ public class World {
 
         // 3 positions + 3 min + 3 max + 1 texID + 1 FaceID
         int estimatedSizeBuffer = ChunkGen.getBlocks(chunk) * 11;
-        FloatBuffer buffer = BufferUtils.createFloatBuffer(estimatedSizeBuffer);
+        FloatBuffer buffer = MemoryUtil.memAllocFloat(estimatedSizeBuffer);
 
 
         for(int x = 0; x < ChunkGen.X_DIMENSION; x++) {
@@ -183,6 +183,7 @@ public class World {
         }
         buffer.flip();
 
+
         return buffer;
     }
 
@@ -198,7 +199,6 @@ public class World {
 
     public void renderChunks(Shader shader) {
         if(loadedChunks == null) {
-            glFinish();
             return;
         }
 
