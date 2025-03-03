@@ -30,7 +30,7 @@ public class World {
     static double[] chunkQueueSpeed = new double[2];
 
     // Chunk Queues
-    public static Queue<Chunk> chunks = new LinkedList<>();
+    public static Queue<Vector2f> chunksPos = new LinkedList<>();
     private Queue<Chunk> chunksToRemove = new LinkedList<>();
 
     private static class ChunkDistance {
@@ -80,7 +80,7 @@ public class World {
             System.gc();
 
             loadedChunks = null;
-            chunks.clear();
+            chunksPos.clear();
 
             Logger.log(Logger.Level.INFO, "Deleted previous chunks");
         }
@@ -118,7 +118,7 @@ public class World {
 
         for (ChunkDistance chunkDistance : chunkList) {
             Chunk chunk = chunkDistance.chunk;
-            chunks.add(chunk);
+            chunksPos.add(new Vector2f(chunk.dx, chunk.dz));
 
             int x = chunk.dx + radius;
             int z = chunk.dz + radius;
@@ -130,7 +130,7 @@ public class World {
     }
 
     public void loadChunks() {
-        if(chunks == null || chunks.isEmpty()) {
+        if(chunksPos == null || chunksPos.isEmpty()) {
             if(chunkRenderSpeed[1] != 0) {
                 Logger.log(Logger.Level.INFO, "Rendered chunks in " +
                         String.format("%.3f", (chunkRenderSpeed[1] - chunkRenderSpeed[0])) +
@@ -145,13 +145,13 @@ public class World {
         chunkRenderSpeed[1] = glfwGetTime();
 
         for(int i = 0; i < Client.renderDistance / 2; i++) {
-            Chunk queuedChunk = chunks.poll();
-            if(queuedChunk == null)
+            Vector2f queuedChunkPos = chunksPos.poll();
+            if(queuedChunkPos == null)
                 break;
 
             int radius = Client.renderDistance / 2;
-            int x = queuedChunk.dx + radius;
-            int z = queuedChunk.dz + radius;
+            int x = (int) (queuedChunkPos.x + radius);
+            int z = (int) (queuedChunkPos.y + radius);
             if(loadedChunks[x][z] == null) continue;
 
             loadedChunks[x][z].Init();
