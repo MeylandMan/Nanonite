@@ -11,6 +11,7 @@ import org.lwjgl.system.MemoryUtil;
 import java.nio.FloatBuffer;
 import java.util.*;
 
+import static org.joml.Math.abs;
 import static org.joml.Math.max;
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.opengl.GL11.*;
@@ -26,6 +27,8 @@ public class World {
     public static boolean loadChunks = true;
     public static boolean isAllRendered = false;
     public static Map<Vector2f, Chunk> loadedChunks = new HashMap<>();
+
+    public static boolean renderQuery = false;
     static double[] chunkRenderSpeed = new double[2];
     static double[] chunkQueueSpeed = new double[2];
 
@@ -51,20 +54,9 @@ public class World {
 
     public static void addChunksToQueue(Camera camera, boolean reset) {
         if(!loadChunks){
-            if(chunkQueueSpeed[1] == 0) {
-                chunkQueueSpeed[1] = glfwGetTime();
-                Logger.log(Logger.Level.INFO, "Chunk queue filled in " +
-                        String.format("%.3f", (chunkQueueSpeed[1] - chunkQueueSpeed[0])) +
-                        " seconds");
-                Logger.log(Logger.Level.INFO, "Rendering chunks...");
-                chunkQueueSpeed[0] = glfwGetTime();
-                chunkRenderSpeed[0] = glfwGetTime();
-            }
-
             return;
         }
 
-        chunkQueueSpeed[0] = chunkQueueSpeed[1] = 0;
         chunkQueueSpeed[0] = glfwGetTime();
 
 
@@ -119,23 +111,29 @@ public class World {
             ChunkGen.setupChunk(chunk);
             loadedChunks.put(new Vector2f(x, z), chunk);
         }
+
+        chunkQueueSpeed[1] = glfwGetTime();
+        double result = chunkQueueSpeed[1] - chunkQueueSpeed[0];
+        Logger.log(Logger.Level.INFO, "Chunk queue filled in " + String.format("%.3f", result) + "s");
+        Logger.log(Logger.Level.INFO, "Rendering chunks...");
         loadChunks = false;
     }
 
     public void loadChunks() {
         if(chunksPos.isEmpty()) {
-            if(chunkRenderSpeed[1] != 0) {
-                Logger.log(Logger.Level.INFO, "Rendered chunks in " +
-                        String.format("%.3f", (chunkRenderSpeed[1] - chunkRenderSpeed[0])) +
-                        " seconds");
-                chunkRenderSpeed[0] = chunkRenderSpeed[1] = 0;
+            if(renderQuery) {
+                chunkRenderSpeed[1] = glfwGetTime();
+                double result = abs(chunkQueueSpeed[1] - chunkRenderSpeed[0]);
+                Logger.log(Logger.Level.INFO, "Rendered chunks in " + String.format("%.3f", result) + "s");
+                renderQuery = false;
             }
             isAllRendered = true;
             chunksToRemove.clear();
             return;
         }
 
-        chunkRenderSpeed[1] = glfwGetTime();
+        renderQuery = true;
+        chunkRenderSpeed[0] = glfwGetTime();
 
         for(int i = 0; i < Client.renderDistance / 2; i++) {
             Vector2f queuedChunkPos = chunksPos.poll();
