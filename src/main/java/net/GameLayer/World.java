@@ -25,13 +25,13 @@ public class World {
     public static boolean firstLoad = true;
     public static boolean loadChunks = true;
     public static boolean isAllRendered = false;
-    public static Chunk[][] loadedChunks;
+    public static Map<Vector2f, Chunk> loadedChunks = new HashMap<>();
     static double[] chunkRenderSpeed = new double[2];
     static double[] chunkQueueSpeed = new double[2];
 
     // Chunk Queues
-    public static Queue<Vector2f> chunksPos = new LinkedList<>();
-    private Queue<Chunk> chunksToRemove = new LinkedList<>();
+    private static final Queue<Vector2f> chunksPos = new LinkedList<>();
+    private static final Queue<Chunk> chunksToRemove = new LinkedList<>();
 
     private static class ChunkDistance {
         Chunk chunk;
@@ -68,29 +68,22 @@ public class World {
         chunkQueueSpeed[0] = glfwGetTime();
 
 
-        if(loadedChunks != null && reset) {
+        if(reset) {
             glFinish();
 
-            for(Chunk[] loadedChunk : World.loadedChunks) {
-                for(Chunk chunk : loadedChunk) {
-                    if(chunk == null) continue;
-                    chunk.Delete();
-                }
+            for(Chunk chunk : loadedChunks.values()) {
+                if(chunk == null) continue;
+                chunk.Delete();
             }
             System.gc();
 
-            loadedChunks = null;
+            loadedChunks.clear();
             chunksPos.clear();
-
+            chunksToRemove.clear();
             Logger.log(Logger.Level.INFO, "Deleted previous chunks");
         }
 
         Logger.log(Logger.Level.INFO, "Loading chunks...");
-
-        if(loadedChunks == null) {
-            int size = Client.renderDistance+1;
-            loadedChunks = new Chunk[size][size];
-        }
 
         int chunkX = (int) (camera.Position.x / ChunkGen.X_DIMENSION);
         int chunkZ = (int) (camera.Position.z / ChunkGen.Z_DIMENSION);
@@ -123,14 +116,14 @@ public class World {
             int x = chunk.dx + radius;
             int z = chunk.dz + radius;
 
-            loadedChunks[x][z] = chunk;
-            ChunkGen.setupChunk(loadedChunks[x][z]);
+            ChunkGen.setupChunk(chunk);
+            loadedChunks.put(new Vector2f(x, z), chunk);
         }
         loadChunks = false;
     }
 
     public void loadChunks() {
-        if(chunksPos == null || chunksPos.isEmpty()) {
+        if(chunksPos.isEmpty()) {
             if(chunkRenderSpeed[1] != 0) {
                 Logger.log(Logger.Level.INFO, "Rendered chunks in " +
                         String.format("%.3f", (chunkRenderSpeed[1] - chunkRenderSpeed[0])) +
@@ -152,18 +145,19 @@ public class World {
             int radius = Client.renderDistance / 2;
             int x = (int) (queuedChunkPos.x + radius);
             int z = (int) (queuedChunkPos.y + radius);
-            if(loadedChunks[x][z] == null) continue;
+            Chunk chunk = loadedChunks.get(new Vector2f(x, z));
+            if(chunk == null) continue;
 
-            loadedChunks[x][z].Init();
-            loadedChunks[x][z].updateChunk(x, z);
+            chunk.Init();
+            chunk.updateChunk(x, z);
         }
     }
 
     protected static FloatBuffer getChunkData(int xx, int zz) {
-        Chunk chunk = loadedChunks[xx][zz];
+        Chunk chunk = loadedChunks.get(new Vector2f(xx, zz));
 
         // 3 positions + 3 min + 3 max + 1 texID + 1 FaceID
-        int estimatedSizeBuffer = ChunkGen.getBlocks(chunk) * 11;
+        int estimatedSizeBuffer = ChunkGen.getBlocksNumber(chunk) * 11;
         FloatBuffer buffer = MemoryUtil.memAllocFloat(estimatedSizeBuffer);
 
 
@@ -235,15 +229,12 @@ public class World {
         int chunkZ = (int) (camera.Position.z / ChunkGen.Z_DIMENSION);
         int radius = Client.renderDistance / 2;  // Rayon de vision
 
-        for (Chunk[] loadedChunk : loadedChunks) {
-            for (int z = 0; z < loadedChunks.length; z++) {
-                if (loadedChunk == null || loadedChunk[z] == null) continue;
-
-                Chunk chunk = loadedChunk[z];
+        for (Chunk chunk : loadedChunks.values()) {
+            for (int z = 0; z < loadedChunks.size(); z++) {
                 if (chunk == null) continue;
 
-                int chunkDistX = Math.abs(chunk.dx - chunkX);
-                int chunkDistZ = Math.abs(chunk.dz - chunkZ);
+                int chunkDistX = Math.abs((chunk.positionX / ChunkGen.X_DIMENSION) - chunkX);
+                int chunkDistZ = Math.abs((chunk.positionZ / ChunkGen.X_DIMENSION) - chunkZ);
 
                 // If the chunk is out of view, delete it
                 if (chunkDistX > radius || chunkDistZ > radius) {
@@ -256,38 +247,17 @@ public class World {
         if(!chunksToRemove.isEmpty()) {
             Chunk chunk = chunksToRemove.poll();
             if (chunk != null) {
-                int x = chunk.dx;
-                int z = chunk.dz;
+                int x = chunk.dx + radius;
+                int z = chunk.dz + radius;
 
                 chunk.Delete();
-                loadedChunks[chunk.dx + radius][chunk.dz + radius] = null;
+                loadedChunks.remove(new Vector2f(x, z));
                 System.gc();
 
                 //moveNearbyChunk(x + radius, z + radius);
             }
         }
 
-    }
-
-    private void moveNearbyChunk(int x, int z) {
-        int[][] directions = { {1, 0}, {-1, 0}, {0, 1}, {0, -1} };  // Right, Left, Down, Up
-
-        for (int[] dir : directions) {
-            int nx = x + dir[0];
-            int nz = z + dir[1];
-
-            if (nx >= 0 && nx < loadedChunks.length && nz >= 0 && nz < loadedChunks[0].length) {
-                if (loadedChunks[nx][nz] != null) {
-                    // Move the nearby chunk to the deleted chunk
-                    loadedChunks[x][z] = loadedChunks[nx][nz];
-
-                    loadedChunks[nx][nz].Delete();
-                    loadedChunks[nx][nz] = null;
-                    System.gc();
-                    return;
-                }
-            }
-        }
     }
 
     public void renderChunks(Shader shader) {
@@ -314,20 +284,16 @@ public class World {
 
         shader.Uniform1iv("u_Textures", Client.samplers);
 
-        for(Chunk[] _loadedChunks : loadedChunks) {
+        for(Chunk chunk : loadedChunks.values()) {
+            if(chunk.Ssbo == null) continue;
 
-            for(Chunk chunk : _loadedChunks) {
-                if(chunk == null) continue;
-                if(chunk.Ssbo == null) continue;
-
-                shader.Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
-                chunk.DrawMesh();
-            }
+            shader.Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
+            chunk.DrawMesh();
         }
     }
 
     protected static int shouldRenderFace(int xx, int zz, Element element, int x, int y, int z, int face) {
-        Chunk actualChunk = loadedChunks[xx][zz];
+        Chunk actualChunk = loadedChunks.get(new Vector2f(xx, zz));
 
         int nx = x, ny = y, nz = z;
         int cnx = xx, cnz = zz;
@@ -352,10 +318,10 @@ public class World {
 
         // Check if the face is in a Chunk's border
         if(nx < 0 || nx >= ChunkGen.X_DIMENSION || nz < 0 || nz >= ChunkGen.Z_DIMENSION || ny < 0 || ny >= ChunkGen.Y_DIMENSION) {
-            if (cnx < 0 || cnx >= loadedChunks.length || cnz < 0 || cnz >= loadedChunks[0].length) {
+            if (cnx < 0 || cnx >= Client.renderDistance+1 || cnz < 0 || cnz >= Client.renderDistance+1) {
                 return 0;
             } else {
-                Chunk nextChunk = loadedChunks[cnx][cnz];
+                Chunk nextChunk = loadedChunks.get(new Vector2f(cnx, cnz));
                 if(nextChunk != null) {
                     int nnx = 0, nnz = 0;
                     if(nx < 0)

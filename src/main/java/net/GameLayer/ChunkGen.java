@@ -51,7 +51,7 @@ public class ChunkGen {
         }
     }
 
-    public static int getBlocks(Chunk chunk) {
+    public static int getBlocksNumber(Chunk chunk) {
         int x = 0;
         for(BlockType[][] blocks : chunk.blocks) {
             for(BlockType[] block : blocks) {
