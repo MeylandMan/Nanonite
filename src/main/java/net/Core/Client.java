@@ -9,7 +9,7 @@ import java.util.Set;
 
 public class Client {
     public static int renderDistance = 32;
-    public static final int MAX_RENDER_DISTANCE = 32;
+    public static final int MAX_RENDER_DISTANCE = 92;
     public static final int MIN_RENDER_DISTANCE = 2;
 
     public static int Vsync = 1;

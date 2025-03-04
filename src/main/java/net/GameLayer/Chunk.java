@@ -30,24 +30,19 @@ public class Chunk {
 
     public int positionX, positionY, positionZ;
 
-    public byte dx;
-    public byte dz;
-
     public Chunk() { }
 
-    public Chunk(Vector2f position, byte dx, byte dz) {
+    public Chunk(Vector2f position) {
         this.positionX = (int)position.x;
         this.positionY = Y_CHUNK;
         this.positionZ = (int)position.y;
-
-        this.dx = dx;
-        this.dz = dz;
 
     }
 
     public void Delete() {
         if(Ssbo != null)
             Ssbo.Delete();
+        Ssbo = null;
         blocks = null;
         buffer = null;
     }

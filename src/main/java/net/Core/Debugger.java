@@ -45,7 +45,6 @@ public class Debugger {
                 debug_timestamp = actual_debug_timestamp = 0;
                 Logger.log(Logger.Level.DEBUG,"Reload Chunks");
 
-                World.loadChunks = true;
                 World.addChunksToQueue(camera, true);
                 is_combined = true;
             }
@@ -76,7 +75,6 @@ public class Debugger {
                 Client.renderDistance = min(Client.renderDistance, Client.MAX_RENDER_DISTANCE);
                 Logger.log(Logger.Level.DEBUG,"Increased Render distance: " + Client.renderDistance);
 
-                World.loadChunks = true;
                 World.addChunksToQueue(camera, true);
                 is_combined = true;
             }
@@ -87,7 +85,6 @@ public class Debugger {
                 Client.renderDistance = max(Client.renderDistance, Client.MIN_RENDER_DISTANCE);
                 Logger.log(Logger.Level.DEBUG,"Decreased Render distance: " + Client.renderDistance);
 
-                World.loadChunks = true;
                 World.addChunksToQueue(camera, true);
                 is_combined = true;
             }

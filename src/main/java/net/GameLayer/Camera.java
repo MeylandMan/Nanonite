@@ -163,15 +163,13 @@ public class Camera {
         } else {
             dragFactor = DRAG_FACTOR;
             velocity.x *= speed;
-            velocity.x = clamp(velocity.x, -1, 1);
-
             velocity.z *= speed;
-            velocity.z = clamp(velocity.z, -1, 1);
-
             velocity.y *= deltaTime;
         }
 
 
+        velocity.x = clamp(velocity.x, -1, 1);
+        velocity.z = clamp(velocity.z, -1, 1);
         Position.add(velocity);
 
         raycast.update(new Vector3f(Position.x, Position.y+1, Position.z), getFront());

@@ -283,7 +283,7 @@ public class App {
                     fpsMonitor.getFPS(),
                     fpsMonitor.getAverageFPS(),
                     fpsMonitor.getMinFPS(),
-                    fpsMonitor.getMaxFPS(),
+                    fpsMonitor.getMaxFPS()
             };
             Input.Update(window, camera, scene, delta);
             camera.updateCameraVectors(delta);
