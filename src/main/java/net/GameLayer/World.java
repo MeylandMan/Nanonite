@@ -116,6 +116,7 @@ public class World {
 
             ChunkGen.setupChunk(chunk);
             loadedChunks.put(chunkID, chunk);
+
         }
 
         if(reset) {
@@ -126,6 +127,40 @@ public class World {
         }
         allowQuery = reset;
         chunkList.clear();
+    }
+
+
+    public static void updateNearbyChunks(Vector2f v) {
+
+        Vector2f neighbour = new Vector2f(v.x+1, v.y);
+
+        if(loadedChunks.containsKey(neighbour)) {
+            if(loadedChunks.get(neighbour).Ssbo == null)
+                loadedChunks.get(neighbour).Init();
+            loadedChunks.get(neighbour).updateChunk = true;
+            loadedChunks.get(neighbour).updateChunk((int) neighbour.x, (int) neighbour.y);
+        }
+        neighbour = new Vector2f(v.x-1, v.y);
+        if(loadedChunks.containsKey(neighbour)) {
+            if(loadedChunks.get(neighbour).Ssbo == null)
+                loadedChunks.get(neighbour).Init();
+            loadedChunks.get(neighbour).updateChunk = true;
+            loadedChunks.get(neighbour).updateChunk((int) neighbour.x, (int) neighbour.y);
+        }
+        neighbour = new Vector2f(v.x, v.y+1);
+        if(loadedChunks.containsKey(neighbour)) {
+            if(loadedChunks.get(neighbour).Ssbo == null)
+                loadedChunks.get(neighbour).Init();
+            loadedChunks.get(neighbour).updateChunk = true;
+            loadedChunks.get(neighbour).updateChunk((int) neighbour.x, (int) neighbour.y);
+        }
+        neighbour = new Vector2f(v.x, v.y-1);
+        if(loadedChunks.containsKey(neighbour)) {
+            if(loadedChunks.get(neighbour).Ssbo == null)
+                loadedChunks.get(neighbour).Init();
+            loadedChunks.get(neighbour).updateChunk = true;
+            loadedChunks.get(neighbour).updateChunk((int) neighbour.x, (int) neighbour.y);
+        }
     }
 
     public void loadChunks() {
@@ -155,7 +190,12 @@ public class World {
             Chunk chunk = loadedChunks.get(chunkID);
             if(chunk == null) continue;
 
-            chunk.Init();
+            if(chunk.Ssbo == null)
+                chunk.Init();
+
+            if(!allowQuery) {
+                updateNearbyChunks(chunkID);
+            }
             chunk.updateChunk((int) chunkID.x, (int) chunkID.y);
         }
     }
@@ -258,6 +298,7 @@ public class World {
             chunk.Delete();
             loadedChunks.remove(chunkPos);
         }
+
         addChunksToQueue(camera, false);
     }
 
@@ -283,6 +324,7 @@ public class World {
 
         for(Chunk chunk : loadedChunks.values()) {
             if(chunk.Ssbo == null) continue;
+
 
             shader.Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
             chunk.DrawMesh();

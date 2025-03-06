@@ -8,9 +8,9 @@ import java.util.Objects;
 import java.util.Set;
 
 public class Client {
-    public static int renderDistance = 5;
+    public static int renderDistance = 8;
     public static final int MAX_RENDER_DISTANCE = 92;
-    public static final int MIN_RENDER_DISTANCE = 2;
+    public static final int MIN_RENDER_DISTANCE = 8;
 
     public static int Vsync = 1;
     public static String name = "Mycraft ";
