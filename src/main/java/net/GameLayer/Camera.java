@@ -41,7 +41,7 @@ public class Camera {
     // camera Attributes
     public CubeCollision collision;
     public Raycast raycast;
-    public Vector3f Position;
+    public static Vector3f Position;
     private Vector3f Front = new Vector3f(0.0f, 0.0f, -1.0f);
     private final Vector3f Up = new Vector3f();
     private final Vector3f Right = new Vector3f();

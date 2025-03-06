@@ -5,6 +5,7 @@ import net.Core.Physics.CubeCollision;
 import net.Core.Rendering.Shader;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.system.MemoryUtil;
 
@@ -34,7 +35,6 @@ public class World {
     static double[] chunkQueueSpeed = new double[2];
 
     // Chunk Queues
-    private static List<ChunkDistance> chunkList = new ArrayList<>();
     private static final Queue<Vector2f> chunksPos = new LinkedList<>();
     private static final Queue<Chunk> chunksToRemove = new LinkedList<>();
 
@@ -70,14 +70,13 @@ public class World {
             System.gc();
 
             loadedChunks.clear();
+            chunksPos.clear();
+            chunksToRemove.clear();
+
             Logger.log(Logger.Level.INFO, "Deleted previous chunks");
 
             Logger.log(Logger.Level.INFO, "Loading chunks...");
         }
-
-        chunksPos.clear();
-        chunksToRemove.clear();
-
 
 
         int chunkX = (int) (camera.Position.x / ChunkGen.X_DIMENSION);
@@ -86,13 +85,15 @@ public class World {
         isAllRendered = false;
 
         // Temporary list of chunks with their distance to the player
+        List<ChunkDistance> chunkList = new ArrayList<>();
+
         for (int dz = -radius; dz <= radius; dz++) {
             for (int dx = -radius; dx <= radius; dx++) {
                 int worldX = (chunkX + dx) * ChunkGen.X_DIMENSION;
                 int worldZ = (chunkZ + dz) * ChunkGen.Z_DIMENSION;
 
                 Vector2f position =  new Vector2f(worldX, worldZ);
-                if(loadedChunks.containsKey(new Vector2f(worldZ / ChunkGen.X_DIMENSION,
+                if(loadedChunks.containsKey(new Vector2f(worldX / ChunkGen.X_DIMENSION,
                         worldZ / ChunkGen.Z_DIMENSION))) continue;
 
                 Chunk chunk = new Chunk(position);
@@ -245,11 +246,10 @@ public class World {
 
             if (chunkDistX > radius || chunkDistZ > radius) {
                 chunksToRemove.add(chunk);
-                delete_cooldown++;
-                isAllDeleted = false;
             }
         }
 
+        // Deleting chunks and replacing deleted with new one
         for (int i = 0; i < MAX_CHUNKS_TO_REMOVE_PER_FRAME && !chunksToRemove.isEmpty(); i++) {
             Chunk chunk = chunksToRemove.poll();
             if(chunk == null) return;
@@ -258,15 +258,7 @@ public class World {
             chunk.Delete();
             loadedChunks.remove(chunkPos);
         }
-
-
-        if(delete_cooldown > 0.5f) {
-            if(!isAllDeleted && chunksToRemove.isEmpty()) {
-                delete_cooldown = 0;
-                isAllDeleted = true;
-                addChunksToQueue(camera, false);
-            }
-        }
+        addChunksToQueue(camera, false);
     }
 
     public void renderChunks(Shader shader) {
