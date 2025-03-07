@@ -333,7 +333,7 @@ public class World {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         // Enable BackFace Culling
-        glDisable(GL_CULL_FACE);
+        glEnable(GL_CULL_FACE);
         glCullFace(GL_FRONT);
         glFrontFace(GL_CW);
 
@@ -352,7 +352,6 @@ public class World {
         Chunk actualChunk = loadedChunks.get(new Vector2f(xx, zz));
 
         int nx = x, ny = y, nz = z;
-        //int cnx = xx, cnz = zz;
 
         // 0 -- FRONT, 1 -- BACK, 2 -- RIGHT, 3 -- LEFT, 4 -- TOP, 5 -- BOTTOM
         switch (face) {
@@ -380,20 +379,20 @@ public class World {
             int neighborChunkX = xx + (nx < 0 ? -1 : (nx >= ChunkGen.X_DIMENSION ? 1 : 0));
             int neighborChunkZ = zz + (nz < 0 ? -1 : (nz >= ChunkGen.Z_DIMENSION ? 1 : 0));
 
-            // Mettre nx et nz dans l'espace local du chunk voisin
+            // Set nx et nz in neighbor local space
             nx = (nx + ChunkGen.X_DIMENSION) % ChunkGen.X_DIMENSION;
             nz = (nz + ChunkGen.Z_DIMENSION) % ChunkGen.Z_DIMENSION;
 
-            // Charger le chunk voisin
+            // Load the neighborChunk
             Chunk neighborChunk = loadedChunks.get(new Vector2f(neighborChunkX, neighborChunkZ));
 
             if (neighborChunk == null || neighborChunk.blocks[nx][ny][nz] == null) {
-                return 1; // Face visible
+                return 1;
             }
         } else {
-            // Vérifier dans le chunk actuel
+            // Check the actual chunk
             if (actualChunk.blocks[nx][ny][nz] == null) {
-                return 1; // Face visible
+                return 1;
             }
         }
 

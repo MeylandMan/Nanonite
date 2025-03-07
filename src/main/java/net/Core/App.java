@@ -35,10 +35,9 @@ public class App {
     float lastX;
     float lastY;
     public Renderer renderer;
-    CubeCollision collision;
     Scene scene = new Scene();
     Shader shader = new Shader();
-    Camera camera = new Camera(new Vector3f(8, -64, 8));
+    Camera camera = new Camera(new Vector3f(8, 70, 8));
     World world;
     float delta;
     float lastFrame;
