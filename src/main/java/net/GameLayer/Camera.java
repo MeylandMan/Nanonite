@@ -24,6 +24,33 @@ public class Camera {
         DOWN
     }
 
+    public static class Plane {
+        public float a, b, c, d;
+
+        public void set(float a, float b, float c, float d) {
+            this.a = a;
+            this.b = b;
+            this.c = c;
+            this.d = d;
+        }
+
+        public void normalize() {
+            float length = (float) Math.sqrt(a * a + b * b + c * c);
+            a /= length;
+            b /= length;
+            c /= length;
+            d /= length;
+        }
+
+        public boolean isPointInside(float x, float y, float z) {
+            return a * x + b * y + c * z + d >= 0;
+        }
+    }
+
+    // Matrices
+    Matrix4f projection = new Matrix4f();
+    Matrix4f view = new Matrix4f();
+
     // Default camera values
     private static final float YAW = -90.0f;
     private static final float PITCH = 0.0f;
@@ -74,11 +101,20 @@ public class Camera {
     // returns the view matrix calculated using Euler Angles and the LookAt Matrix
     public Matrix4f GetViewMatrix()
     {
-        return new Matrix4f().lookAt(Position, new Vector3f(Position).add(Front), Up);
+        return view;
     }
 
-    public Matrix4f GetProjectionMatrix(int width, int height) {
-        return new Matrix4f().identity()
+    public Matrix4f GetProjectionMatrix() {
+        return projection;
+    }
+
+
+    public void SetViewMatrix() {
+        view = new Matrix4f().lookAt(Position, new Vector3f(Position).add(Front), Up);
+    }
+
+    public void SetProjectionMatrix(int width, int height) {
+        projection = new Matrix4f().identity()
                 .perspective((float)Math.toRadians(Zoom),
                         (float)width / (float)Math.max(height, 1),
                         0.1f,

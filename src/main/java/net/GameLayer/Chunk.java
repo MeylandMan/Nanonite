@@ -12,6 +12,7 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.lwjgl.opengl.GL11C.glEnable;
@@ -24,6 +25,7 @@ public class Chunk {
     protected FloatBuffer buffer;
 
     public BlockType[][][] blocks;
+    public Map<Integer, Integer> compressedBlocks;
     VBO Ssbo;
     int faceDrawn = 0;
     int blockDrawn = 0;
@@ -33,6 +35,7 @@ public class Chunk {
     public Chunk() { }
 
     public Chunk(Vector2f position) {
+        this.compressedBlocks = new HashMap<>();
         this.positionX = (int)position.x;
         this.positionY = Y_CHUNK;
         this.positionZ = (int)position.y;
@@ -45,6 +48,7 @@ public class Chunk {
         Ssbo = null;
         blocks = null;
         buffer = null;
+        compressedBlocks = null;
     }
 
 

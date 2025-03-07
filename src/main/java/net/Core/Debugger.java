@@ -104,10 +104,9 @@ public class Debugger {
             if(isDebugKeyJustPressed(DEBUG_VSYNC)) {
                 debug_timestamp = actual_debug_timestamp = 0;
                 Client.Vsync = (Client.Vsync == 1)? 0:1;
-                if(Client.Vsync == 1)
-                    Logger.log(Logger.Level.DEBUG,"Disabled Vsync");
-                else
-                    Logger.log(Logger.Level.DEBUG,"Enabled Vsync");
+                String message = (Client.Vsync == 1)? "Enabled Vsync" : "Disabled Vsync";
+                Logger.log(Logger.Level.DEBUG, message);
+
 
                 is_combined = true;
             }

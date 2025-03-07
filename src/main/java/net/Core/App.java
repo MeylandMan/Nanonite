@@ -237,9 +237,7 @@ public class App {
             }
             glfwSwapInterval(Client.Vsync);
 
-            float currentFrame = (float)(glfwGetTime());
-            delta = currentFrame - lastFrame;
-            lastFrame = currentFrame;
+            delta = (fps[0] == 0)? 0.1f : 1/fps[0];
 
             ProcessInput(window);
 
@@ -247,8 +245,11 @@ public class App {
 
             shader.Bind();
 
+            camera.SetViewMatrix();
+            camera.SetProjectionMatrix(m_Width, m_Height);
+
             shader.UniformMatrix4x4("view", camera.GetViewMatrix());
-            shader.UniformMatrix4x4("projection", camera.GetProjectionMatrix(m_Width, m_Height));
+            shader.UniformMatrix4x4("projection", camera.GetProjectionMatrix());
 
             //Draw chunks
             world.renderChunks(shader);

@@ -25,8 +25,6 @@ public class World {
     // Chunks datas
     public static boolean allowQuery = true;
     public static boolean firstLoad = true;
-    public static boolean isAllDeleted = false;
-    public static float delete_cooldown = 0;
     public static boolean isAllRendered = false;
     public static Map<Vector2f, Chunk> loadedChunks = new HashMap<>();
 
@@ -60,7 +58,6 @@ public class World {
     public static void addChunksToQueue(Camera camera, boolean reset) {
 
         chunkQueueSpeed[0] = glfwGetTime();
-
 
         if(reset) {
 
@@ -262,6 +259,7 @@ public class World {
             // Load chunks to the queue
             addChunksToQueue(camera, true);
         }
+        addChunksToQueue(camera, false);
 
         // Load chunks
         loadChunks();
@@ -298,8 +296,6 @@ public class World {
             chunk.Delete();
             loadedChunks.remove(chunkPos);
         }
-
-        addChunksToQueue(camera, false);
     }
 
     public void renderChunks(Shader shader) {

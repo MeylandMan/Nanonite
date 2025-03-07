@@ -7,18 +7,20 @@ import net.Core.Face;
 import org.joml.Random;
 import org.lwjgl.system.MemoryUtil;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.random.*;
 
 import static org.joml.Math.*;
 
 public class ChunkGen {
+    public final static int Y_CHUNK = 0;
+
     public final static byte X_DIMENSION = 16;
-    public final static short Y_DIMENSION = 255;
+    public final static int Y_DIMENSION = 256 + abs(Y_CHUNK);
     public final static byte Z_DIMENSION = 16;
     public final static int Y_MAX = 5;
-
-    public final static int Y_CHUNK = 0;
 
     public enum BlockType {
         DIRT((byte)0),
@@ -104,5 +106,16 @@ public class ChunkGen {
         // check if there's blocks at the top of the dirt
         ResolveChunkSurface(chunk);
 
+        //CompressChunkData(chunk);
+    }
+
+    protected static void CompressChunkData(Chunk chunk) {
+        for(int x = 0; x < X_DIMENSION; x++) {
+            for(int y = 0; y < Y_DIMENSION; y++) {
+                for(int z = 0; z < Z_DIMENSION; z++) {
+
+                }
+            }
+        }
     }
 }
