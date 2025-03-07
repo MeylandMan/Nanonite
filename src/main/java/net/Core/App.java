@@ -38,7 +38,7 @@ public class App {
     CubeCollision collision;
     Scene scene = new Scene();
     Shader shader = new Shader();
-    Camera camera = new Camera(new Vector3f(8));
+    Camera camera = new Camera(new Vector3f(8, -64, 8));
     World world;
     float delta;
     float lastFrame;
@@ -225,7 +225,7 @@ public class App {
         user.addElement(button);
         */
 
-        world = new World();
+        world = new World(450);
         world.addCollision(camera.collision);
         world.addCollision(new CubeCollision(new Vector3f(8, 8, 8), new Vector3f(1)));
 

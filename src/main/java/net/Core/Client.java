@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public class Client {
-    public static int renderDistance = 16;
+    public static int renderDistance = 8;
     public static final int MAX_RENDER_DISTANCE = 92;
     public static final int MIN_RENDER_DISTANCE = 8;
 
@@ -22,7 +22,10 @@ public class Client {
     public static final String[] modelPaths = {
             "blocks/dirt",
             "blocks/grass_block",
-            "blocks/stone"
+            "blocks/stone",
+            "blocks/gravel",
+            "blocks/bedrock",
+            "blocks/deepslate"
     };
 
     public static ModelLoader modelLoader = new ModelLoader();

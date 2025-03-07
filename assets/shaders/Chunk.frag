@@ -1,7 +1,7 @@
 #version 330 core
 out vec4 fragColor;
 
-#define TEXTURE_LOADED 3
+#define TEXTURE_LOADED 7
 #define DEFAULT_GRASS_COLOR vec4(0.61, 0.80, 0.42, 1.0)
 
 in vec2 v_TexCoords;

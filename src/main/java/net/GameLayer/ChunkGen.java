@@ -1,16 +1,13 @@
 package net.GameLayer;
 
+import com.sudoplay.joise.module.ModuleClamp;
+import com.sudoplay.joise.module.ModuleScaleOffset;
 import net.Core.BlockModel;
 import net.Core.Client;
-import net.Core.Element;
 import net.Core.Face;
 import org.joml.Random;
-import org.lwjgl.system.MemoryUtil;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.random.*;
 
 import static org.joml.Math.*;
 
@@ -20,12 +17,25 @@ public class ChunkGen {
     public final static byte X_DIMENSION = 16;
     public final static int Y_DIMENSION = 256 + abs(Y_CHUNK);
     public final static byte Z_DIMENSION = 16;
-    public final static int Y_MAX = 5;
+
+    // Surface data
+    public static int MAX_HEIGHT = 92;
+    public static int MIN_HEIGHT = 8;
+    public static int SURFACE_HEIGHT = 30;
+    public final static int WATER_LEVEL = 64;
+
+    // Depths data
+    public static int MAX_DEPTH_HEIGHT = 64;
+    public static int MIN_DEPTH_HEIGHT = 1;
+    //public static int SURFACE_DEPTH_HEIGHT = 10;
 
     public enum BlockType {
         DIRT((byte)0),
         GRASS((byte)1),
-        STONE((byte)2);
+        STONE((byte)2),
+        GRAVEL((byte)3),
+        BEDROCK((byte)4),
+        DEEPSLATE((byte)5);
 
         private final byte id;
 
@@ -39,17 +49,44 @@ public class ChunkGen {
     }
 
     public static void AddChunkSurface(Chunk chunk) {
-        Random rand = new Random();
-        int temp = rand.nextInt(Y_MAX);
 
+        // Appliquer un scale et un offset pour mieux lisser le terrain
+        ModuleScaleOffset scaleOffset = new ModuleScaleOffset();
+        scaleOffset.setSource(World.basis);
+        scaleOffset.setScale(0.1);
+        scaleOffset.setOffset(0.1);
+
+        ModuleClamp clamp = new ModuleClamp();
+        clamp.setSource(scaleOffset);
+        clamp.setRange(0.01, 1.0);
+
+        double frequency = 1.0 / 64.0;
+
+        // Add the surface
         for(int x = 0; x < X_DIMENSION; x++) {
-            for(int y = 0; y < Y_MAX + temp; y++) {
-                for(int z = 0; z < Z_DIMENSION; z++) {
-                    chunk.blocks[x][y][z] = (y == Y_MAX-1)? BlockType.GRASS : BlockType.DIRT;
+            for(int z = 0; z < Z_DIMENSION; z++) {
 
-                    BlockModel model = Client.modelLoader.getModel(Client.modelPaths[chunk.blocks[x][y][z].getID()]);
-                    chunk.blockDrawn += model.getElements().size();
-                }
+                double perlinX = (double) (chunk.positionX + x) * frequency;
+                double perlinY = (double) (chunk.positionZ + z) * frequency;
+
+                double noiseValue = clamp.get(perlinX, perlinY);
+                int y = (int) (SURFACE_HEIGHT + Math.round(MAX_HEIGHT + (MAX_HEIGHT - MIN_HEIGHT) * noiseValue));
+                chunk.blocks[x][y][z] = BlockType.STONE;
+
+            }
+        }
+
+        // Add the depth surface
+        clamp.setRange(0.08, 1.0);
+        for(int x = 0; x < X_DIMENSION; x++) {
+            for(int z = 0; z < Z_DIMENSION; z++) {
+
+                double perlinX = (double) (chunk.positionX + x) * frequency;
+                double perlinY = (double) (chunk.positionZ + z) * frequency;
+
+                double noiseValue = clamp.get(perlinX, perlinY);
+                int y = (int) Math.round(MAX_DEPTH_HEIGHT * noiseValue);
+                chunk.blocks[x][y][z] = BlockType.STONE;
             }
         }
     }
@@ -69,18 +106,56 @@ public class ChunkGen {
         }
         return x;
     }
+
     public static void ResolveChunkSurface(Chunk chunk) {
+
+        Random rand = new Random(World.seed);
         for(int x = 0; x < X_DIMENSION; x++) {
-            for(int y = 0; y < Y_DIMENSION; y++) {
-                for(int z = 0; z < Z_DIMENSION; z++) {
-                    if(chunk.blocks[x][y][z] == null)
-                        continue;
-                    if(chunk.blocks[x][y][z] == BlockType.DIRT) {
-                        if(chunk.blocks[x][y+1][z] == null)
-                            chunk.blocks[x][y][z] = BlockType.GRASS;
+            for(int z = 0; z < Z_DIMENSION; z++) {
+                int dirtLevel = max(3, rand.nextInt(5) + 1);
+                int stoneLevel = max(MAX_DEPTH_HEIGHT-4,rand.nextInt(MAX_DEPTH_HEIGHT) + 1);
+
+                // Add surface blocks
+                for(int y = Y_DIMENSION-1; y > MAX_DEPTH_HEIGHT; y--) {
+                    if(chunk.blocks[x][y][z] == BlockType.STONE) {
+                        chunk.blocks[x][y][z] = BlockType.GRASS;
+
+                        // Add sub surface blocks
+                        for(int i = 1; i < dirtLevel; i++) {
+                            chunk.blocks[x][y-i][z] = BlockType.DIRT;
+                        }
+
+                        // Add stone blocks
+                        for(int i = 0; i < stoneLevel; i++) {
+                            int yy = y-dirtLevel-i;
+                            chunk.blocks[x][yy][z] = BlockType.STONE;
+                        }
+                        break;
                     }
                 }
+
+                // Add depths blocks
+                int bedrockLevel = max(2, rand.nextInt(5) + 1);
+
+                // Add bedrock
+                for(int i = 0; i < bedrockLevel; i++) {
+                    chunk.blocks[x][i][z] = BlockType.BEDROCK;
+                }
+
+                // Add Deepslate
+                for(int i = 0; i < MAX_DEPTH_HEIGHT; i++) {
+                    if(chunk.blocks[x][i][z] == BlockType.STONE) {
+                        chunk.blocks[x][i][z] = BlockType.DEEPSLATE;
+                        break;
+                    }
+
+                    if(chunk.blocks[x][i][z] != BlockType.BEDROCK) {
+                        chunk.blocks[x][i][z] = BlockType.DEEPSLATE;
+                    }
+                }
+
             }
+
         }
     }
 
@@ -101,7 +176,7 @@ public class ChunkGen {
 
        chunk.blocks = new BlockType[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
 
-        // Add Blocks inside the chunk
+        // Add Terrain Surface
         AddChunkSurface(chunk);
 
         // check if there's blocks at the top of the dirt

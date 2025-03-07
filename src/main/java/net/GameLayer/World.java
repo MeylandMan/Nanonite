@@ -11,6 +11,7 @@ import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
 import java.util.*;
+import com.sudoplay.joise.module.ModuleBasisFunction;
 
 import static org.joml.Math.*;
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
@@ -21,6 +22,9 @@ public class World {
     public Shader shader;
     public static final float GRAVITY = 0;
 
+    // Procedural generation datas
+    static ModuleBasisFunction basis;
+    public static long seed;
 
     // Chunks datas
     public static boolean allowQuery = true;
@@ -53,6 +57,23 @@ public class World {
         worldCollisions = new ArrayList<>();
         shader = new Shader();
         shader.CreateShader("Physics.vert", "Physics.frag");
+
+        Random rand = new Random();
+        seed = rand.nextLong();
+        basis = new ModuleBasisFunction();
+        basis.setType(ModuleBasisFunction.BasisType.SIMPLEX);
+        basis.setSeed(seed);
+    }
+
+    public World(long sd) {
+        worldCollisions = new ArrayList<>();
+        shader = new Shader();
+        shader.CreateShader("Physics.vert", "Physics.frag");
+        Random rand = new Random();
+        seed = sd;
+        basis = new ModuleBasisFunction();
+        basis.setType(ModuleBasisFunction.BasisType.SIMPLEX);
+        basis.setSeed(seed);
     }
 
     public static void addChunksToQueue(Camera camera, boolean reset) {
@@ -202,7 +223,7 @@ public class World {
         Chunk chunk = loadedChunks.get(chunkID);
 
         // 3 positions + 3 min + 3 max + 1 texID + 1 FaceID
-        int estimatedSizeBuffer = ChunkGen.getBlocksNumber(chunk) * 11;
+        int estimatedSizeBuffer = (ChunkGen.getBlocksNumber(chunk) * 6) * 11;
         FloatBuffer buffer = MemoryUtil.memAllocFloat(estimatedSizeBuffer);
 
 
@@ -319,8 +340,8 @@ public class World {
         shader.Uniform1iv("u_Textures", Client.samplers);
 
         for(Chunk chunk : loadedChunks.values()) {
-            if(chunk.Ssbo == null) continue;
 
+            if(chunk.Ssbo == null) continue;
 
             shader.Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
             chunk.DrawMesh();
@@ -331,54 +352,59 @@ public class World {
         Chunk actualChunk = loadedChunks.get(new Vector2f(xx, zz));
 
         int nx = x, ny = y, nz = z;
-        int cnx = xx, cnz = zz;
+        //int cnx = xx, cnz = zz;
 
         // 0 -- FRONT, 1 -- BACK, 2 -- RIGHT, 3 -- LEFT, 4 -- TOP, 5 -- BOTTOM
         switch (face) {
-            case 0:   nz += 1; cnz += 1; break; // +Z
-            case 1:   nz -= 1; cnz -= 1; break; // -Z
-            case 2:   nx -= 1; cnx -= 1; break; // -X
-            case 3:   nx += 1; cnx += 1; break; // +X
+            case 0:   nz += 1; break; // +Z
+            case 1:   nz -= 1; break; // -Z
+            case 2:   nx -= 1; break; // -X
+            case 3:   nx += 1; break; // +X
             case 4:   ny += 1; break; // +Y
             case 5:   ny -= 1; break; // -Y
         }
 
-        // Check if the current block is not AIR or VOID
-        if(actualChunk == null || actualChunk.blocks[x][y][z] == null) {
+        // Vérifier si le chunk actuel est valide et contient un bloc
+        if (actualChunk == null || actualChunk.blocks[x][y][z] == null) {
             return 0;
         }
 
-        // Check if the nearby chunk is out of length
-        // Check if the face is in a Chunk's border
-        if(nx < 0 || nx >= ChunkGen.X_DIMENSION || nz < 0 || nz >= ChunkGen.Z_DIMENSION || ny < 0 || ny >= ChunkGen.Y_DIMENSION) {
-            //Check the next chunk
-            Chunk nextChunk = loadedChunks.get(new Vector2f(cnx, cnz));
-            if(nextChunk != null) {
-                int nnx = 0, nnz = 0;
-                if(nx < 0)
-                    nnx = ChunkGen.X_DIMENSION-1;
-                if(nz < 0)
-                    nnz = ChunkGen.Z_DIMENSION-1;
+        // Vérifier si on est en dehors des limites Y
+        if (ny < 0 || ny >= ChunkGen.Y_DIMENSION) {
+            return 1;
+        }
 
-                ChunkGen.BlockType nextBlock = nextChunk.blocks[nnx][y][nnz];
+        // Vérifier si on sort du chunk actuel
+        if (nx < 0 || nx >= ChunkGen.X_DIMENSION || nz < 0 || nz >= ChunkGen.Z_DIMENSION) {
+            // Déterminer le chunk voisin
+            int neighborChunkX = xx + (nx < 0 ? -1 : (nx >= ChunkGen.X_DIMENSION ? 1 : 0));
+            int neighborChunkZ = zz + (nz < 0 ? -1 : (nz >= ChunkGen.Z_DIMENSION ? 1 : 0));
 
-                if(nextBlock == null) {
-                    return 1;
-                }
+            // Mettre nx et nz dans l'espace local du chunk voisin
+            nx = (nx + ChunkGen.X_DIMENSION) % ChunkGen.X_DIMENSION;
+            nz = (nz + ChunkGen.Z_DIMENSION) % ChunkGen.Z_DIMENSION;
+
+            // Charger le chunk voisin
+            Chunk neighborChunk = loadedChunks.get(new Vector2f(neighborChunkX, neighborChunkZ));
+
+            if (neighborChunk == null || neighborChunk.blocks[nx][ny][nz] == null) {
+                return 1; // Face visible
             }
-            return 0;
+        } else {
+            // Vérifier dans le chunk actuel
+            if (actualChunk.blocks[nx][ny][nz] == null) {
+                return 1; // Face visible
+            }
         }
 
-
-        if(actualChunk.blocks[nx][ny][nz] == null)
+        // Vérifier l'opacité du bloc adjacent
+        if (!element.isOpacity()) {
             return 1;
-
-        // Vérifier si le bloc adjacent est transparent
-        if(!element.isOpacity())
-            return 1;
+        }
 
         return 0;
     }
+
 
     public void addCollision(CubeCollision collision) {
         worldCollisions.add(collision);

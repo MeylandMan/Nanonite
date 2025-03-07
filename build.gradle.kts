@@ -60,6 +60,7 @@ dependencies {
     implementation("org.joml", "joml", jomlVersion)
     implementation("org.joml", "joml-primitives", `joml-primitivesVersion`)
     implementation("com.google.code.gson:gson:2.12.1")
+    implementation("com.sudoplay.joise:joise:1.1.0")
 }
 
 tasks.test {

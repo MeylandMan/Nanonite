@@ -6,6 +6,7 @@ import net.Core.Rendering.Text.TextRenderer;
 import net.GameLayer.Chunk;
 import net.GameLayer.ChunkGen;
 import net.GameLayer.World;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import java.text.DecimalFormat;
@@ -177,6 +178,17 @@ public class Debugger {
                 floor(camera.Position.y),
                 floor(camera.Position.z)
         );
+
+        /*
+        String blockID = "NAH";
+        if(World.loadedChunks.containsKey(new Vector2f(chunkPosition.x, chunkPosition.z))) {
+            ChunkGen.BlockType block = World.loadedChunks.get(new Vector2f(chunkPosition.x, chunkPosition.z))
+                    .blocks[(int)blockPosition.x][(int)blockPosition.y][(int)blockPosition.z];
+            if(block != null)
+                blockID = block.toString();
+        }
+        */
+
 
         String gameInfo = "XYZ: " + df.format(camera.Position.x) +
                 " / " + df.format(camera.Position.y) +
