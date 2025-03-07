@@ -21,7 +21,8 @@ public class Client {
 
     public static final String[] modelPaths = {
             "blocks/dirt",
-            "blocks/grass_block"
+            "blocks/grass_block",
+            "blocks/stone"
     };
 
     public static ModelLoader modelLoader = new ModelLoader();

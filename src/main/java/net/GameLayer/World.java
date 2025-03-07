@@ -312,7 +312,7 @@ public class World {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         // Enable BackFace Culling
-        glEnable(GL_CULL_FACE);
+        glDisable(GL_CULL_FACE);
         glCullFace(GL_FRONT);
         glFrontFace(GL_CW);
 

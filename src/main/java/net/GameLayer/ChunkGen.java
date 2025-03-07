@@ -15,7 +15,7 @@ import java.util.random.*;
 import static org.joml.Math.*;
 
 public class ChunkGen {
-    public final static int Y_CHUNK = 0;
+    public final static int Y_CHUNK = -64;
 
     public final static byte X_DIMENSION = 16;
     public final static int Y_DIMENSION = 256 + abs(Y_CHUNK);
@@ -24,7 +24,8 @@ public class ChunkGen {
 
     public enum BlockType {
         DIRT((byte)0),
-        GRASS((byte)1);
+        GRASS((byte)1),
+        STONE((byte)2);
 
         private final byte id;
 
@@ -105,17 +106,5 @@ public class ChunkGen {
 
         // check if there's blocks at the top of the dirt
         ResolveChunkSurface(chunk);
-
-        //CompressChunkData(chunk);
-    }
-
-    protected static void CompressChunkData(Chunk chunk) {
-        for(int x = 0; x < X_DIMENSION; x++) {
-            for(int y = 0; y < Y_DIMENSION; y++) {
-                for(int z = 0; z < Z_DIMENSION; z++) {
-
-                }
-            }
-        }
     }
 }

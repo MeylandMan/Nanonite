@@ -25,7 +25,7 @@ public class Chunk {
     protected FloatBuffer buffer;
 
     public BlockType[][][] blocks;
-    public Map<Integer, Integer> compressedBlocks;
+    public Map<Integer, Integer[]> compressedBlocks;
     VBO Ssbo;
     int faceDrawn = 0;
     int blockDrawn = 0;
