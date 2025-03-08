@@ -18,7 +18,6 @@ public class Client {
     public static String version = "Alpha1.0";
 
 
-
     public static final String[] modelPaths = {
             "blocks/dirt",
             "blocks/grass_block",

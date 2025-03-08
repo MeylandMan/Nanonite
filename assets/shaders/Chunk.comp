@@ -14,21 +14,18 @@ vec2(0.0, 0.0), vec2(1.0, 1.0), vec2(0.0, 1.0)
 );
 
 struct BlockFace {
-    float positionX;
-    float positionY;
-    float positionZ;
-
-    float minAABBX;
-    float minAABBY;
-    float minAABBZ;
-
-    float maxAABBX;
-    float maxAABBY;
-    float maxAABBZ;
+    float positionX, positionY, positionZ;
+    float minAABBX, minAABBY, minAABBZ;
+    float maxAABBX, maxAABBY, maxAABBZ;
 
     float id;
     float FaceID;
 };
+
+struct Plane {
+    float a, b, c, d;
+};
+
 
 layout(std430, binding = 0) buffer BlockData {
     BlockFace faces[];
@@ -37,6 +34,13 @@ layout(std430, binding = 0) buffer BlockData {
 uniform mat4 projection;
 uniform mat4 view;
 uniform vec3 Position;
+
+#define PROJECTION_VIEW_MATRIX projection * view
+
+void setPlane(Plane place, float a, float b, float c, float d);
+void normalizePlane(Plane plane);
+bool isPointInside(Plane plane, float x, float y, float z);
+Plane[6] getViewFrustum();
 
 void main() {
 
@@ -104,6 +108,40 @@ void main() {
     v_TexCoords = texCoords[vertexIndex % 6];
     TextureIndex = faces[faceIndex].id;
 
-    gl_Position = projection * view * vec4(fragPos+Position, 1.0);
+    gl_Position = PROJECTION_VIEW_MATRIX * vec4(fragPos+Position, 1.0);
 }
 
+void setPlane(Plane plane, float a, float b, float c, float d) {
+    plane.a = a;
+    plane.b = b;
+    plane.c = c;
+    plane.d = d;
+}
+
+void normalizePlane(Plane plane) {
+    float l = sqrt(plane.a * plane.a + plane.b * plane.b + plane.c * plane.c);
+    plane.a /= l;
+    plane.b /= l;
+    plane.c /= l;
+    plane.d /= l;
+}
+
+bool isPointInside(Plane plane, float x, float y, float z) {
+    return plane.a * x + plane.b * y + plane.c * z + plane.d >= 0;
+}
+
+Plane[6] getViewFrustum() {
+    mat4 vpMatrix = PROJECTION_VIEW_MATRIX;
+
+    Plane planes[6];
+
+    // Récupération des 6 plans
+    setPlane(planes[0], vpMatrix[0][3] + vpMatrix[0][0], vpMatrix[1][3] + vpMatrix[1][0], vpMatrix[2][3] + vpMatrix[2][0], vpMatrix[3][3] + vpMatrix[3][0]); // Plan gauche
+    setPlane(planes[1], vpMatrix[0][3] - vpMatrix[0][0], vpMatrix[1][3] - vpMatrix[1][0], vpMatrix[2][3] - vpMatrix[2][0], vpMatrix[3][3] - vpMatrix[3][0]); // Plan droit
+    setPlane(planes[2], vpMatrix[0][3] + vpMatrix[0][1], vpMatrix[1][3] + vpMatrix[1][1], vpMatrix[2][3] + vpMatrix[2][1], vpMatrix[3][3] + vpMatrix[3][1]); // Plan bas
+    setPlane(planes[3], vpMatrix[0][3] - vpMatrix[0][1], vpMatrix[1][3] - vpMatrix[1][1], vpMatrix[2][3] - vpMatrix[2][1], vpMatrix[3][3] - vpMatrix[3][1]); // Plan haut
+    setPlane(planes[3], vpMatrix[0][3] + vpMatrix[0][2], vpMatrix[1][3] + vpMatrix[1][2], vpMatrix[2][3] + vpMatrix[2][2], vpMatrix[3][3] + vpMatrix[3][2]); // Plan proche
+    setPlane(planes[3], vpMatrix[0][3] - vpMatrix[0][2], vpMatrix[1][3] - vpMatrix[1][2], vpMatrix[2][3] - vpMatrix[2][2], vpMatrix[3][3] - vpMatrix[3][2]); // Plan Eloigné
+
+    return planes;
+}
