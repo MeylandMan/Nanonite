@@ -3,14 +3,14 @@ package net;
 import net.Core.App;
 import net.Core.Client;
 import net.Core.Logger;
-
-import net.Core.Terrain.OpenSimplex2;
-import org.joml.Random;
+import net.Core.MultiThreading;
 
 public class EntryPoint {
 
     public static void main(String[] args) {
         Client.loadModels();
+
+        System.out.println("Nombre de threads max : " + Client.MAX_THREADS);
 
         Logger.log(Logger.Level.INFO, "Creating Window");
 

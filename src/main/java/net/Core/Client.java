@@ -12,6 +12,8 @@ public class Client {
     public static final int MAX_RENDER_DISTANCE = 92;
     public static final int MIN_RENDER_DISTANCE = 8;
 
+    public static final int MAX_THREADS = Runtime.getRuntime().availableProcessors();
+
     public static int Vsync = 1;
     public static String name = "Mycraft ";
     public static String type = "Vanilla";

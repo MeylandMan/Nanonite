@@ -101,6 +101,7 @@ public class App {
         scene.Delete();
         shader.Clear();
         Client.DeleteTextures();
+        MultiThreading.shutdown();
 
         // Terminate GLFW and free the error callback
         glfwTerminate();

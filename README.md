@@ -53,13 +53,13 @@ In the entire project, the following features will be implemented and improved f
   	- [ ] Shadows
    	- [ ] Cascaded shadow maps
 	- [ ] Depth of field
-  - [ ] Use the same shader for all things in game
+  - [ ] Adding ``#include`` in my shader programs
 
-- [ ] Chunk system
+- [x] Chunk system
   - [ ] Blocks physics
   - [ ] Placing blocks
   - [ ] breaking blocks
-- [ ] World Generation
+- [x] World Generation
   - [ ] Biome generation
   - [ ] Water cave
   - [ ] caves (and cliffs ?)

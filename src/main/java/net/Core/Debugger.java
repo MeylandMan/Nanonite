@@ -209,6 +209,10 @@ public class Debugger {
                 df.format(camera.velocity.x) + " / " +
                 df.format(camera.velocity.y) + " / " +
                 df.format(camera.velocity.z) +
+                "\nRight Vector: " +
+                df.format(round(camera.getRight().x)) + " / " +
+                df.format(round(camera.getRight().y)) + " / " +
+                df.format(round(camera.getRight().z)) +
                 "\ntarget speed: " + df.format(camera.targetSpeed) +
                 "\nCurrent Speed: " + df.format(camera.currentSpeed) +
                 "\nDrag Factor: " + df.format(camera.dragFactor);

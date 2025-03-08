@@ -11,6 +11,10 @@ import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
 import com.sudoplay.joise.module.ModuleBasisFunction;
 
 import static org.joml.Math.*;
@@ -30,7 +34,11 @@ public class World {
     public static boolean allowQuery = true;
     public static boolean firstLoad = true;
     public static boolean isAllRendered = false;
-    public static Map<Vector2f, Chunk> loadedChunks = new HashMap<>();
+    public static final Map<Vector2f, Chunk> loadedChunks = new HashMap<>();
+    // File des chunks à supprimer dans le thread OpenGL
+    private static ConcurrentLinkedQueue<Chunk> chunkDeletionQueue = new ConcurrentLinkedQueue<>();
+
+    private static final int CHUNK_THREADS = Client.MAX_THREADS / 2;
 
     public static Camera.Plane[] frustumPlanes;
 
@@ -39,11 +47,11 @@ public class World {
     static double[] chunkQueueSpeed = new double[2];
 
     // Chunk Queues
-    private static final Queue<Vector2f> chunksPos = new LinkedList<>();
-    private static final Queue<Chunk> chunksToRemove = new LinkedList<>();
+    private static PriorityQueue<ChunkDistance> chunksPos;
+    private static Queue<Chunk> chunksToRemove = new LinkedList<>();
 
     // Macros
-    private static final int MAX_CHUNKS_TO_REMOVE_PER_FRAME = 4;
+    private static final int MAX_CHUNKS_TO_REMOVE_PER_FRAME = 2;
 
     private static class ChunkDistance {
         Chunk chunk;
@@ -57,6 +65,7 @@ public class World {
 
     public World() {
         worldCollisions = new ArrayList<>();
+        chunksPos = new PriorityQueue<>(Comparator.comparingDouble(c -> c.distance));
         shader = new Shader();
         shader.CreateShader("Physics.vert", "Physics.frag");
 
@@ -69,9 +78,9 @@ public class World {
 
     public World(long sd) {
         worldCollisions = new ArrayList<>();
+        chunksPos = new PriorityQueue<>(Comparator.comparingDouble(c -> c.distance));
         shader = new Shader();
         shader.CreateShader("Physics.vert", "Physics.frag");
-        Random rand = new Random();
         seed = sd;
         basis = new ModuleBasisFunction();
         basis.setType(ModuleBasisFunction.BasisType.SIMPLEX);
@@ -84,17 +93,11 @@ public class World {
 
         if(reset) {
 
-            for(Chunk chunk : loadedChunks.values()) {
-                chunk.Delete();
-            }
-            System.gc();
-
+            chunkDeletionQueue.addAll(loadedChunks.values());
             loadedChunks.clear();
             chunksPos.clear();
-            chunksToRemove.clear();
 
             Logger.log(Logger.Level.INFO, "Deleted previous chunks");
-
             Logger.log(Logger.Level.INFO, "Loading chunks...");
         }
 
@@ -104,9 +107,6 @@ public class World {
         int radius = Client.renderDistance / 2;
         isAllRendered = false;
 
-        // Temporary list of chunks with their distance to the player
-        List<ChunkDistance> chunkList = new ArrayList<>();
-
         // Takes the view Frustum
         frustumPlanes = camera.getFrustumPlanes();
 
@@ -115,34 +115,20 @@ public class World {
                 int worldX = (chunkX + dx) * ChunkGen.X_DIMENSION;
                 int worldZ = (chunkZ + dz) * ChunkGen.Z_DIMENSION;
 
-                // Check if the chunk is inside the viewFrustum
                 if (!ChunkGen.isChunkInFrustum(frustumPlanes, worldX, worldZ)) continue;
 
-                Vector2f position =  new Vector2f(worldX, worldZ);
-                if(loadedChunks.containsKey(new Vector2f(worldX / ChunkGen.X_DIMENSION,
-                        worldZ / ChunkGen.Z_DIMENSION))) continue;
+                Vector2f chunkID = new Vector2f(worldX / ChunkGen.X_DIMENSION, worldZ / ChunkGen.Z_DIMENSION);
+                if (loadedChunks.containsKey(chunkID)) continue;
 
-                Chunk chunk = new Chunk(position);
+                Chunk chunk = new Chunk(new Vector2f(worldX, worldZ));
 
+                // Utilisation de la distance au carré pour éviter sqrt()
+                float distanceSquared = dx * dx + dz * dz;
+                chunksPos.add(new ChunkDistance(chunk, distanceSquared));
 
-                float distance = (float) Math.sqrt(dx * dx + dz * dz);
-                chunkList.add(new ChunkDistance(chunk, distance));
+                ChunkGen.setupChunk(chunk);
+                loadedChunks.put(chunkID, chunk);
             }
-        }
-
-        // Sort by the nearest to the farthest from the player
-        chunkList.sort(Comparator.comparingDouble(c -> c.distance));
-
-        for (ChunkDistance chunkDistance : chunkList) {
-            Chunk chunk = chunkDistance.chunk;
-            Vector2f chunkPos = new Vector2f(chunk.positionX, chunk.positionZ);
-            Vector2f chunkID = new Vector2f(chunk.positionX / ChunkGen.X_DIMENSION,
-                    chunk.positionZ / ChunkGen.Z_DIMENSION);
-            chunksPos.add(chunkPos);
-
-            ChunkGen.setupChunk(chunk);
-            loadedChunks.put(chunkID, chunk);
-
         }
 
         if(reset) {
@@ -152,48 +138,33 @@ public class World {
             Logger.log(Logger.Level.INFO, "Rendering chunks...");
         }
         allowQuery = reset;
-        chunkList.clear();
     }
 
 
     public static void updateNearbyChunks(Vector2f v) {
+        Vector2f[] neighbors = {
+                new Vector2f(v.x + 1, v.y),
+                new Vector2f(v.x - 1, v.y),
+                new Vector2f(v.x, v.y + 1),
+                new Vector2f(v.x, v.y - 1)
+        };
 
-        Vector2f neighbour = new Vector2f(v.x+1, v.y);
+        for (Vector2f neighbor : neighbors) {
+            Chunk neighborChunk = loadedChunks.get(neighbor);
+            if (neighborChunk != null) {
 
-        if(loadedChunks.containsKey(neighbour)) {
-            if(loadedChunks.get(neighbour).Ssbo == null)
-                loadedChunks.get(neighbour).Init();
-            loadedChunks.get(neighbour).updateChunk = true;
-            loadedChunks.get(neighbour).updateChunk((int) neighbour.x, (int) neighbour.y);
-        }
-        neighbour = new Vector2f(v.x-1, v.y);
-        if(loadedChunks.containsKey(neighbour)) {
-            if(loadedChunks.get(neighbour).Ssbo == null)
-                loadedChunks.get(neighbour).Init();
-            loadedChunks.get(neighbour).updateChunk = true;
-            loadedChunks.get(neighbour).updateChunk((int) neighbour.x, (int) neighbour.y);
-        }
-        neighbour = new Vector2f(v.x, v.y+1);
-        if(loadedChunks.containsKey(neighbour)) {
-            if(loadedChunks.get(neighbour).Ssbo == null)
-                loadedChunks.get(neighbour).Init();
-            loadedChunks.get(neighbour).updateChunk = true;
-            loadedChunks.get(neighbour).updateChunk((int) neighbour.x, (int) neighbour.y);
-        }
-        neighbour = new Vector2f(v.x, v.y-1);
-        if(loadedChunks.containsKey(neighbour)) {
-            if(loadedChunks.get(neighbour).Ssbo == null)
-                loadedChunks.get(neighbour).Init();
-            loadedChunks.get(neighbour).updateChunk = true;
-            loadedChunks.get(neighbour).updateChunk((int) neighbour.x, (int) neighbour.y);
+                 if (neighborChunk.Ssbo == null) neighborChunk.Init();
+                neighborChunk.updateChunk = true;
+                neighborChunk.updateChunk((int) neighbor.x, (int) neighbor.y);
+            }
         }
     }
 
     public void loadChunks() {
-        if(chunksPos.isEmpty()) {
-            if(renderQuery) {
+        if (chunksPos.isEmpty()) {
+            if (renderQuery) {
                 chunkRenderSpeed[1] = glfwGetTime();
-                double result = abs(chunkQueueSpeed[1] - chunkRenderSpeed[0]);
+                double result = Math.abs(chunkQueueSpeed[1] - chunkRenderSpeed[0]);
                 Logger.log(Logger.Level.INFO, "Rendered chunks in " + String.format("%.3f", result) + "s");
                 renderQuery = false;
             }
@@ -205,23 +176,19 @@ public class World {
         renderQuery = allowQuery;
         chunkRenderSpeed[0] = glfwGetTime();
 
-        for(int i = 0; i < Client.renderDistance / 2; i++) {
-            Vector2f queuedChunkPos = chunksPos.poll();
-            if(queuedChunkPos == null)
-                break;
+        int maxChunksPerFrame = Client.renderDistance / 2;
+        for (int i = 0; i < maxChunksPerFrame && !chunksPos.isEmpty(); i++) {
+            Chunk getID = chunksPos.poll().chunk;
+            Vector2f queuedChunkPos = new Vector2f(getID.positionX, getID.positionZ);
+            if (queuedChunkPos == null) break;
 
-            Vector2f chunkID = new Vector2f(queuedChunkPos.x / ChunkGen.X_DIMENSION,
-                    queuedChunkPos.y / ChunkGen.Z_DIMENSION);
-
+            Vector2f chunkID = new Vector2f(queuedChunkPos.x / ChunkGen.X_DIMENSION, queuedChunkPos.y / ChunkGen.Z_DIMENSION);
             Chunk chunk = loadedChunks.get(chunkID);
-            if(chunk == null) continue;
+            if (chunk == null) continue;
 
-            if(chunk.Ssbo == null)
-                chunk.Init();
+            if (chunk.Ssbo == null) chunk.Init();
 
-            if(!allowQuery) {
-                updateNearbyChunks(chunkID);
-            }
+            updateNearbyChunks(chunkID);
             chunk.updateChunk((int) chunkID.x, (int) chunkID.y);
         }
     }
@@ -296,7 +263,6 @@ public class World {
         ResolveChunkRender(camera, deltaTime);
     }
 
-
     public void ResolveChunkRender(Camera camera, float deltaTime) {
         if (loadedChunks == null || !isAllRendered) return;
 
@@ -304,30 +270,62 @@ public class World {
         int chunkZ = (int) (camera.Position.z / ChunkGen.Z_DIMENSION);
         float radius = Client.renderDistance / 2.f;
 
-        // Put the out-of-reach chunks out of the box
-        for (Chunk chunk : loadedChunks.values()) {
-            if (chunk == null) continue;
+        List<Chunk> chunksToProcess = new ArrayList<>();
 
-            int chunkDistX = Math.abs((chunk.positionX / ChunkGen.X_DIMENSION) - chunkX);
-            int chunkDistZ = Math.abs((chunk.positionZ / ChunkGen.X_DIMENSION) - chunkZ);
+        // Multithreading pour déterminer les chunks à supprimer
+        List<Future<List<Chunk>>> futures = new ArrayList<>();
+        List<Chunk> chunkList = new ArrayList<>(loadedChunks.values());
+        int chunkSize = chunkList.size() / CHUNK_THREADS;
 
-            if (chunkDistX > radius || chunkDistZ > radius) {
-                chunksToRemove.add(chunk);
+        for (int i = 0; i < CHUNK_THREADS; i++) {
+            int start = i * chunkSize;
+            int end = (i == CHUNK_THREADS - 1) ? chunkList.size() : (i + 1) * chunkSize;
+
+            List<Chunk> sublist = chunkList.subList(start, end);
+            futures.add(MultiThreading.submitTask(() -> {
+                List<Chunk> localChunksToRemove = new ArrayList<>();
+                for (Chunk chunk : sublist) {
+                    if (chunk == null) continue;
+                    int chunkDistX = Math.abs((chunk.positionX / ChunkGen.X_DIMENSION) - chunkX);
+                    int chunkDistZ = Math.abs((chunk.positionZ / ChunkGen.Z_DIMENSION) - chunkZ);
+                    if (chunkDistX > radius || chunkDistZ > radius) {
+                        localChunksToRemove.add(chunk);
+                    }
+                }
+                return localChunksToRemove;
+            }));
+        }
+
+        // Collecter les résultats des threads
+        for (Future<List<Chunk>> future : futures) {
+            try {
+                chunksToProcess.addAll(future.get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
             }
         }
 
-        // Deleting chunks and replacing deleted with new one
-        for (int i = 0; i < MAX_CHUNKS_TO_REMOVE_PER_FRAME && !chunksToRemove.isEmpty(); i++) {
-            Chunk chunk = chunksToRemove.poll();
-            if(chunk == null) return;
-            Vector2f chunkPos = new Vector2f(chunk.positionX / ChunkGen.X_DIMENSION,
-                    chunk.positionZ / ChunkGen.Z_DIMENSION);
-            chunk.Delete();
-            loadedChunks.remove(chunkPos);
+        // Ajouter les chunks à la file d'attente pour suppression dans le thread OpenGL
+        for (int i = 0; i < Math.min(MAX_CHUNKS_TO_REMOVE_PER_FRAME, chunksToProcess.size()); i++) {
+            chunkDeletionQueue.add(chunksToProcess.get(i));
+        }
+    }
+
+    public void processChunkDeletions() {
+        while (!chunkDeletionQueue.isEmpty()) {
+            Chunk chunk = chunkDeletionQueue.poll();
+            if (chunk != null) {
+                chunk.Delete(); // Exécute OpenGL dans le thread principal
+                Vector2f chunkPos = new Vector2f(chunk.positionX / ChunkGen.X_DIMENSION,
+                        chunk.positionZ / ChunkGen.Z_DIMENSION);
+                loadedChunks.remove(chunkPos);
+            }
         }
     }
 
     public void renderChunks(Shader shader) {
+
+        processChunkDeletions();
 
         for(int i = 0; i < Client.blockTextures.length; i++) {
             Client.blockTextures[i].Bind(i);
