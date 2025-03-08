@@ -172,6 +172,37 @@ public class ChunkGen {
         return -1.0f; // In case the path is not found
     }
 
+    public static boolean isChunkInFrustum(Camera.Plane[] frustumPlanes, float chunkX, float chunkZ) {
+        float chunkSize = ChunkGen.X_DIMENSION; // Length of a chunk
+        float chunkHeight = ChunkGen.Y_DIMENSION;
+
+        // Try the 4 corners of a chunk (ground)
+        float[][] corners = {
+                {chunkX, 0, chunkZ},                                    // Bas-gauche
+                {chunkX + chunkSize, 0, chunkZ},                        // Bas-droite
+                {chunkX, 0, chunkZ + chunkSize},                        // Bas-gauche arrière
+                {chunkX + chunkSize, 0, chunkZ + chunkSize},            // Bas-droite arrière
+                {chunkX, chunkHeight, chunkZ},                          // Haut-gauche
+                {chunkX + chunkSize, chunkHeight, chunkZ},              // Haut-droite
+                {chunkX, chunkHeight, chunkZ + chunkSize},              // Haut-gauche arrière
+                {chunkX + chunkSize, chunkHeight, chunkZ + chunkSize}   // Haut-droite arrière
+        };
+
+        for (Camera.Plane plane : frustumPlanes) {
+            boolean inside = false;
+            for (float[] corner : corners) {
+                if (plane.isPointInside(corner[0], corner[1], corner[2])) {
+                    inside = true;
+                    break;
+                }
+            }
+
+            if (!inside) return false; // If no corners is inside the view Frustum, eject the chunk
+        }
+
+        return true;
+    }
+
     protected static void setupChunk(Chunk chunk) {
 
        chunk.blocks = new BlockType[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];

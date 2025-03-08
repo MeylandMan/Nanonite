@@ -105,10 +105,16 @@ public class World {
         // Temporary list of chunks with their distance to the player
         List<ChunkDistance> chunkList = new ArrayList<>();
 
+        // Takes the view Frustum
+        Camera.Plane[] frustumPlanes = camera.getFrustumPlanes();
+
         for (int dz = -radius; dz <= radius; dz++) {
             for (int dx = -radius; dx <= radius; dx++) {
                 int worldX = (chunkX + dx) * ChunkGen.X_DIMENSION;
                 int worldZ = (chunkZ + dz) * ChunkGen.Z_DIMENSION;
+
+                // Check if the chunk is inside the viewFrustum
+                if (!ChunkGen.isChunkInFrustum(frustumPlanes, worldX, worldZ)) continue;
 
                 Vector2f position =  new Vector2f(worldX, worldZ);
                 if(loadedChunks.containsKey(new Vector2f(worldX / ChunkGen.X_DIMENSION,
@@ -385,7 +391,6 @@ public class World {
 
             // Load the neighborChunk
             Chunk neighborChunk = loadedChunks.get(new Vector2f(neighborChunkX, neighborChunkZ));
-
             if (neighborChunk == null || neighborChunk.blocks[nx][ny][nz] == null) {
                 return 1;
             }

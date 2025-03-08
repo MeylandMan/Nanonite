@@ -237,32 +237,6 @@ public class Camera {
 
         return planes;
     }
-
-    public static boolean isChunkInFrustum(Plane[] frustumPlanes, float chunkX, float chunkZ) {
-        float chunkSize = ChunkGen.X_DIMENSION; // Length of a chunk
-
-        // Try the 4 corners of a chunk (ground)
-        float[][] corners = {
-                {chunkX, 0, chunkZ},
-                {chunkX + chunkSize, 0, chunkZ},
-                {chunkX, 0, chunkZ + chunkSize},
-                {chunkX + chunkSize, 0, chunkZ + chunkSize}
-        };
-
-        for (Plane plane : frustumPlanes) {
-            boolean inside = false;
-            for (float[] corner : corners) {
-                if (plane.isPointInside(corner[0], corner[1], corner[2])) {
-                    inside = true;
-                    break;
-                }
-            }
-
-            if (!inside) return false; // If no corners is inside the view Frustum, eject the chunk
-        }
-
-        return true;
-    }
     
     // Getters
     public Vector3f getFront() { return Front; }
