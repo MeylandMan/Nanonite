@@ -212,6 +212,58 @@ public class Camera {
         collision.position = new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f);
     }
 
+    // Frustum 
+    public Plane[] getFrustumPlanes() {
+        Matrix4f vpMatrix = new Matrix4f();
+        projection.mul(view, vpMatrix);
+
+        Plane[] planes = new Plane[6];
+        for (int i = 0; i < 6; i++) {
+            planes[i] = new Plane();
+        }
+        
+        // Récupération des 6 plans
+        planes[0].set(vpMatrix.get(0,3) + vpMatrix.get(0,0), vpMatrix.get(1,3) + vpMatrix.get(1,0), vpMatrix.get(2,3) + vpMatrix.get(2,0), vpMatrix.get(3,3) + vpMatrix.get(3,0)); // Plan gauche
+        planes[1].set(vpMatrix.get(0,3) - vpMatrix.get(0,0), vpMatrix.get(1,3) - vpMatrix.get(1,0), vpMatrix.get(2,3) - vpMatrix.get(2,0), vpMatrix.get(3,3) - vpMatrix.get(3,0)); // Plan droit
+        planes[2].set(vpMatrix.get(0,3) + vpMatrix.get(0,1), vpMatrix.get(1,3) + vpMatrix.get(1,1), vpMatrix.get(2,3) + vpMatrix.get(2,1), vpMatrix.get(3,3) + vpMatrix.get(3,1)); // Plan bas
+        planes[3].set(vpMatrix.get(0,3) - vpMatrix.get(0,1), vpMatrix.get(1,3) - vpMatrix.get(1,1), vpMatrix.get(2,3) - vpMatrix.get(2,1), vpMatrix.get(3,3) - vpMatrix.get(3,1)); // Plan haut
+        planes[4].set(vpMatrix.get(0,3) + vpMatrix.get(0,2), vpMatrix.get(1,3) + vpMatrix.get(1,2), vpMatrix.get(2,3) + vpMatrix.get(2,2), vpMatrix.get(3,3) + vpMatrix.get(3,2)); // Plan proche
+        planes[5].set(vpMatrix.get(0,3) - vpMatrix.get(0,2), vpMatrix.get(1,3) - vpMatrix.get(1,2), vpMatrix.get(2,3) - vpMatrix.get(2,2), vpMatrix.get(3,3) - vpMatrix.get(3,2)); // Plan éloigné
+
+        // Normalisation des plans pour éviter les erreurs de distance
+        for (Plane plane : planes) {
+            plane.normalize();
+        }
+
+        return planes;
+    }
+
+    public static boolean isChunkInFrustum(Plane[] frustumPlanes, float chunkX, float chunkZ) {
+        float chunkSize = ChunkGen.X_DIMENSION; // Length of a chunk
+
+        // Try the 4 corners of a chunk (ground)
+        float[][] corners = {
+                {chunkX, 0, chunkZ},
+                {chunkX + chunkSize, 0, chunkZ},
+                {chunkX, 0, chunkZ + chunkSize},
+                {chunkX + chunkSize, 0, chunkZ + chunkSize}
+        };
+
+        for (Plane plane : frustumPlanes) {
+            boolean inside = false;
+            for (float[] corner : corners) {
+                if (plane.isPointInside(corner[0], corner[1], corner[2])) {
+                    inside = true;
+                    break;
+                }
+            }
+
+            if (!inside) return false; // If no corners is inside the view Frustum, eject the chunk
+        }
+
+        return true;
+    }
+    
     // Getters
     public Vector3f getFront() { return Front; }
     public Vector3f getRight() { return Right; }
