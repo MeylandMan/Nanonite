@@ -174,18 +174,19 @@ public class ChunkGen {
 
     public static boolean isChunkInFrustum(Camera.Plane[] frustumPlanes, float chunkX, float chunkZ) {
         float chunkSize = ChunkGen.X_DIMENSION; // Length of a chunk
-        float chunkHeight = ChunkGen.Y_DIMENSION;
+        float chunkHeight = 80;
+        float chunkY = ChunkGen.Y_CHUNK;
 
         // Try the 4 corners of a chunk (ground)
         float[][] corners = {
-                {chunkX, 0, chunkZ},                                    // Bas-gauche
-                {chunkX + chunkSize, 0, chunkZ},                        // Bas-droite
-                {chunkX, 0, chunkZ + chunkSize},                        // Bas-gauche arrière
-                {chunkX + chunkSize, 0, chunkZ + chunkSize},            // Bas-droite arrière
-                {chunkX, chunkHeight, chunkZ},                          // Haut-gauche
-                {chunkX + chunkSize, chunkHeight, chunkZ},              // Haut-droite
-                {chunkX, chunkHeight, chunkZ + chunkSize},              // Haut-gauche arrière
-                {chunkX + chunkSize, chunkHeight, chunkZ + chunkSize}   // Haut-droite arrière
+                {chunkX, chunkY, chunkZ},                                    // Bas-gauche
+                {chunkX + chunkSize, chunkY, chunkZ},                        // Bas-droite
+                {chunkX, chunkY, chunkZ + chunkSize},                        // Bas-gauche arrière
+                {chunkX + chunkSize, chunkY, chunkZ + chunkSize},            // Bas-droite arrière
+                {chunkX, chunkHeight, chunkZ},                               // Haut-gauche
+                {chunkX + chunkSize, chunkHeight, chunkZ},                   // Haut-droite
+                {chunkX, chunkHeight, chunkZ + chunkSize},                   // Haut-gauche arrière
+                {chunkX + chunkSize, chunkHeight, chunkZ + chunkSize}        // Haut-droite arrière
         };
 
         for (Camera.Plane plane : frustumPlanes) {

@@ -32,6 +32,8 @@ public class World {
     public static boolean isAllRendered = false;
     public static Map<Vector2f, Chunk> loadedChunks = new HashMap<>();
 
+    public static Camera.Plane[] frustumPlanes;
+
     public static boolean renderQuery = false;
     static double[] chunkRenderSpeed = new double[2];
     static double[] chunkQueueSpeed = new double[2];
@@ -106,7 +108,7 @@ public class World {
         List<ChunkDistance> chunkList = new ArrayList<>();
 
         // Takes the view Frustum
-        Camera.Plane[] frustumPlanes = camera.getFrustumPlanes();
+        frustumPlanes = camera.getFrustumPlanes();
 
         for (int dz = -radius; dz <= radius; dz++) {
             for (int dx = -radius; dx <= radius; dx++) {
@@ -347,7 +349,8 @@ public class World {
 
         for(Chunk chunk : loadedChunks.values()) {
 
-            if(chunk.Ssbo == null) continue;
+            if(chunk.Ssbo == null || !ChunkGen.isChunkInFrustum(frustumPlanes, chunk.positionX, chunk.positionZ))
+                continue;
 
             shader.Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
             chunk.DrawMesh();
