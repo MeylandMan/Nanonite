@@ -1,16 +1,19 @@
 #version 460 core
+
 #define BLOCK_SIZE 16
+#define VERTICES_CLIPPING -200000000000.0
+
 
 out vec3 fragPos;
-
+out float inside;
 out vec2 v_TexCoords;
 out float TextureIndex;
 
 // Positions locales des sommets d’un cube
 
 const vec2 texCoords[6] = vec2[](
-vec2(0.0, 0.0), vec2(1.0, 0.0), vec2(1.0, 1.0),
-vec2(0.0, 0.0), vec2(1.0, 1.0), vec2(0.0, 1.0)
+    vec2(0.0, 0.0), vec2(1.0, 0.0), vec2(1.0, 1.0),
+    vec2(0.0, 0.0), vec2(1.0, 1.0), vec2(0.0, 1.0)
 );
 
 struct BlockFace {
@@ -70,14 +73,16 @@ void main() {
     Plane viewFrustum[6] = getViewFrustum();
 
     vec4 worldPosition = PROJECTION_VIEW_MATRIX * vec4(fragPos+Position, 1.0);
+
     bool isInside;
     for(uint i = 0; i < 6; i++) {
         isInside = isPointInside(viewFrustum[i], worldPosition.x, worldPosition.y, worldPosition.z);
     }
 
     if (!isInside)
-        worldPosition = vec4(-200000000000.0, -2000000000000.0, -20000000000.0, 1.0); // Put the vertices very far AWAY
+        worldPosition = vec4(VERTICES_CLIPPING, VERTICES_CLIPPING, VERTICES_CLIPPING, 1.0); // Put the vertices very far AWAY
 
+    inside = (isInside)? 1.0 : 0.0;
     gl_Position = worldPosition;
 }
 

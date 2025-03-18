@@ -6,11 +6,15 @@ out vec4 fragColor;
 
 in vec2 v_TexCoords;
 in vec3 fragPos;
+in float inside;
 in float TextureIndex;
 
 uniform sampler2D u_Textures[TEXTURE_LOADED];
 
 void main() {
+    if(inside == 0.0)
+        discard;
+
     int index = int(TextureIndex);
     //fragColor = vec4(TextureIndex, TextureIndex, 0.0, 1.0);
 

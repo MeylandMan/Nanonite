@@ -37,7 +37,7 @@ public class App {
     public Renderer renderer;
     Scene scene = new Scene();
     Shader shader = new Shader();
-    Camera camera = new Camera(new Vector3f(8, 70, 8));
+    Camera camera = new Camera(new Vector3f(Integer.MAX_VALUE / 10, 70, Integer.MAX_VALUE / 10));
     World world;
     float delta;
     float lastFrame;
