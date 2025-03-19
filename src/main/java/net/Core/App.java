@@ -231,10 +231,9 @@ public class App {
 
         Raycast raycast = new Raycast(camera.Position, camera.getFront());
         while ( !glfwWindowShouldClose(window) ) {
-            int error;
-            while ((error = glGetError()) != GL_NO_ERROR) {
-                Logger.log(Logger.Level.WARNING, "OpenGL error: " + error);
-            }
+
+            Logger.catchOpenGLErrors();
+
             glfwSwapInterval(Client.Vsync);
 
             delta = (fps[0] == 0)? 0.1f : 1/fps[0];

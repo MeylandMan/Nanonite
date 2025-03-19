@@ -30,15 +30,15 @@ public class Chunk {
     int faceDrawn = 0;
     int blockDrawn = 0;
 
-    public int positionX, positionY, positionZ;
+    public long positionX, positionY, positionZ;
 
     public Chunk() { }
 
-    public Chunk(Vector2f position) {
+    public Chunk(long x, long z) {
         this.compressedBlocks = new HashMap<>();
-        this.positionX = (int)position.x;
+        this.positionX = x;
         this.positionY = Y_CHUNK;
-        this.positionZ = (int)position.y;
+        this.positionZ = z;
 
     }
 
@@ -53,7 +53,7 @@ public class Chunk {
 
 
 
-    public void updateChunk(int xx, int zz) {
+    public void updateChunk(long xx, long zz) {
         if(!updateChunk)
             return;
 

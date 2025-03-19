@@ -6,6 +6,9 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static org.lwjgl.opengl.GL11.GL_NO_ERROR;
+import static org.lwjgl.opengl.GL11.glGetError;
+
 public class Logger {
 
     private static final String LOG_FILE = "Mycraft.log";
@@ -26,6 +29,12 @@ public class Logger {
         }
     }
 
+    public static void catchOpenGLErrors() {
+        int error;
+        while ((error = glGetError()) != GL_NO_ERROR) {
+            Logger.log(Logger.Level.WARNING, "OpenGL error: " + error);
+        }
+    }
     private static void writeToFile(String message) {
         try (FileWriter fw = new FileWriter(LOG_FILE, true);
              PrintWriter pw = new PrintWriter(fw)) {

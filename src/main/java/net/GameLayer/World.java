@@ -112,15 +112,15 @@ public class World {
 
         for (int dz = -radius; dz <= radius; dz++) {
             for (int dx = -radius; dx <= radius; dx++) {
-                int worldX = (chunkX + dx) * ChunkGen.X_DIMENSION;
-                int worldZ = (chunkZ + dz) * ChunkGen.Z_DIMENSION;
+                long worldX = (long) (chunkX + dx) * ChunkGen.X_DIMENSION;
+                long worldZ = (long) (chunkZ + dz) * ChunkGen.Z_DIMENSION;
 
                 if (!ChunkGen.isChunkInFrustum(frustumPlanes, worldX, worldZ)) continue;
 
                 Vector2f chunkID = new Vector2f(worldX / ChunkGen.X_DIMENSION, worldZ / ChunkGen.Z_DIMENSION);
                 if (loadedChunks.containsKey(chunkID)) continue;
 
-                Chunk chunk = new Chunk(new Vector2f(worldX, worldZ));
+                Chunk chunk = new Chunk(worldX, worldZ);
 
                 // Utilisation de la distance au carré pour éviter sqrt()
                 float distanceSquared = dx * dx + dz * dz;
@@ -193,7 +193,7 @@ public class World {
         }
     }
 
-    protected static FloatBuffer getChunkData(int xx, int zz) {
+    protected static FloatBuffer getChunkData(long xx, long zz) {
         Vector2f chunkID = new Vector2f(xx, zz);
         Chunk chunk = loadedChunks.get(chunkID);
 
@@ -286,8 +286,8 @@ public class World {
                 List<Chunk> localChunksToRemove = new ArrayList<>();
                 for (Chunk chunk : sublist) {
                     if (chunk == null) continue;
-                    int chunkDistX = Math.abs((chunk.positionX / ChunkGen.X_DIMENSION) - chunkX);
-                    int chunkDistZ = Math.abs((chunk.positionZ / ChunkGen.Z_DIMENSION) - chunkZ);
+                    long chunkDistX = Math.abs((chunk.positionX / ChunkGen.X_DIMENSION) - chunkX);
+                    long chunkDistZ = Math.abs((chunk.positionZ / ChunkGen.Z_DIMENSION) - chunkZ);
                     if (chunkDistX > radius || chunkDistZ > radius) {
                         localChunksToRemove.add(chunk);
                     }
@@ -355,7 +355,7 @@ public class World {
         }
     }
 
-    protected static int shouldRenderFace(int xx, int zz, Element element, int x, int y, int z, int face) {
+    protected static int shouldRenderFace(long xx, long zz, Element element, int x, int y, int z, int face) {
         Chunk actualChunk = loadedChunks.get(new Vector2f(xx, zz));
 
         int nx = x, ny = y, nz = z;
@@ -383,8 +383,8 @@ public class World {
         // Vérifier si on sort du chunk actuel
         if (nx < 0 || nx >= ChunkGen.X_DIMENSION || nz < 0 || nz >= ChunkGen.Z_DIMENSION) {
             // Déterminer le chunk voisin
-            int neighborChunkX = xx + (nx < 0 ? -1 : (nx >= ChunkGen.X_DIMENSION ? 1 : 0));
-            int neighborChunkZ = zz + (nz < 0 ? -1 : (nz >= ChunkGen.Z_DIMENSION ? 1 : 0));
+            long neighborChunkX = xx + (nx < 0 ? -1 : (nx >= ChunkGen.X_DIMENSION ? 1 : 0));
+            long neighborChunkZ = zz + (nz < 0 ? -1 : (nz >= ChunkGen.Z_DIMENSION ? 1 : 0));
 
             // Set nx et nz in neighbor local space
             nx = (nx + ChunkGen.X_DIMENSION) % ChunkGen.X_DIMENSION;
