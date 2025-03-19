@@ -60,14 +60,14 @@ public class ChunkGen {
         clamp.setSource(scaleOffset);
         clamp.setRange(0.01, 1.0);
 
-        double frequency = 1.0 / 64.0;
-
+        double surfaceFrequency = 1.0 / 128.0;
+        double depthFrequency = 1.0 / 64.0;
         // Add the surface
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int z = 0; z < Z_DIMENSION; z++) {
 
-                double perlinX = (double) (chunk.positionX + x) * frequency;
-                double perlinY = (double) (chunk.positionZ + z) * frequency;
+                double perlinX = (double) (chunk.positionX + x) * surfaceFrequency;
+                double perlinY = (double) (chunk.positionZ + z) * surfaceFrequency;
 
                 double noiseValue = clamp.get(perlinX, perlinY);
                 int y = (int) (SURFACE_HEIGHT + Math.round(MAX_HEIGHT + (MAX_HEIGHT - MIN_HEIGHT) * noiseValue));
@@ -81,8 +81,8 @@ public class ChunkGen {
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int z = 0; z < Z_DIMENSION; z++) {
 
-                double perlinX = (double) (chunk.positionX + x) * frequency;
-                double perlinY = (double) (chunk.positionZ + z) * frequency;
+                double perlinX = (double) (chunk.positionX + x) * depthFrequency;
+                double perlinY = (double) (chunk.positionZ + z) * depthFrequency;
 
                 double noiseValue = clamp.get(perlinX, perlinY);
                 int y = (int) Math.round(MAX_DEPTH_HEIGHT * noiseValue);

@@ -189,8 +189,8 @@ public class Camera {
             float speed = currentSpeed * deltaTime;
 
         if(targetSpeed == 0 && !UP) {
-            velocity.x = lerp(velocity.x, 0, acceleration/dragFactor);
-            velocity.z = lerp(velocity.z, 0, acceleration/dragFactor);
+            velocity.x = clamp(lerp(velocity.x, 0, acceleration/dragFactor), -1, 1);
+            velocity.z = clamp(lerp(velocity.z, 0, acceleration/dragFactor), -1, 1);
             dragFactor -= deltaTime * DRAG_FACTOR;
             dragFactor = max(dragFactor, 1);
 
@@ -200,10 +200,6 @@ public class Camera {
             velocity.z *= speed;
             velocity.y *= deltaTime;
         }
-
-
-        velocity.x = clamp(velocity.x, -1, 1);
-        velocity.z = clamp(velocity.z, -1, 1);
         Position.add(velocity);
 
         raycast.update(new Vector3f(Position.x, Position.y+1, Position.z), getFront());
