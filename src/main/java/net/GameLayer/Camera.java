@@ -3,12 +3,12 @@ package net.GameLayer;
 
 import net.Core.Client;
 import net.Core.Physics.CubeCollision;
-import static net.GameLayer.World.*;
 import static org.joml.Math.*;
 
 import net.Core.Physics.Raycast;
 import org.joml.Vector3f;
 import org.joml.Matrix4f;
+import java.util.*;
 
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 
@@ -89,7 +89,7 @@ public class Camera {
 
     // Camera constructor
     public Camera(Vector3f position) {
-        this.Position = position;
+        Position = position;
         this.WorldUp = new Vector3f(0.f, 1.f, 0.f);
         this.Yaw = YAW;
         this.Pitch = PITCH;
@@ -150,9 +150,7 @@ public class Camera {
             velocity.y -= SPEED;
             UP = true;
         }
-        
-        for(CubeCollision collision : worldCollisions) {
-        }
+
     }
 
     // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
@@ -237,7 +235,24 @@ public class Camera {
 
         return planes;
     }
-    
+
+    public float[] getFrustumData() {
+        ArrayList<Float> data = new ArrayList<>();
+
+        for(int i = 0; i < 6; i++) {
+            data.add(getFrustumPlanes()[i].a);
+            data.add(getFrustumPlanes()[i].b);
+            data.add(getFrustumPlanes()[i].c);
+            data.add(getFrustumPlanes()[i].d);
+        }
+
+        float[] result = new float[data.size()];
+        for(int i = 0; i < data.size(); i++) {
+            result[i] = data.get(i);
+        }
+
+        return result;
+    }
     // Getters
     public Vector3f getFront() { return Front; }
     public Vector3f getRight() { return Right; }

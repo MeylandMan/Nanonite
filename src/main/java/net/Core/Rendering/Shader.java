@@ -123,6 +123,11 @@ public class Shader {
         glUniform4fv(location, x);
     }
 
+    public void Uniform4fv(String name, float[] x) {
+        int location = getUniform(name);
+        glUniform4fv(location, x);
+    }
+
     public void Uniform1iv(String name, IntBuffer x) {
         int location = getUniform(name);
         glUniform1iv(location, x);
