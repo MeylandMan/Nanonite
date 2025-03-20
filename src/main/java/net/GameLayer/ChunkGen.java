@@ -62,12 +62,16 @@ public class ChunkGen {
 
         double surfaceFrequency = 1.0 / 128.0;
         double depthFrequency = 1.0 / 64.0;
+
+        long worldX = chunk.positionX * ChunkGen.X_DIMENSION;
+        long worldZ = chunk.positionZ * ChunkGen.Z_DIMENSION;
+        
         // Add the surface
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int z = 0; z < Z_DIMENSION; z++) {
 
-                double perlinX = (double) (chunk.positionX + x) * surfaceFrequency;
-                double perlinY = (double) (chunk.positionZ + z) * surfaceFrequency;
+                double perlinX = (double) (worldX + x) * surfaceFrequency;
+                double perlinY = (double) (worldZ + z) * surfaceFrequency;
 
                 double noiseValue = clamp.get(perlinX, perlinY);
                 int y = (int) (SURFACE_HEIGHT + Math.round(MAX_HEIGHT + (MAX_HEIGHT - MIN_HEIGHT) * noiseValue));

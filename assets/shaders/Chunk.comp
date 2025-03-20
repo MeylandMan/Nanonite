@@ -35,7 +35,7 @@ layout(std430, binding = 0) buffer BlockData {
 
 uniform mat4 projection;
 uniform mat4 view;
-uniform vec3 Position;
+uniform dvec3 Position;
 
 uniform Plane viewFrustum[6];
 
@@ -68,7 +68,7 @@ void main() {
     v_TexCoords = texCoords[vertexIndex % 6];
     TextureIndex = faces[faceIndex].id;
 
-    vec4 worldPosition = PROJECTION_VIEW_MATRIX * vec4(fragPos+Position, 1.0);
+    vec4 worldPosition = PROJECTION_VIEW_MATRIX * vec4(fragPos+vec3(Position), 1.0);
 
     bool isInside;
     for(uint i = 0; i < 6; i++) {
@@ -79,7 +79,7 @@ void main() {
     worldPosition; // Put the vertices very far AWAY
 
     inside = (isInside)? 1.0 : 0.0;
-    gl_Position = vec4(worldPosition);
+    gl_Position = worldPosition;
 }
 
 vec3[6] getVertices(uint faceID, vec3 mn, vec3 mx) {

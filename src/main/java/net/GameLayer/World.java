@@ -102,8 +102,8 @@ public class World {
         }
 
 
-        int chunkX = (int) (camera.Position.x / ChunkGen.X_DIMENSION);
-        int chunkZ = (int) (camera.Position.z / ChunkGen.Z_DIMENSION);
+        long chunkX = (long) (Camera.Position.x / ChunkGen.X_DIMENSION);
+        long chunkZ = (long) (Camera.Position.z / ChunkGen.Z_DIMENSION);
         int radius = Client.renderDistance / 2;
         isAllRendered = false;
 
@@ -112,12 +112,13 @@ public class World {
 
         for (int dz = -radius; dz <= radius; dz++) {
             for (int dx = -radius; dx <= radius; dx++) {
-                long worldX = (long) (chunkX + dx) * ChunkGen.X_DIMENSION;
-                long worldZ = (long) (chunkZ + dz) * ChunkGen.Z_DIMENSION;
+                long worldX = (chunkX + dx);
+                long worldZ = (chunkZ + dz);
 
-                if (!ChunkGen.isChunkInFrustum(frustumPlanes, worldX, worldZ)) continue;
+                if (!ChunkGen.isChunkInFrustum(frustumPlanes, worldX * ChunkGen.X_DIMENSION,
+                        worldZ * ChunkGen.Z_DIMENSION)) continue;
 
-                Vector2f chunkID = new Vector2f(worldX / ChunkGen.X_DIMENSION, worldZ / ChunkGen.Z_DIMENSION);
+                Vector2f chunkID = new Vector2f(worldX, worldZ);
                 if (loadedChunks.containsKey(chunkID)) continue;
 
                 Chunk chunk = new Chunk(worldX, worldZ);
@@ -179,17 +180,16 @@ public class World {
         int maxChunksPerFrame = Client.renderDistance / 2;
         for (int i = 0; i < maxChunksPerFrame && !chunksPos.isEmpty(); i++) {
             Chunk getID = chunksPos.poll().chunk;
-            Vector2f queuedChunkPos = new Vector2f(getID.positionX, getID.positionZ);
-            if (queuedChunkPos == null) break;
+            if (getID == null) break;
 
-            Vector2f chunkID = new Vector2f(queuedChunkPos.x / ChunkGen.X_DIMENSION, queuedChunkPos.y / ChunkGen.Z_DIMENSION);
+            Vector2f chunkID = new Vector2f(getID.positionX, getID.positionZ);
             Chunk chunk = loadedChunks.get(chunkID);
             if (chunk == null) continue;
 
             if (chunk.Ssbo == null) chunk.Init();
 
             updateNearbyChunks(chunkID);
-            chunk.updateChunk((int) chunkID.x, (int) chunkID.y);
+            chunk.updateChunk((long) chunkID.x, (long) chunkID.y);
         }
     }
 
@@ -264,10 +264,10 @@ public class World {
     }
 
     public void ResolveChunkRender(Camera camera, float deltaTime) {
-        if (loadedChunks == null || !isAllRendered) return;
+        if (!isAllRendered) return;
 
-        int chunkX = (int) (camera.Position.x / ChunkGen.X_DIMENSION);
-        int chunkZ = (int) (camera.Position.z / ChunkGen.Z_DIMENSION);
+        long chunkX = (long) (Camera.Position.x / ChunkGen.X_DIMENSION);
+        long chunkZ = (long) (Camera.Position.z / ChunkGen.Z_DIMENSION);
         float radius = Client.renderDistance / 2.f;
 
         List<Chunk> chunksToProcess = new ArrayList<>();
@@ -286,8 +286,8 @@ public class World {
                 List<Chunk> localChunksToRemove = new ArrayList<>();
                 for (Chunk chunk : sublist) {
                     if (chunk == null) continue;
-                    long chunkDistX = Math.abs((chunk.positionX / ChunkGen.X_DIMENSION) - chunkX);
-                    long chunkDistZ = Math.abs((chunk.positionZ / ChunkGen.Z_DIMENSION) - chunkZ);
+                    long chunkDistX = Math.abs(chunk.positionX - chunkX);
+                    long chunkDistZ = Math.abs(chunk.positionZ - chunkZ);
                     if (chunkDistX > radius || chunkDistZ > radius) {
                         localChunksToRemove.add(chunk);
                     }
@@ -316,8 +316,7 @@ public class World {
             Chunk chunk = chunkDeletionQueue.poll();
             if (chunk != null) {
                 chunk.Delete(); // Exécute OpenGL dans le thread principal
-                Vector2f chunkPos = new Vector2f(chunk.positionX / ChunkGen.X_DIMENSION,
-                        chunk.positionZ / ChunkGen.Z_DIMENSION);
+                Vector2f chunkPos = new Vector2f(chunk.positionX,chunk.positionZ);
                 loadedChunks.remove(chunkPos);
             }
         }
@@ -347,10 +346,12 @@ public class World {
 
         for(Chunk chunk : loadedChunks.values()) {
 
-            if(chunk.Ssbo == null || !ChunkGen.isChunkInFrustum(frustumPlanes, chunk.positionX, chunk.positionZ))
+            if(chunk.Ssbo == null || !ChunkGen.isChunkInFrustum(frustumPlanes, chunk.positionX * ChunkGen.X_DIMENSION,
+                    chunk.positionZ * ChunkGen.Z_DIMENSION))
                 continue;
 
-            shader.Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
+            shader.Uniform3d("Position", chunk.positionX * ChunkGen.X_DIMENSION, chunk.positionY,
+                    chunk.positionZ * ChunkGen.Z_DIMENSION);
             chunk.DrawMesh();
         }
     }

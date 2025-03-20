@@ -90,6 +90,12 @@ public class Shader {
         int location = getUniform(name);
         glUniform3f(location, x, y, z);
     }
+
+    public void Uniform3d(String name, double x, double y, double z) {
+        int location = getUniform(name);
+        glUniform3d(location, x, y, z);
+    }
+
     public void Uniform3f(String name, Vector3f vector) {
         int location = getUniform(name);
         glUniform3f(location, vector.x, vector.y, vector.z);
@@ -175,6 +181,12 @@ public class Shader {
         int location = getUniform(name);
         assert(location != -1);
         glUniformMatrix4fv(location, false, matrix.get(new float[16]));
+    }
+
+    public void UniformMatrix4x4d(String name, Matrix4d matrix) {
+        int location = getUniform(name);
+        assert(location != -1);
+        glUniformMatrix4dv(location, false, matrix.get(new double[16]));
     }
 
 }

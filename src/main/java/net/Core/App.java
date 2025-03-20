@@ -248,7 +248,10 @@ public class App {
             camera.SetProjectionMatrix(m_Width, m_Height);
 
             shader.UniformMatrix4x4("view", camera.GetViewMatrix());
-            shader.UniformMatrix4x4("projection", camera.GetProjectionMatrix());
+            shader.UniformMatrix4x4("projection", camera.GetProjectionMatrix(m_Width, m_Height));
+
+            //shader.UniformMatrix4x4d("view", camera.GetViewMatrixd());
+            //shader.UniformMatrix4x4d("projection", camera.GetProjectionMatrixd(m_Width, m_Height));
 
             shader.Uniform4fv("viewFrustum", camera.getFrustumData());
 

@@ -6,6 +6,8 @@ import net.Core.Physics.CubeCollision;
 import static org.joml.Math.*;
 
 import net.Core.Physics.Raycast;
+import org.joml.Matrix4d;
+import org.joml.Vector3d;
 import org.joml.Vector3f;
 import org.joml.Matrix4f;
 import java.util.*;
@@ -101,11 +103,30 @@ public class Camera {
     // returns the view matrix calculated using Euler Angles and the LookAt Matrix
     public Matrix4f GetViewMatrix()
     {
-        return view;
+        return new Matrix4f().lookAt(Position, new Vector3f(Position).add(Front), Up);
     }
 
-    public Matrix4f GetProjectionMatrix() {
-        return projection;
+    public Matrix4d GetViewMatrixd()
+    {
+        return new Matrix4d().lookAt(new Vector3d(Position), new Vector3d(Position).add(Front), new Vector3d(Up));
+    }
+
+    public Matrix4f GetProjectionMatrix(int width, int height) {
+        return new Matrix4f().identity()
+                .perspective((float)Math.toRadians(Zoom),
+                        (float)width / (float)Math.max(height, 1),
+                        0.1f,
+                        ChunkGen.X_DIMENSION * Client.renderDistance
+                );
+    }
+
+    public Matrix4d GetProjectionMatrixd(int width, int height) {
+        return new Matrix4d().identity()
+                .perspective((double)Math.toRadians(Zoom),
+                        (double)width / (double)Math.max(height, 1),
+                        0.1f,
+                        ChunkGen.X_DIMENSION * Client.renderDistance
+                );
     }
 
 
