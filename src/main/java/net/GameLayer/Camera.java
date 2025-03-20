@@ -70,7 +70,7 @@ public class Camera {
     // camera Attributes
     public CubeCollision collision;
     public Raycast raycast;
-    public static Vector3f Position;
+    public static Vector3d Position;
     private Vector3f Front = new Vector3f(0.0f, 0.0f, -1.0f);
     private final Vector3f Up = new Vector3f();
     private final Vector3f Right = new Vector3f();
@@ -90,39 +90,25 @@ public class Camera {
     public float dragFactor = 1;
 
     // Camera constructor
-    public Camera(Vector3f position) {
+    public Camera(Vector3d position) {
         Position = position;
         this.WorldUp = new Vector3f(0.f, 1.f, 0.f);
         this.Yaw = YAW;
         this.Pitch = PITCH;
-        collision = new CubeCollision(new Vector3f(), new Vector3f(1, 2, 1));
-        this.raycast = new Raycast(new Vector3f(Position.x, Position.y+1, Position.z), getFront());
+        collision = new CubeCollision(new Vector3d(), new Vector3d(1, 2, 1));
+        this.raycast = new Raycast(new Vector3d(Position.x, Position.y+1, Position.z), new Vector3d(getFront()));
         this.velocity = new Vector3f();
     }
 
     // returns the view matrix calculated using Euler Angles and the LookAt Matrix
-    public Matrix4f GetViewMatrix()
+    public Matrix4d GetViewMatrix()
     {
-        return new Matrix4f().lookAt(Position, new Vector3f(Position).add(Front), Up);
+        return new Matrix4d().lookAt(Position, new Vector3d(Position).add(Front), new Vector3d(Up));
     }
 
-    public Matrix4d GetViewMatrixd()
-    {
-        return new Matrix4d().lookAt(new Vector3d(Position), new Vector3d(Position).add(Front), new Vector3d(Up));
-    }
-
-    public Matrix4f GetProjectionMatrix(int width, int height) {
-        return new Matrix4f().identity()
-                .perspective((float)Math.toRadians(Zoom),
-                        (float)width / (float)Math.max(height, 1),
-                        0.1f,
-                        ChunkGen.X_DIMENSION * Client.renderDistance
-                );
-    }
-
-    public Matrix4d GetProjectionMatrixd(int width, int height) {
+    public Matrix4d GetProjectionMatrix(int width, int height) {
         return new Matrix4d().identity()
-                .perspective((double)Math.toRadians(Zoom),
+                .perspective(toRadians(Zoom),
                         (double)width / (double)Math.max(height, 1),
                         0.1f,
                         ChunkGen.X_DIMENSION * Client.renderDistance
@@ -223,8 +209,8 @@ public class Camera {
         }
         Position.add(velocity);
 
-        raycast.update(new Vector3f(Position.x, Position.y+1, Position.z), getFront());
-        collision.position = new Vector3f(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f);
+        raycast.update(new Vector3d(Position.x, Position.y+1, Position.z), new Vector3d(getFront()));
+        collision.position = new Vector3d(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f);
     }
 
     // Frustum 

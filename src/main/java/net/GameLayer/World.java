@@ -3,14 +3,14 @@ package net.GameLayer;
 import net.Core.*;
 import net.Core.Physics.CubeCollision;
 import net.Core.Rendering.Shader;
-import org.joml.Matrix4f;
-import org.joml.Vector2f;
-import org.joml.Vector2i;
+import org.joml.*;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.system.MemoryUtil;
 
+import java.lang.Math;
 import java.nio.FloatBuffer;
 import java.util.*;
+import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -436,10 +436,10 @@ public class World {
         shader.UniformMatrix4x4("projection", projection);
 
         for(CubeCollision collision : worldCollisions) {
-            Matrix4f model = new Matrix4f().identity()
+            Matrix4d model = new Matrix4d().identity()
                     .translate(collision.position)
-                    .scale(collision.size);
-            shader.UniformMatrix4x4("model", model);
+                    .scale(new Vector3d(collision.size));
+            shader.UniformMatrix4x4("model", new Matrix4f(model));
             shader.Uniform1f("borderThickness", 1);
             collision.drawAABB();
         }

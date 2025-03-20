@@ -37,7 +37,7 @@ public class App {
     public Renderer renderer;
     Scene scene = new Scene();
     Shader shader = new Shader();
-    Camera camera = new Camera(new Vector3f(Integer.MAX_VALUE / 100.f, 70, 8));
+    Camera camera = new Camera(new Vector3d(Integer.MAX_VALUE / 10.f, 70, 8));
     World world;
     float delta;
     float lastFrame;
@@ -65,7 +65,7 @@ public class App {
             }
 
             if(Input.isKeyJustPressed(Input.KEY_RESET_POSITION)) {
-                camera.Position = new Vector3f(8);
+                Camera.Position = new Vector3d(8);
             }
 
 
@@ -227,9 +227,9 @@ public class App {
 
         world = new World(450);
         world.addCollision(camera.collision);
-        world.addCollision(new CubeCollision(new Vector3f(8, 8, 8), new Vector3f(1)));
+        world.addCollision(new CubeCollision(new Vector3d(8), new Vector3d(1)));
 
-        Raycast raycast = new Raycast(camera.Position, camera.getFront());
+        Raycast raycast = new Raycast(camera.Position, new Vector3d(camera.getFront()));
         while ( !glfwWindowShouldClose(window) ) {
 
             Logger.catchOpenGLErrors();
@@ -247,8 +247,8 @@ public class App {
             camera.SetViewMatrix();
             camera.SetProjectionMatrix(m_Width, m_Height);
 
-            shader.UniformMatrix4x4("view", camera.GetViewMatrix());
-            shader.UniformMatrix4x4("projection", camera.GetProjectionMatrix(m_Width, m_Height));
+            shader.UniformMatrix4x4("view", new Matrix4f(camera.GetViewMatrix()));
+            shader.UniformMatrix4x4("projection", new Matrix4f(camera.GetProjectionMatrix(m_Width, m_Height)));
 
             //shader.UniformMatrix4x4d("view", camera.GetViewMatrixd());
             //shader.UniformMatrix4x4d("projection", camera.GetProjectionMatrixd(m_Width, m_Height));

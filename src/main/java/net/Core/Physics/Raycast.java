@@ -1,21 +1,22 @@
 package net.Core.Physics;
 
 
+import org.joml.Vector3d;
 import org.joml.Vector3f;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Raycast {
-    public Vector3f origin;
-    public Vector3f direction;
+    public Vector3d origin;
+    public Vector3d direction;
 
-    public Raycast(Vector3f origin, Vector3f direction) {
-        this.origin = new Vector3f(origin);
-        this.direction = new Vector3f(direction);
+    public Raycast(Vector3d origin, Vector3d direction) {
+        this.origin = new Vector3d(origin);
+        this.direction = new Vector3d(direction);
     }
 
-    public void update(Vector3f origin, Vector3f direction) {
-        this.origin = new Vector3f(origin);
-        this.direction = new Vector3f(direction);
+    public void update(Vector3d origin, Vector3d direction) {
+        this.origin = new Vector3d(origin);
+        this.direction = new Vector3d(direction);
     }
 
     /**
@@ -23,24 +24,24 @@ public class Raycast {
      * @param aabb La boîte AABB à tester
      * @return Distance de l'impact, ou -1 si pas d'intersection
      */
-    public float intersectCube(CubeCollision aabb) {
-        Vector3f min = aabb.min.add(aabb.position);
-        Vector3f max = aabb.max.add(aabb.position);
+    public double intersectCube(CubeCollision aabb) {
+        Vector3d min = aabb.min.add(aabb.position);
+        Vector3d max = aabb.max.add(aabb.position);
 
-        float tMin = (min.x - origin.x) / direction.x;
-        float tMax = (max.x - origin.x) / direction.x;
+        double tMin = (min.x - origin.x) / direction.x;
+        double tMax = (max.x - origin.x) / direction.x;
 
         if (tMin > tMax) {
-            float temp = tMin;
+            double temp = tMin;
             tMin = tMax;
             tMax = temp;
         }
 
-        float tyMin = (min.y - origin.y) / direction.y;
-        float tyMax = (max.y - origin.y) / direction.y;
+        double tyMin = (min.y - origin.y) / direction.y;
+        double tyMax = (max.y - origin.y) / direction.y;
 
         if (tyMin > tyMax) {
-            float temp = tyMin;
+            double temp = tyMin;
             tyMin = tyMax;
             tyMax = temp;
         }
@@ -53,11 +54,11 @@ public class Raycast {
         if (tyMax < tMax)
             tMax = tyMax;
 
-        float tzMin = (min.z - origin.z) / direction.z;
-        float tzMax = (max.z - origin.z) / direction.z;
+        double tzMin = (min.z - origin.z) / direction.z;
+        double tzMax = (max.z - origin.z) / direction.z;
 
         if (tzMin > tzMax) {
-            float temp = tzMin;
+            double temp = tzMin;
             tzMin = tzMax;
             tzMax = temp;
         }
@@ -73,30 +74,14 @@ public class Raycast {
         return (tMin < 0) ? tMax : tMin; // Distance de l'impact
     }
 
-    /**
-     * Retourne le point d'impact sur une AABB
-     * @param aabb La boîte AABB
-     * @return Le point d'impact (ou null si pas d'intersection)
-     */
-    public Vector3f getImpactPoint(CubeCollision aabb) {
-        float t = intersectCube(aabb);
+    public Vector3d getImpactPoint(CubeCollision aabb) {
+        double t = intersectCube(aabb);
         if (t < 0) return null;
-        return new Vector3f(origin).add(direction.mul(t));
+        return new Vector3d(origin).add(direction.mul(t));
     }
 
     public void drawRay(float length) {
-        Vector3f end = new Vector3f(origin).add(new Vector3f(direction).mul(length));
 
-        glColor3f(1.0f, 0.0f, 0.0f);
-        glBegin(GL_LINES);
-
-        // Point de départ du rayon
-        glVertex3f(origin.x, origin.y, origin.z);
-
-        // Point final du rayon
-        glVertex3f(end.x, end.y, end.z);
-
-        glEnd();
     }
 }
 

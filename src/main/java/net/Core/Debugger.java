@@ -7,6 +7,7 @@ import net.GameLayer.Chunk;
 import net.GameLayer.ChunkGen;
 import net.GameLayer.World;
 import org.joml.Vector2f;
+import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 import java.text.DecimalFormat;
@@ -65,7 +66,7 @@ public class Debugger {
 
                 debug_timestamp = actual_debug_timestamp = 0;
                 Logger.log(Logger.Level.DEBUG,"Teleported to the copied position !");
-                camera.Position = new Vector3f(copyPosition);
+                camera.Position = new Vector3d(copyPosition);
 
                 is_combined = true;
             }
@@ -167,13 +168,13 @@ public class Debugger {
                 (int)fps[0] + " fps (avg: " + (int)fps[1] + ", min: " + (int)fps[2] + ", max: " + (int)fps[3] + ")";
         textRenderer.renderText(stateInfo,10, 10, 0.3f, false);
 
-        Vector3f chunkPosition = new Vector3f(
+        Vector3d chunkPosition = new Vector3d(
                 floor(camera.Position.x / ChunkGen.X_DIMENSION),
                 floor(camera.Position.y / ChunkGen.Z_DIMENSION),
                 floor(camera.Position.z / ChunkGen.Z_DIMENSION)
         );
 
-        Vector3f blockPosition = new Vector3f(
+        Vector3d blockPosition = new Vector3d(
                 floor(camera.Position.x),
                 floor(camera.Position.y),
                 floor(camera.Position.z)
