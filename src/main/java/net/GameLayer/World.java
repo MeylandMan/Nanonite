@@ -184,8 +184,8 @@ public class World {
 
             Vector2f chunkID = new Vector2f(getID.positionX, getID.positionZ);
             Chunk chunk = loadedChunks.get(chunkID);
-            if (chunk == null) continue;
 
+            if (chunk == null) continue;
             if (chunk.Ssbo == null) chunk.Init();
 
             updateNearbyChunks(chunkID);

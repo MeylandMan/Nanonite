@@ -4,12 +4,12 @@ package net.GameLayer;
 import net.Core.Client;
 import net.Core.Physics.CubeCollision;
 import static org.joml.Math.*;
+import static org.joml.Math.toRadians;
 
 import net.Core.Physics.Raycast;
 import org.joml.Matrix4d;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
-import org.joml.Matrix4f;
 import java.util.*;
 
 public class Camera {
@@ -54,7 +54,7 @@ public class Camera {
     Matrix4d view = new Matrix4d();
 
     // Default camera values
-    private static final float YAW = -90.0f;
+    private static final float YAW = 0.0f;
     private static final float PITCH = 0.0f;
     public  static final float SPEED = 5.f;
     public static final float MAX_SPEED = 15.0f; // Vitesse max en mode spectateur 7
@@ -79,6 +79,7 @@ public class Camera {
     // euler Angles
     public float Yaw;
     public float Pitch;
+    public float Roll = 0;
 
     // camera options
     public Vector3f velocity;
@@ -103,8 +104,19 @@ public class Camera {
     // returns the view matrix calculated using Euler Angles and the LookAt Matrix
     public Matrix4d GetViewMatrix()
     {
+        return new Matrix4d().identity()
+                .rotate(toRadians(Roll), new Vector3d(0, 0, 1))
+                .rotate(toRadians(-Pitch), new Vector3d(1, 0, 0))
+                .rotate(toRadians(Yaw), new Vector3d(0, 1, 0))
+                .translate(new Vector3d(-Position.x, -Position.y, -Position.z));
+    }
+
+    /*
+    public Matrix4d GetViewMatrix()
+    {
         return new Matrix4d().lookAt(Position, new Vector3d(Position).add(Front), new Vector3d(Up));
     }
+    */
 
     public Matrix4d GetProjectionMatrix(int width, int height) {
         return new Matrix4d().identity()
@@ -117,7 +129,11 @@ public class Camera {
 
 
     public void SetViewMatrix() {
-        view = new Matrix4d().lookAt(new Vector3d(Position), new Vector3d(Position).add(Front), new Vector3d(Up));
+        view = new Matrix4d().identity()
+                .rotate(toRadians(Roll), new Vector3d(0, 0, 1))
+                .rotate(toRadians(-Pitch), new Vector3d(1, 0, 0))
+                .rotate(toRadians(Yaw), new Vector3d(0, 1, 0))
+                .translate(new Vector3d(-Position.x, -Position.y, -Position.z));
     }
 
     public void SetProjectionMatrix(int width, int height) {
@@ -131,15 +147,14 @@ public class Camera {
 
     public void ProcessKeyboard(Camera_Movement direction, float deltaTime) {
 
-        float pitchRad = (float) Math.toRadians(Pitch);
         UP = false;
         if (direction == Camera_Movement.FORWARD) {
-            velocity.x += (float) (Front.x/Math.cos(pitchRad));
-            velocity.z += (float) (Front.z/Math.cos(pitchRad));
+            velocity.x += Front.x;
+            velocity.z += Front.z;
         }
         if (direction == Camera_Movement.BACKWARD) {
-            velocity.x -= (float) (Front.x/Math.cos(pitchRad));
-            velocity.z -= (float) (Front.z/Math.cos(pitchRad));
+            velocity.x -= Front.x;
+            velocity.z -= Front.z;
         }
         if (direction == Camera_Movement.LEFT) {
             velocity.x += Right.x;
@@ -178,14 +193,14 @@ public class Camera {
         float yawRad = toRadians(Yaw);
         float pitchRad = toRadians(Pitch);
 
-        Front.set(
-                (cos(yawRad) * cos(pitchRad)),
+        Right.set(
+                -(cos(yawRad) * cos(pitchRad)),
                 sin(pitchRad),
-                (sin(yawRad) * cos(pitchRad))
+                -(sin(yawRad) * cos(pitchRad))
         ).normalize();
 
         // also re-calculate the Right and Up vector
-        Right.set(WorldUp).cross(Front).normalize();
+        Front.set(Right).cross(WorldUp).normalize();
         Up.set(Front).cross(Right).normalize();
 
         float acceleration = ACCELERATION_FACTOR * deltaTime;
