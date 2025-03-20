@@ -37,7 +37,7 @@ public class App {
     public Renderer renderer;
     Scene scene = new Scene();
     Shader shader = new Shader();
-    Camera camera = new Camera(new Vector3f(8, 70, 8));
+    Camera camera = new Camera(new Vector3f(Integer.MAX_VALUE / 100.f, 70, 8));
     World world;
     float delta;
     float lastFrame;
@@ -253,7 +253,7 @@ public class App {
             //shader.UniformMatrix4x4d("view", camera.GetViewMatrixd());
             //shader.UniformMatrix4x4d("projection", camera.GetProjectionMatrixd(m_Width, m_Height));
 
-            shader.Uniform4fv("viewFrustum", camera.getFrustumData());
+            shader.Uniform4dv("viewFrustum", camera.getFrustumData());
 
             //Draw chunks
             world.renderChunks(shader);

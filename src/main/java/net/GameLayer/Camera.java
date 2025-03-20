@@ -12,10 +12,6 @@ import org.joml.Vector3f;
 import org.joml.Matrix4f;
 import java.util.*;
 
-// Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
-
-
-
 public class Camera {
     public enum Camera_Movement {
         FORWARD,
@@ -27,9 +23,9 @@ public class Camera {
     }
 
     public static class Plane {
-        public float a, b, c, d;
+        public double a, b, c, d;
 
-        public void set(float a, float b, float c, float d) {
+        public void set(double a, double b, double c, double d) {
             this.a = a;
             this.b = b;
             this.c = c;
@@ -37,7 +33,7 @@ public class Camera {
         }
 
         public void normalize() {
-            float length = (float) Math.sqrt(a * a + b * b + c * c);
+            double length = sqrt(a * a + b * b + c * c);
             a /= length;
             b /= length;
             c /= length;
@@ -47,11 +43,15 @@ public class Camera {
         public boolean isPointInside(float x, float y, float z) {
             return a * x + b * y + c * z + d >= 0;
         }
+
+        public boolean isPointInside(double x, double y, double z) {
+            return a * x + b * y + c * z + d >= 0;
+        }
     }
 
     // Matrices
-    Matrix4f projection = new Matrix4f();
-    Matrix4f view = new Matrix4f();
+    Matrix4d projection = new Matrix4d();
+    Matrix4d view = new Matrix4d();
 
     // Default camera values
     private static final float YAW = -90.0f;
@@ -131,11 +131,11 @@ public class Camera {
 
 
     public void SetViewMatrix() {
-        view = new Matrix4f().lookAt(Position, new Vector3f(Position).add(Front), Up);
+        view = new Matrix4d().lookAt(new Vector3d(Position), new Vector3d(Position).add(Front), new Vector3d(Up));
     }
 
     public void SetProjectionMatrix(int width, int height) {
-        projection = new Matrix4f().identity()
+        projection = new Matrix4d().identity()
                 .perspective((float)Math.toRadians(Zoom),
                         (float)width / (float)Math.max(height, 1),
                         0.1f,
@@ -229,7 +229,7 @@ public class Camera {
 
     // Frustum 
     public Plane[] getFrustumPlanes() {
-        Matrix4f vpMatrix = new Matrix4f();
+        Matrix4d vpMatrix = new Matrix4d();
         projection.mul(view, vpMatrix);
 
         Plane[] planes = new Plane[6];
@@ -253,8 +253,8 @@ public class Camera {
         return planes;
     }
 
-    public float[] getFrustumData() {
-        ArrayList<Float> data = new ArrayList<>();
+    public double[] getFrustumData() {
+        ArrayList<Double> data = new ArrayList<>();
 
         for(int i = 0; i < 6; i++) {
             data.add(getFrustumPlanes()[i].a);
@@ -263,7 +263,7 @@ public class Camera {
             data.add(getFrustumPlanes()[i].d);
         }
 
-        float[] result = new float[data.size()];
+        double[] result = new double[data.size()];
         for(int i = 0; i < data.size(); i++) {
             result[i] = data.get(i);
         }

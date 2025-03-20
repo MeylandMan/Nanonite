@@ -25,7 +25,7 @@ struct BlockFace {
 };
 
 struct Plane {
-    float a, b, c, d;
+    double a, b, c, d;
 };
 
 
@@ -43,7 +43,7 @@ uniform Plane viewFrustum[6];
 
 vec3[6] getVertices(uint faceID, vec3 mn, vec3 mx);
 
-bool isPointInside(Plane plane, float x, float y, float z);
+bool isPointInside(Plane plane, double x, double y, double z);
 
 void main() {
 
@@ -132,6 +132,6 @@ vec3[6] getVertices(uint faceID, vec3 mn, vec3 mx) {
     return vertices;
 }
 
-bool isPointInside(Plane plane, float x, float y, float z) {
+bool isPointInside(Plane plane, double x, double y, double z) {
     return plane.a * x + plane.b * y + plane.c * z + plane.d >= 0;
 }

@@ -5,6 +5,8 @@ import com.sudoplay.joise.module.ModuleScaleOffset;
 import net.Core.BlockModel;
 import net.Core.Client;
 import net.Core.Face;
+import org.joml.Matrix4d;
+import org.joml.Matrix4f;
 import org.joml.Random;
 
 import java.util.Map;
@@ -65,7 +67,7 @@ public class ChunkGen {
 
         long worldX = chunk.positionX * ChunkGen.X_DIMENSION;
         long worldZ = chunk.positionZ * ChunkGen.Z_DIMENSION;
-        
+
         // Add the surface
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int z = 0; z < Z_DIMENSION; z++) {
@@ -85,8 +87,8 @@ public class ChunkGen {
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int z = 0; z < Z_DIMENSION; z++) {
 
-                double perlinX = (double) (chunk.positionX + x) * depthFrequency;
-                double perlinY = (double) (chunk.positionZ + z) * depthFrequency;
+                double perlinX = (double) (worldX + x) * depthFrequency;
+                double perlinY = (double) (worldZ + z) * depthFrequency;
 
                 double noiseValue = clamp.get(perlinX, perlinY);
                 int y = (int) Math.round(MAX_DEPTH_HEIGHT * noiseValue);
@@ -176,13 +178,13 @@ public class ChunkGen {
         return -1.0f; // In case the path is not found
     }
 
-    public static boolean isChunkInFrustum(Camera.Plane[] frustumPlanes, float chunkX, float chunkZ) {
+    public static boolean isChunkInFrustum(Camera.Plane[] frustumPlanes, double chunkX, double chunkZ) {
         float chunkSize = ChunkGen.X_DIMENSION; // Length of a chunk
         float chunkHeight = 80;
         float chunkY = ChunkGen.Y_CHUNK;
 
         // Try the 4 corners of a chunk (ground)
-        float[][] corners = {
+        double[][] corners = {
                 {chunkX, chunkY, chunkZ},                                    // Bas-gauche
                 {chunkX + chunkSize, chunkY, chunkZ},                        // Bas-droite
                 {chunkX, chunkY, chunkZ + chunkSize},                        // Bas-gauche arrière
@@ -195,7 +197,7 @@ public class ChunkGen {
 
         for (Camera.Plane plane : frustumPlanes) {
             boolean inside = false;
-            for (float[] corner : corners) {
+            for (double[] corner : corners) {
                 if (plane.isPointInside(corner[0], corner[1], corner[2])) {
                     inside = true;
                     break;
