@@ -155,11 +155,13 @@ public class ChunkGen {
                 // Add surface blocks
                 for(int y = Y_DIMENSION-1; y > MAX_DEPTH_HEIGHT; y--) {
                     if(chunk.blocks[x][y][z] == BlockType.STONE) {
-                        chunk.blocks[x][y][z] = BlockType.GRASS;
+                        boolean isUnderWater = (chunk.blocks[x][y+5][z] == BlockType.WATER);
+                        chunk.blocks[x][y][z] = (isUnderWater)? BlockType.GRAVEL :
+                                (chunk.blocks[x][y+1][z] == BlockType.WATER)? BlockType.DIRT : BlockType.GRASS;
 
                         // Add sub surface blocks
                         for(int i = 1; i < dirtLevel; i++) {
-                            chunk.blocks[x][y-i][z] = BlockType.DIRT;
+                            chunk.blocks[x][y-i][z] = (isUnderWater)? BlockType.GRAVEL : BlockType.DIRT;
                         }
 
                         // Add stone blocks
@@ -249,6 +251,6 @@ public class ChunkGen {
         AddChunkSurface(chunk);
 
         // check if there's blocks at the top of the dirt
-        //ResolveChunkSurface(chunk);
+        ResolveChunkSurface(chunk);
     }
 }

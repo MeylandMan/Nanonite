@@ -4,7 +4,6 @@ import net.Core.*;
 import net.Core.Physics.CubeCollision;
 import net.Core.Rendering.Shader;
 import org.joml.*;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.system.MemoryUtil;
 
 import java.lang.Math;
@@ -17,12 +16,12 @@ import java.util.concurrent.Future;
 
 import com.sudoplay.joise.module.ModuleBasisFunction;
 
-import static org.joml.Math.*;
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.opengl.GL11.*;
 
 public class World {
     public static ArrayList<CubeCollision> worldCollisions;
+    Shader[] ChunkShaders = new Shader[2];
     public Shader shader;
     public static final float GRAVITY = 0;
 
@@ -74,6 +73,12 @@ public class World {
         basis = new ModuleBasisFunction();
         basis.setType(ModuleBasisFunction.BasisType.SIMPLEX);
         basis.setSeed(seed);
+
+        ChunkShaders[0] = new Shader();
+        ChunkShaders[1] = new Shader();
+
+        ChunkShaders[0].CreateShader("Chunk.comp", "Chunk.frag");
+        ChunkShaders[1].CreateShader("Liquid.comp", "Liquid.frag");
     }
 
     public World(long sd) {
@@ -85,6 +90,12 @@ public class World {
         basis = new ModuleBasisFunction();
         basis.setType(ModuleBasisFunction.BasisType.SIMPLEX);
         basis.setSeed(seed);
+
+        ChunkShaders[0] = new Shader();
+        ChunkShaders[1] = new Shader();
+
+        ChunkShaders[0].CreateShader("Chunk.comp", "Chunk.frag");
+        ChunkShaders[1].CreateShader("Liquid.comp", "Liquid.frag");
     }
 
     public static void addChunksToQueue(Camera camera, boolean reset) {
@@ -154,7 +165,7 @@ public class World {
             Chunk neighborChunk = loadedChunks.get(neighbor);
             if (neighborChunk != null) {
 
-                 if (neighborChunk.Ssbo == null) neighborChunk.Init();
+                 if (neighborChunk.StaticBlocks == null) neighborChunk.Init();
                 neighborChunk.updateChunk = true;
                 neighborChunk.updateChunk((int) neighbor.x, (int) neighbor.y);
             }
@@ -186,14 +197,14 @@ public class World {
             Chunk chunk = loadedChunks.get(chunkID);
 
             if (chunk == null) continue;
-            if (chunk.Ssbo == null) chunk.Init();
+            if (chunk.StaticBlocks == null) chunk.Init();
 
             updateNearbyChunks(chunkID);
             chunk.updateChunk((long) chunkID.x, (long) chunkID.y);
         }
     }
 
-    protected static FloatBuffer getChunkData(long xx, long zz) {
+    protected static FloatBuffer getChunkData(long xx, long zz, int type) {
         Vector2f chunkID = new Vector2f(xx, zz);
         Chunk chunk = loadedChunks.get(chunkID);
 
@@ -206,6 +217,12 @@ public class World {
             for(int y = 0; y < ChunkGen.Y_DIMENSION; y++) {
                 for(int z = 0; z < ChunkGen.Z_DIMENSION; z++) {
                     if(chunk.blocks[x][y][z] == null)
+                        continue;
+
+                    if(type == 0 && chunk.blocks[x][y][z] == ChunkGen.BlockType.WATER)
+                        continue;
+
+                    if(type == 1 && chunk.blocks[x][y][z] != ChunkGen.BlockType.WATER)
                         continue;
 
                     BlockModel model = Client.modelLoader.getModel(Client.modelPaths[chunk.blocks[x][y][z].getID()]);
@@ -322,7 +339,7 @@ public class World {
         }
     }
 
-    public void renderChunks(Shader[] shader) {
+    public void renderChunks(Camera camera) {
 
         processChunkDeletions();
 
@@ -330,30 +347,71 @@ public class World {
             Client.blockTextures[i].Bind(i);
         }
 
-        glDisable(GL_BLEND);
-
         // Depth render
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         // Enable BackFace Culling
-        glEnable(GL_CULL_FACE);
         glCullFace(GL_FRONT);
         glFrontFace(GL_CW);
 
-        shader[0].Uniform1iv("u_Textures", Client.samplers);
-        shader[1].Uniform1iv("u_Textures", Client.samplers);
+        Vector3f fogColor = WorldEnvironment.interpolateFogColor(Camera.Position.y);
+
+        ChunkShaders[0].Bind();
+        ChunkShaders[0].Uniform1iv("u_Textures", Client.samplers);
+
+        if(fogColor.x > WorldEnvironment.SURFACE_DEFAULT_COLOR.x)
+            ChunkShaders[0].Uniform3f("fogColor", WorldEnvironment.SURFACE_DEFAULT_COLOR);
+        else ChunkShaders[0].Uniform3f("fogColor", fogColor);
+
+        ChunkShaders[0].Uniform1f("renderDistance", Client.renderDistance);
+        ChunkShaders[0].Uniform3f("cameraPos", new Vector3f(Camera.Position));
+        ChunkShaders[0].UniformMatrix4x4("view", new Matrix4f(camera.GetViewMatrix()));
+        ChunkShaders[0].UniformMatrix4x4("projection", new Matrix4f(camera.GetProjectionMatrix()));
+        ChunkShaders[0].Uniform4dv("viewFrustum", camera.getFrustumData());
 
         for(Chunk chunk : loadedChunks.values()) {
 
-            if(chunk.Ssbo == null || !ChunkGen.isChunkInFrustum(frustumPlanes, chunk.positionX * ChunkGen.X_DIMENSION,
+            // Draw static blocks
+            glDisable(GL_BLEND);
+
+            glEnable(GL_CULL_FACE);
+
+            if(chunk.StaticBlocks == null || !ChunkGen.isChunkInFrustum(frustumPlanes, chunk.positionX * ChunkGen.X_DIMENSION,
                     chunk.positionZ * ChunkGen.Z_DIMENSION))
                 continue;
 
-            shader[0].Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
-            shader[1].Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
+            ChunkShaders[0].Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
             chunk.DrawMesh();
+        }
+
+        ChunkShaders[1].Bind();
+        ChunkShaders[1].Uniform1iv("u_Textures", Client.samplers);
+
+        if(fogColor.x > WorldEnvironment.SURFACE_DEFAULT_COLOR.x)
+            ChunkShaders[1].Uniform3f("fogColor", WorldEnvironment.SURFACE_DEFAULT_COLOR);
+        else ChunkShaders[1].Uniform3f("fogColor", fogColor);
+
+        ChunkShaders[1].Uniform1f("renderDistance", Client.renderDistance);
+        ChunkShaders[1].Uniform3f("cameraPos", new Vector3f(Camera.Position));
+        ChunkShaders[1].UniformMatrix4x4("view", new Matrix4f(camera.GetViewMatrix()));
+        ChunkShaders[1].UniformMatrix4x4("projection", new Matrix4f(camera.GetProjectionMatrix()));
+        ChunkShaders[1].Uniform4dv("viewFrustum", camera.getFrustumData());
+
+        for(Chunk chunk : loadedChunks.values()) {
+
+            // Draw static blocks
+            glDisable(GL_CULL_FACE);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+            if(chunk.LiquidBlocks == null || !ChunkGen.isChunkInFrustum(frustumPlanes, chunk.positionX * ChunkGen.X_DIMENSION,
+                    chunk.positionZ * ChunkGen.Z_DIMENSION))
+                continue;
+
+            ChunkShaders[1].Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
+            chunk.DrawLiquidMesh();
         }
     }
 
@@ -405,11 +463,7 @@ public class World {
                 return element.isOpacity() ? 1 : 0;
             }
 
-        } else {
-            // Check the actual chunk
-            if (actualChunk.blocks[nx][ny][nz] == null) {
-                return 1;
-            }
+            return 0;
         }
 
         // Check if the neighbor is air

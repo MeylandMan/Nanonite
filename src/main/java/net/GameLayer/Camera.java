@@ -8,6 +8,7 @@ import static org.joml.Math.toRadians;
 
 import net.Core.Physics.Raycast;
 import org.joml.Matrix4d;
+import org.joml.Matrix4f;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 import java.util.*;
@@ -125,6 +126,10 @@ public class Camera {
                         0.1f,
                         ChunkGen.X_DIMENSION * Client.renderDistance
                 );
+    }
+
+    public Matrix4d GetProjectionMatrix() {
+        return projection;
     }
 
 

@@ -1,13 +1,8 @@
 package net.GameLayer;
 
 import net.Core.*;
-import net.Core.Rendering.Scene;
-import net.Core.Rendering.Shader;
 import net.Core.Rendering.VBO;
 
-import org.joml.Vector2f;
-import org.joml.Vector3f;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryUtil;
 
@@ -15,7 +10,6 @@ import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.lwjgl.opengl.GL11C.glEnable;
 import static org.lwjgl.opengl.GL43.*;
 import static net.GameLayer.ChunkGen.*;
 
@@ -26,8 +20,8 @@ public class Chunk {
 
     public BlockType[][][] blocks;
     public Map<Integer, Integer[]> compressedBlocks;
-    VBO Ssbo;
-    int faceDrawn = 0;
+    VBO StaticBlocks, LiquidBlocks;
+    int[] faceDrawn = new int[2];
     int blockDrawn = 0;
 
     public int Y_MAX;
@@ -44,9 +38,9 @@ public class Chunk {
     }
 
     public void Delete() {
-        if(Ssbo != null)
-            Ssbo.Delete();
-        Ssbo = null;
+        if(StaticBlocks != null)
+            StaticBlocks.Delete();
+        StaticBlocks = null;
         blocks = null;
         buffer = null;
         compressedBlocks = null;
@@ -57,22 +51,40 @@ public class Chunk {
     public void updateChunk(long xx, long zz) {
         if(!updateChunk)
             return;
-
-        buffer = World.getChunkData(xx, zz);
-        faceDrawn = buffer.limit()/11;
-
-        Ssbo.Bind();
-        Ssbo.InitSSBO(buffer,0);
-        Ssbo.UnBind();
-        MemoryUtil.memFree(buffer);
         updateChunk = false;
+
+        // Updating Static blocks
+        buffer = World.getChunkData(xx, zz, 0);
+        faceDrawn[0] = buffer.limit()/11;
+
+        StaticBlocks.Bind();
+        StaticBlocks.InitSSBO(buffer,0);
+        StaticBlocks.UnBind();
+        MemoryUtil.memFree(buffer);
+
+        // Updating Liquid blocks
+        buffer = World.getChunkData(xx, zz, 1);
+        faceDrawn[1] = buffer.limit()/11;
+
+        LiquidBlocks.Bind();
+        LiquidBlocks.InitSSBO(buffer,0);
+        LiquidBlocks.UnBind();
+        MemoryUtil.memFree(buffer);
+
     }
 
     public void DrawMesh() {
 
-        Ssbo.BindBase(0);
+        StaticBlocks.BindBase(0);
         glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-        glDrawArrays(GL_TRIANGLES, 0, 6* faceDrawn);
+        glDrawArrays(GL_TRIANGLES, 0, 6* faceDrawn[0]);
+    }
+
+    public void DrawLiquidMesh() {
+
+        LiquidBlocks.BindBase(0);
+        glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+        glDrawArrays(GL_TRIANGLES, 0, 6* faceDrawn[1]);
     }
 
     public void Init() {
@@ -80,7 +92,8 @@ public class Chunk {
             Logger.log(Logger.Level.ERROR, "OpenGL 4.3 not supported");
         }
 
-        Ssbo = new VBO(GL_DYNAMIC_DRAW, GL_SHADER_STORAGE_BUFFER);
+        StaticBlocks = new VBO(GL_DYNAMIC_DRAW, GL_SHADER_STORAGE_BUFFER);
+        LiquidBlocks = new VBO(GL_DYNAMIC_DRAW, GL_SHADER_STORAGE_BUFFER);
     }
 
 }

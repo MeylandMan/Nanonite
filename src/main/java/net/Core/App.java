@@ -36,7 +36,6 @@ public class App {
     float lastY;
     public Renderer renderer;
     Scene scene = new Scene();
-    Shader[] ChunkShaders = new Shader[2];
     Camera camera = new Camera(new Vector3d(8, 200, 8));
     World world;
     float delta;
@@ -99,9 +98,6 @@ public class App {
 
         // Delete the buffers and shader we don't need anymore
         scene.Delete();
-        for(Shader shader : ChunkShaders) {
-            shader.Clear();
-        }
         Client.DeleteTextures();
         MultiThreading.shutdown();
 
@@ -193,9 +189,7 @@ public class App {
             Logger.log(Logger.Level.WARNING, "GL DEBUG MESSAGE: " + glGetShaderInfoLog(id));
         }, 0);
 
-        ChunkShaders[0] = ChunkShaders[1] = new Shader();
-        ChunkShaders[0].CreateShader("Chunk.comp", "Chunk.frag");
-        ChunkShaders[1].CreateShader("Liquid.comp", "Liquid.frag");
+
 
         //System.out.println("MAX TEXTURE YOU CAN LOAD : " + GL_MAX_TEXTURE_IMAGE_UNITS); 34930
         FPSMonitor fpsMonitor = new FPSMonitor();
@@ -222,28 +216,11 @@ public class App {
 
             renderer.ClearColor();
 
-            ChunkShaders[0].Bind();
-
             camera.SetViewMatrix();
             camera.SetProjectionMatrix(m_Width, m_Height);
 
-            //Fog data
-            Vector3f fogColor = WorldEnvironment.interpolateFogColor(Camera.Position.y);
-
-            for(Shader shader : ChunkShaders) {
-                if(fogColor.x > WorldEnvironment.SURFACE_DEFAULT_COLOR.x)
-                    shader.Uniform3f("fogColor", WorldEnvironment.SURFACE_DEFAULT_COLOR);
-                else shader.Uniform3f("fogColor", fogColor);
-
-                shader.Uniform1f("renderDistance", Client.renderDistance);
-                shader.Uniform3f("cameraPos", new Vector3f(Camera.Position));
-                shader.UniformMatrix4x4("view", new Matrix4f(camera.GetViewMatrix()));
-                shader.UniformMatrix4x4("projection", new Matrix4f(camera.GetProjectionMatrix(m_Width, m_Height)));
-                shader.Uniform4dv("viewFrustum", camera.getFrustumData());
-            }
-
             //Draw chunks
-            world.renderChunks(ChunkShaders);
+            world.renderChunks(camera);
 
             //Draw entities
             //renderer.DrawScene(scene, shader);

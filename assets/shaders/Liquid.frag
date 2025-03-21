@@ -31,9 +31,7 @@ void main() {
     float dist = length(worldPos - cameraPos);
     float frac = clamp((dist - fogStart) / (fogEnd - fogStart), 0.0, 1.0);
 
-    vec4 specialColor = vec4(1.0);
-    if(index == 2)
-        specialColor = DEFAULT_GRASS_COLOR;
+    vec4 specialColor = vec4(0.3, 0.3, 0.3, 1.0);
 
     if(index == 7)
         specialColor = vec4(0.14, 0.21, 0.42, 1.0);
