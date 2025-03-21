@@ -188,7 +188,7 @@ public class World {
             if (chunk == null) continue;
             if (chunk.Ssbo == null) chunk.Init();
 
-            //updateNearbyChunks(chunkID);
+            updateNearbyChunks(chunkID);
             chunk.updateChunk((long) chunkID.x, (long) chunkID.y);
         }
     }
@@ -397,6 +397,14 @@ public class World {
             if (neighborChunk == null || neighborChunk.blocks[nx][ny][nz] == null) {
                 return 1;
             }
+
+            // Vérifier l'opacité du bloc adjacent du chunk adjacent
+            BlockModel nextBlock = Client.modelLoader.getModel(Client.modelPaths[neighborChunk.blocks[nx][ny][nz].getID()]);
+            Element nextBlockFirstElement = nextBlock.getElements().getFirst();
+            if (!nextBlockFirstElement.isOpacity()) {
+                return element.isOpacity() ? 1 : 0;
+            }
+
         } else {
             // Check the actual chunk
             if (actualChunk.blocks[nx][ny][nz] == null) {
@@ -404,9 +412,16 @@ public class World {
             }
         }
 
-        // Vérifier l'opacité du bloc adjacent
-        if (!element.isOpacity()) {
+        // Check if the neighbor is air
+        if (actualChunk.blocks[nx][ny][nz] == null) {
             return 1;
+        }
+
+        // Vérifier l'opacité du bloc adjacent
+        BlockModel nextBlock = Client.modelLoader.getModel(Client.modelPaths[actualChunk.blocks[nx][ny][nz].getID()]);
+        Element nextBlockFirstElement = nextBlock.getElements().getFirst();
+        if (!nextBlockFirstElement.isOpacity()) {
+            return element.isOpacity() ? 1 : 0;
         }
 
         return 0;

@@ -1,6 +1,6 @@
 {
-  "parent": "blocks/cube_all",
+  "parent": "blocks/liquid",
   "textures": {
-    "all": "blocks/water_still.png"
+    "alias": "blocks/water_still.png"
   }
 }

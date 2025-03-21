@@ -88,9 +88,19 @@ public class ChunkGen {
 
                 int y = (int) (MIN_HEIGHT + (SURFACE_HEIGHT * baseHeight));
                 y = abs(Y_CHUNK) + min(MAX_HEIGHT, max(MIN_HEIGHT, y));
-
                 chunk.blocks[x][y][z] = BlockType.STONE;
 
+            }
+        }
+
+        // Add water to the surface
+        for(int x = 0; x < ChunkGen.X_DIMENSION; x++) {
+            for(int z = 0; z < ChunkGen.Z_DIMENSION; z++) {
+                for(int y = WATER_LEVEL; y > MIN_HEIGHT; y--) {
+                    int yy = y + abs(Y_CHUNK);
+                    if(chunk.blocks[x][yy][z] == BlockType.STONE) break;
+                    chunk.blocks[x][yy][z] = BlockType.WATER;
+                }
             }
         }
 
