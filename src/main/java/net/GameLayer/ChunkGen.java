@@ -35,7 +35,8 @@ public class ChunkGen {
         GRAVEL((byte)3),
         BEDROCK((byte)4),
         DEEPSLATE((byte)5),
-        WATER((byte)6);
+        WATER((byte)6),
+        SAND((byte)7);
 
         private final byte id;
 
@@ -157,11 +158,14 @@ public class ChunkGen {
                     if(chunk.blocks[x][y][z] == BlockType.STONE) {
                         boolean isUnderWater = (chunk.blocks[x][y+5][z] == BlockType.WATER);
                         chunk.blocks[x][y][z] = (isUnderWater)? BlockType.GRAVEL :
-                                (chunk.blocks[x][y+1][z] == BlockType.WATER)? BlockType.DIRT : BlockType.GRASS;
+                                (chunk.blocks[x][y+1][z] == BlockType.WATER)? BlockType.SAND :
+                                        (y == WATER_LEVEL + abs(Y_CHUNK))? BlockType.SAND : BlockType.GRASS;
 
                         // Add sub surface blocks
                         for(int i = 1; i < dirtLevel; i++) {
-                            chunk.blocks[x][y-i][z] = (isUnderWater)? BlockType.GRAVEL : BlockType.DIRT;
+                            int yy = y-i;
+                            chunk.blocks[x][yy][z] = (isUnderWater)? BlockType.GRAVEL :
+                                    (chunk.blocks[x][yy+1][z] == BlockType.SAND) ? BlockType.SAND : BlockType.DIRT;
                         }
 
                         // Add stone blocks

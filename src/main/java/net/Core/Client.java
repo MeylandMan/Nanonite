@@ -27,7 +27,8 @@ public class Client {
             "blocks/gravel",
             "blocks/bedrock",
             "blocks/deepslate",
-            "blocks/water"
+            "blocks/water",
+            "blocks/sand"
     };
 
     public static ModelLoader modelLoader = new ModelLoader();

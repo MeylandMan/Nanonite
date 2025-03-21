@@ -2,7 +2,7 @@
 out vec4 fragColor;
 
 
-#define TEXTURE_LOADED 8
+#define TEXTURE_LOADED 9
 #define DEFAULT_WATER_COLOR vec4(0.14, 0.21, 0.42, 1.0)
 
 in vec2 v_TexCoords;
