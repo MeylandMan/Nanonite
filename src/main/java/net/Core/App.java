@@ -2,12 +2,10 @@ package net.Core;
 
 
 import net.Core.Rendering.*;
-import net.GameLayer.Camera;
-import net.GameLayer.FPSMonitor;
+import net.GameLayer.*;
 import net.Core.Physics.CubeCollision;
 import net.Core.Physics.Raycast;
 import net.Core.Rendering.Text.*;
-import net.GameLayer.World;
 import org.joml.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
@@ -17,6 +15,7 @@ import org.lwjgl.system.*;
 import java.nio.IntBuffer;
 import java.util.*;
 
+import static org.joml.Math.*;
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -213,6 +212,33 @@ public class App {
             glfwSwapInterval(Client.Vsync);
             delta = (fps[0] == 0)? 0.1f : 1/fps[0];
             ProcessInput(window);
+
+            Vector3d chunkPos = new Vector3d(
+                    floor(camera.Position.x / ChunkGen.X_DIMENSION),
+                    floor(camera.Position.y / ChunkGen.Z_DIMENSION),
+                    floor(camera.Position.z / ChunkGen.Z_DIMENSION)
+            );
+
+            int X = (int) floor((camera.Position.x % ChunkGen.X_DIMENSION + ChunkGen.X_DIMENSION) % ChunkGen.X_DIMENSION);
+            int Y = (int) floor(camera.Position.y) + abs(ChunkGen.Y_CHUNK);
+            int Z = (int) floor((camera.Position.z % ChunkGen.Z_DIMENSION + ChunkGen.Z_DIMENSION) % ChunkGen.Z_DIMENSION);
+
+            Chunk actualChunk = World.loadedChunks.get(new Vector2f((float) chunkPos.x, (float) chunkPos.z));
+            if(actualChunk != null) {
+                ChunkGen.BlockType actualBlock =
+                        actualChunk.blocks[X][Y][Z];
+
+                WorldEnvironment.isUnderWater = (actualBlock == ChunkGen.BlockType.WATER);
+                float fogFinalDist = (WorldEnvironment.isUnderWater)?
+                        WorldEnvironment.WATER_FOG_DISTANCE : WorldEnvironment.DEFAULT_FOG_DISTANCE;
+
+
+                float acc = WorldEnvironment.FOG_DISTANCE_ACCELERATION;
+                float fogDist = lerp(WorldEnvironment.fogDistance, fogFinalDist, acc * delta);
+
+                WorldEnvironment.fogDistance = fogDist;
+            }
+
 
             renderer.ClearColor();
 

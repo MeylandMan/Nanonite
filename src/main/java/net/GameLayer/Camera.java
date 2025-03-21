@@ -153,6 +153,7 @@ public class Camera {
     public void ProcessKeyboard(Camera_Movement direction, float deltaTime) {
 
         UP = false;
+        float pitchRad = toRadians(Pitch);
         if (direction == Camera_Movement.FORWARD) {
             velocity.x += Front.x;
             velocity.z += Front.z;
@@ -162,12 +163,12 @@ public class Camera {
             velocity.z -= Front.z;
         }
         if (direction == Camera_Movement.LEFT) {
-            velocity.x += Right.x;
-            velocity.z += Right.z;
+            velocity.x += Right.x / cos(pitchRad);
+            velocity.z += Right.z / cos(pitchRad);
         }
         if (direction == Camera_Movement.RIGHT) {
-            velocity.x -= Right.x;
-            velocity.z -= Right.z;
+            velocity.x -= Right.x / cos(pitchRad);
+            velocity.z -= Right.z / cos(pitchRad);
         }
         if(direction == Camera_Movement.UP) {
             velocity.y += SPEED * 5;

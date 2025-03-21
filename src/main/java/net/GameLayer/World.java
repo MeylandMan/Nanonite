@@ -356,7 +356,9 @@ public class World {
         glCullFace(GL_FRONT);
         glFrontFace(GL_CW);
 
-        Vector3f fogColor = WorldEnvironment.interpolateFogColor(Camera.Position.y);
+        Vector3f fogColor = (WorldEnvironment.isUnderWater)?
+                new Vector3f(0.14f, 0.21f, 0.42f) :
+                WorldEnvironment.interpolateFogColor(Camera.Position.y);
 
         ChunkShaders[0].Bind();
         ChunkShaders[0].Uniform1iv("u_Textures", Client.samplers);
@@ -364,6 +366,8 @@ public class World {
         if(fogColor.x > WorldEnvironment.SURFACE_DEFAULT_COLOR.x)
             ChunkShaders[0].Uniform3f("fogColor", WorldEnvironment.SURFACE_DEFAULT_COLOR);
         else ChunkShaders[0].Uniform3f("fogColor", fogColor);
+        ChunkShaders[0].Uniform1f("fogDistance", WorldEnvironment.fogDistance);
+        ChunkShaders[0].Uniform1i("UnderWater", (WorldEnvironment.isUnderWater)?1:0);
 
         ChunkShaders[0].Uniform1f("renderDistance", Client.renderDistance);
         ChunkShaders[0].Uniform3f("cameraPos", new Vector3f(Camera.Position));
@@ -392,7 +396,9 @@ public class World {
         if(fogColor.x > WorldEnvironment.SURFACE_DEFAULT_COLOR.x)
             ChunkShaders[1].Uniform3f("fogColor", WorldEnvironment.SURFACE_DEFAULT_COLOR);
         else ChunkShaders[1].Uniform3f("fogColor", fogColor);
+        ChunkShaders[1].Uniform1f("fogDistance", WorldEnvironment.fogDistance);
 
+        ChunkShaders[1].Uniform1i("UnderWater", (WorldEnvironment.isUnderWater)?1:0);
         ChunkShaders[1].Uniform1f("renderDistance", Client.renderDistance);
         ChunkShaders[1].Uniform3f("cameraPos", new Vector3f(Camera.Position));
         ChunkShaders[1].UniformMatrix4x4("view", new Matrix4f(camera.GetViewMatrix()));

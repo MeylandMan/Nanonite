@@ -175,9 +175,9 @@ public class Debugger {
         );
 
         Vector3d blockPosition = new Vector3d(
-                floor(camera.Position.x),
-                floor(camera.Position.y),
-                floor(camera.Position.z)
+                floor((camera.Position.x % ChunkGen.X_DIMENSION + ChunkGen.X_DIMENSION) % ChunkGen.X_DIMENSION),
+                floor((camera.Position.y % ChunkGen.Y_DIMENSION + ChunkGen.Y_DIMENSION) % ChunkGen.Y_DIMENSION),
+                floor((camera.Position.z % ChunkGen.Z_DIMENSION + ChunkGen.Z_DIMENSION) % ChunkGen.Z_DIMENSION)
         );
 
         /*
