@@ -36,8 +36,8 @@ public class App {
     float lastY;
     public Renderer renderer;
     Scene scene = new Scene();
-    Shader shader = new Shader();
-    Camera camera = new Camera(new Vector3d(8, 70, 8));
+    Shader[] ChunkShaders = new Shader[2];
+    Camera camera = new Camera(new Vector3d(8, 200, 8));
     World world;
     float delta;
     float lastFrame;
@@ -99,7 +99,9 @@ public class App {
 
         // Delete the buffers and shader we don't need anymore
         scene.Delete();
-        shader.Clear();
+        for(Shader shader : ChunkShaders) {
+            shader.Clear();
+        }
         Client.DeleteTextures();
         MultiThreading.shutdown();
 
@@ -191,7 +193,9 @@ public class App {
             Logger.log(Logger.Level.WARNING, "GL DEBUG MESSAGE: " + glGetShaderInfoLog(id));
         }, 0);
 
-        shader.CreateShader("Chunk.comp", "Chunk.frag");
+        ChunkShaders[0] = ChunkShaders[1] = new Shader();
+        ChunkShaders[0].CreateShader("Chunk.comp", "Chunk.frag");
+        ChunkShaders[1].CreateShader("Liquid.comp", "Liquid.frag");
 
         //System.out.println("MAX TEXTURE YOU CAN LOAD : " + GL_MAX_TEXTURE_IMAGE_UNITS); 34930
         FPSMonitor fpsMonitor = new FPSMonitor();
@@ -208,41 +212,17 @@ public class App {
         }
         SpriteRenderer spriteRenderer = new SpriteRenderer();
 
-        // UI
-        /*
-        user = new UserInterface(spriteRenderer, textRenderer);
-        UISlider slider = new UISlider("Value of x: " + value,
-                new Vector3f(30, 10, -10),
-                new Vector2f(400, 50),
-                value);
-        slider.setRectangleColor(new Vector3f(0.5f));
-        slider.setSliderColor(new Vector3f(1));
-
-        UIButton button = new UIButton(
-                "Press to", new Vector3f(30, 30, -10),
-                new Vector2f(300, 100)
-        );
-        user.addElement(button);
-        */
-
         world = new World(450);
-        world.addCollision(camera.collision);
-        world.addCollision(new CubeCollision(new Vector3d(8), new Vector3d(1)));
-
-        Raycast raycast = new Raycast(camera.Position, new Vector3d(camera.getFront()));
         while ( !glfwWindowShouldClose(window) ) {
 
             Logger.catchOpenGLErrors();
-
             glfwSwapInterval(Client.Vsync);
-
             delta = (fps[0] == 0)? 0.1f : 1/fps[0];
-
             ProcessInput(window);
 
             renderer.ClearColor();
 
-            shader.Bind();
+            ChunkShaders[0].Bind();
 
             camera.SetViewMatrix();
             camera.SetProjectionMatrix(m_Width, m_Height);
@@ -250,25 +230,23 @@ public class App {
             //Fog data
             Vector3f fogColor = WorldEnvironment.interpolateFogColor(Camera.Position.y);
 
-            if(fogColor.x > WorldEnvironment.SURFACE_DEFAULT_COLOR.x)
-                shader.Uniform3f("fogColor", WorldEnvironment.SURFACE_DEFAULT_COLOR);
-            else shader.Uniform3f("fogColor", fogColor);
+            for(Shader shader : ChunkShaders) {
+                if(fogColor.x > WorldEnvironment.SURFACE_DEFAULT_COLOR.x)
+                    shader.Uniform3f("fogColor", WorldEnvironment.SURFACE_DEFAULT_COLOR);
+                else shader.Uniform3f("fogColor", fogColor);
 
-            shader.Uniform1f("renderDistance", Client.renderDistance);
-            shader.Uniform3f("cameraPos", new Vector3f(Camera.Position));
-            shader.UniformMatrix4x4("view", new Matrix4f(camera.GetViewMatrix()));
-            shader.UniformMatrix4x4("projection", new Matrix4f(camera.GetProjectionMatrix(m_Width, m_Height)));
-
-            //shader.UniformMatrix4x4d("view", camera.GetViewMatrixd());
-            //shader.UniformMatrix4x4d("projection", camera.GetProjectionMatrixd(m_Width, m_Height));
-
-            shader.Uniform4dv("viewFrustum", camera.getFrustumData());
+                shader.Uniform1f("renderDistance", Client.renderDistance);
+                shader.Uniform3f("cameraPos", new Vector3f(Camera.Position));
+                shader.UniformMatrix4x4("view", new Matrix4f(camera.GetViewMatrix()));
+                shader.UniformMatrix4x4("projection", new Matrix4f(camera.GetProjectionMatrix(m_Width, m_Height)));
+                shader.Uniform4dv("viewFrustum", camera.getFrustumData());
+            }
 
             //Draw chunks
-            world.renderChunks(shader);
+            world.renderChunks(ChunkShaders);
 
             //Draw entities
-            renderer.DrawScene(scene, shader);
+            //renderer.DrawScene(scene, shader);
             //world.onRender(camera.GetViewMatrix(), camera.GetProjectionMatrix(m_Width, m_Height));
 
             //raycast.origin = camera.Position;

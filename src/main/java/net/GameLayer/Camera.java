@@ -55,7 +55,7 @@ public class Camera {
 
     // Default camera values
     private static final float YAW = 0.0f;
-    private static final float PITCH = 0.0f;
+    private static final float PITCH = -90.0f;
     public  static final float SPEED = 5.f;
     public static final float MAX_SPEED = 15.0f; // Vitesse max en mode spectateur 7
     public static final float ACCELERATION_FACTOR = 3.0f; // Influence de l'accélération
@@ -165,11 +165,11 @@ public class Camera {
             velocity.z -= Right.z;
         }
         if(direction == Camera_Movement.UP) {
-            velocity.y += SPEED;
+            velocity.y += SPEED * 5;
             UP = true;
         }
         if(direction == Camera_Movement.DOWN) {
-            velocity.y -= SPEED;
+            velocity.y -= SPEED * 5;
             UP = true;
         }
 

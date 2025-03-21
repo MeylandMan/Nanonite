@@ -19,7 +19,7 @@ uniform sampler2D u_Textures[TEXTURE_LOADED];
 
 void main() {
     if(inside == 0.0)
-        discard;
+    discard;
 
     int index = int(TextureIndex);
     //fragColor = vec4(TextureIndex, TextureIndex, 0.0, 1.0);
@@ -33,7 +33,7 @@ void main() {
 
     vec4 specialColor = vec4(1.0);
     if(index == 2)
-        specialColor = DEFAULT_GRASS_COLOR;
+    specialColor = DEFAULT_GRASS_COLOR;
 
     vec4 result = mix(startingColor * specialColor, vec4(fogColor, 1.0), frac);
 

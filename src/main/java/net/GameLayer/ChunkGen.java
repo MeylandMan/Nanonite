@@ -1,12 +1,9 @@
 package net.GameLayer;
 
-import com.sudoplay.joise.module.ModuleClamp;
-import com.sudoplay.joise.module.ModuleScaleOffset;
+import com.sudoplay.joise.module.*;
 import net.Core.BlockModel;
 import net.Core.Client;
 import net.Core.Face;
-import org.joml.Matrix4d;
-import org.joml.Matrix4f;
 import org.joml.Random;
 
 import java.util.Map;
@@ -21,9 +18,9 @@ public class ChunkGen {
     public final static byte Z_DIMENSION = 16;
 
     // Surface data
-    public static int MAX_HEIGHT = 92;
-    public static int MIN_HEIGHT = 8;
-    public static int SURFACE_HEIGHT = 30;
+    public static int MAX_HEIGHT = 157;
+    public static int MIN_HEIGHT = 40;
+    public static int SURFACE_HEIGHT = 70;
     public final static int WATER_LEVEL = 64;
 
     // Depths data
@@ -51,16 +48,24 @@ public class ChunkGen {
     }
 
     public static void AddChunkSurface(Chunk chunk) {
+        // Create the terrain height
+        ModuleFractal baseTerrain = new ModuleFractal(
+                ModuleFractal.FractalType.FBM, // Fractal type
+                ModuleBasisFunction.BasisType.SIMPLEX, // Using SimplexNoise
+                ModuleBasisFunction.InterpolationType.QUINTIC // fluid interpolation
+        );
+        baseTerrain.setSeed(World.seed);
+        baseTerrain.setNumOctaves(4);
 
-        // Appliquer un scale et un offset pour mieux lisser le terrain
-        ModuleScaleOffset scaleOffset = new ModuleScaleOffset();
-        scaleOffset.setSource(World.basis);
-        scaleOffset.setScale(0.1);
-        scaleOffset.setOffset(0.1);
+        ModuleScaleOffset surfaceScaleOffset = new ModuleScaleOffset();
+        surfaceScaleOffset.setSource(baseTerrain);
+        surfaceScaleOffset.setScale(0.2);
+        surfaceScaleOffset.setOffset(0.3);
 
-        ModuleClamp clamp = new ModuleClamp();
-        clamp.setSource(scaleOffset);
-        clamp.setRange(0.01, 1.0);
+        // Clamping to avoid extreme values
+        ModuleClamp clamping = new ModuleClamp();
+        clamping.setSource(surfaceScaleOffset);
+        clamping.setRange(0.0, 0.9);
 
         double surfaceFrequency = 1.0 / 128.0;
         double depthFrequency = 1.0 / 64.0;
@@ -75,15 +80,30 @@ public class ChunkGen {
                 double perlinX = (double) (worldX + x) * surfaceFrequency;
                 double perlinY = (double) (worldZ + z) * surfaceFrequency;
 
-                double noiseValue = clamp.get(perlinX, perlinY);
-                int y = (int) (SURFACE_HEIGHT + Math.round(MAX_HEIGHT + (MAX_HEIGHT - MIN_HEIGHT) * noiseValue));
+                double baseHeight = clamping.get(perlinX, perlinY);
+
+                // Final formula to calculate the height
+                //int y = (int) (30 + (40 * baseHeight) + (87 * max(0, moutainFactor)));
+
+                int y = (int) (MIN_HEIGHT + (SURFACE_HEIGHT * baseHeight));
+                y = abs(Y_CHUNK) + min(MAX_HEIGHT, max(MIN_HEIGHT, y));
+
                 chunk.blocks[x][y][z] = BlockType.STONE;
 
             }
         }
 
         // Add the depth surface
+        // Appliquer un scale et un offset pour mieux lisser le terrain
+        ModuleScaleOffset scaleOffset = new ModuleScaleOffset();
+        scaleOffset.setSource(World.basis);
+        scaleOffset.setScale(0.1);
+        scaleOffset.setOffset(0.1);
+
+        ModuleClamp clamp = new ModuleClamp();
+        clamp.setSource(scaleOffset);
         clamp.setRange(0.08, 1.0);
+
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int z = 0; z < Z_DIMENSION; z++) {
 
@@ -180,7 +200,7 @@ public class ChunkGen {
 
     public static boolean isChunkInFrustum(Camera.Plane[] frustumPlanes, double chunkX, double chunkZ) {
         float chunkSize = ChunkGen.X_DIMENSION; // Length of a chunk
-        float chunkHeight = 80;
+        float chunkHeight = ChunkGen.Y_DIMENSION;
         float chunkY = ChunkGen.Y_CHUNK;
 
         // Try the 4 corners of a chunk (ground)

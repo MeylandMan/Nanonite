@@ -30,6 +30,7 @@ public class Chunk {
     int faceDrawn = 0;
     int blockDrawn = 0;
 
+    public int Y_MAX;
     public long positionX, positionY, positionZ;
 
     public Chunk() { }

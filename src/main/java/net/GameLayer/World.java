@@ -188,7 +188,7 @@ public class World {
             if (chunk == null) continue;
             if (chunk.Ssbo == null) chunk.Init();
 
-            updateNearbyChunks(chunkID);
+            //updateNearbyChunks(chunkID);
             chunk.updateChunk((long) chunkID.x, (long) chunkID.y);
         }
     }
@@ -322,7 +322,7 @@ public class World {
         }
     }
 
-    public void renderChunks(Shader shader) {
+    public void renderChunks(Shader[] shader) {
 
         processChunkDeletions();
 
@@ -342,7 +342,8 @@ public class World {
         glCullFace(GL_FRONT);
         glFrontFace(GL_CW);
 
-        shader.Uniform1iv("u_Textures", Client.samplers);
+        shader[0].Uniform1iv("u_Textures", Client.samplers);
+        shader[1].Uniform1iv("u_Textures", Client.samplers);
 
         for(Chunk chunk : loadedChunks.values()) {
 
@@ -350,7 +351,8 @@ public class World {
                     chunk.positionZ * ChunkGen.Z_DIMENSION))
                 continue;
 
-            shader.Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
+            shader[0].Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
+            shader[1].Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
             chunk.DrawMesh();
         }
     }
