@@ -350,8 +350,7 @@ public class World {
                     chunk.positionZ * ChunkGen.Z_DIMENSION))
                 continue;
 
-            shader.Uniform3d("Position", chunk.positionX * ChunkGen.X_DIMENSION, chunk.positionY,
-                    chunk.positionZ * ChunkGen.Z_DIMENSION);
+            shader.Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
             chunk.DrawMesh();
         }
     }

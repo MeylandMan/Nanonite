@@ -1,9 +1,12 @@
 package net.Core.Rendering;
 
 import net.Core.Rendering.UI.UserInterface;
+import net.GameLayer.Camera;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 
+import static net.Core.WorldEnvironment.*;
 import static org.lwjgl.opengl.GL20.*;
 
 
@@ -26,7 +29,11 @@ public class Renderer {
         mesh.Draw();
     }
     public void ClearColor() {
-        glClearColor(0.53f, 0.81f, 0.92f, 0.f);
+        Vector3f fogColor = interpolateFogColor(Camera.Position.y);
+        if(fogColor.x > SURFACE_DEFAULT_COLOR.x)
+            glClearColor(SURFACE_DEFAULT_COLOR.x, SURFACE_DEFAULT_COLOR.y, SURFACE_DEFAULT_COLOR.z, 0.f);
+        else
+            glClearColor(fogColor.x, fogColor.y, fogColor.z, 0.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
     public void ClearRender() {

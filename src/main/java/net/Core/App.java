@@ -37,7 +37,7 @@ public class App {
     public Renderer renderer;
     Scene scene = new Scene();
     Shader shader = new Shader();
-    Camera camera = new Camera(new Vector3d(999999, 70, 8));
+    Camera camera = new Camera(new Vector3d(8, 70, 8));
     World world;
     float delta;
     float lastFrame;
@@ -247,6 +247,15 @@ public class App {
             camera.SetViewMatrix();
             camera.SetProjectionMatrix(m_Width, m_Height);
 
+            //Fog data
+            Vector3f fogColor = WorldEnvironment.interpolateFogColor(Camera.Position.y);
+
+            if(fogColor.x > WorldEnvironment.SURFACE_DEFAULT_COLOR.x)
+                shader.Uniform3f("fogColor", WorldEnvironment.SURFACE_DEFAULT_COLOR);
+            else shader.Uniform3f("fogColor", fogColor);
+
+            shader.Uniform1f("renderDistance", Client.renderDistance);
+            shader.Uniform3f("cameraPos", new Vector3f(Camera.Position));
             shader.UniformMatrix4x4("view", new Matrix4f(camera.GetViewMatrix()));
             shader.UniformMatrix4x4("projection", new Matrix4f(camera.GetProjectionMatrix(m_Width, m_Height)));
 
