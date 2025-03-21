@@ -399,6 +399,7 @@ public class World {
         ChunkShaders[1].Uniform1f("fogDistance", WorldEnvironment.fogDistance);
 
         ChunkShaders[1].Uniform1i("UnderWater", (WorldEnvironment.isUnderWater)?1:0);
+        ChunkShaders[1].Uniform1f("Time", (float) glfwGetTime());
         ChunkShaders[1].Uniform1f("renderDistance", Client.renderDistance);
         ChunkShaders[1].Uniform3f("cameraPos", new Vector3f(Camera.Position));
         ChunkShaders[1].UniformMatrix4x4("view", new Matrix4f(camera.GetViewMatrix()));

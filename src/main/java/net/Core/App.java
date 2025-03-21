@@ -220,7 +220,7 @@ public class App {
             );
 
             int X = (int) floor((camera.Position.x % ChunkGen.X_DIMENSION + ChunkGen.X_DIMENSION) % ChunkGen.X_DIMENSION);
-            int Y = (int) floor(camera.Position.y) + abs(ChunkGen.Y_CHUNK);
+            int Y = (int) max(floor(camera.Position.y) + abs(ChunkGen.Y_CHUNK), 0);
             int Z = (int) floor((camera.Position.z % ChunkGen.Z_DIMENSION + ChunkGen.Z_DIMENSION) % ChunkGen.Z_DIMENSION);
 
             Chunk actualChunk = World.loadedChunks.get(new Vector2f((float) chunkPos.x, (float) chunkPos.z));

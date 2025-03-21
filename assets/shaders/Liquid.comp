@@ -2,6 +2,7 @@
 
 #define BLOCK_SIZE 16
 #define VERTICES_CLIPPING -200000000000.0
+#define PI 3.1415926535
 
 out vec3 fragPos;
 out vec3 worldPos;
@@ -38,6 +39,8 @@ layout(std430, binding = 0) buffer BlockData {
 uniform mat4 projection;
 uniform mat4 view;
 uniform vec3 Position;
+
+uniform float Time;
 
 uniform Plane viewFrustum[6];
 
@@ -82,6 +85,8 @@ void main() {
     worldPosition; // Put the vertices very far AWAY
 
     worldPosition.y = (faces[faceIndex].FaceID == 4) ? worldPosition.y - 0.1 : worldPosition.y;
+    worldPosition.y += (sin(worldPosition.x * PI / 2 + Time) +
+            sin(worldPosition.z * PI / 2 + Time * 1.5)) * 0.05;
     inside = (isInside)? 1.0 : 0.0;
     worldPos = worldPosition;
     gl_Position = PROJECTION_VIEW_MATRIX * vec4(worldPosition, 1.0);
