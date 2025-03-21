@@ -81,8 +81,8 @@ void main() {
     worldPosition = (!isInside)? vec3(VERTICES_CLIPPING, VERTICES_CLIPPING, VERTICES_CLIPPING) :
     worldPosition; // Put the vertices very far AWAY
 
+    worldPosition.y = (faces[faceIndex].FaceID == 4) ? worldPosition.y - 0.1 : worldPosition.y;
     inside = (isInside)? 1.0 : 0.0;
-
     worldPos = worldPosition;
     gl_Position = PROJECTION_VIEW_MATRIX * vec4(worldPosition, 1.0);
 
