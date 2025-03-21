@@ -2,7 +2,7 @@
 out vec4 fragColor;
 
 
-#define TEXTURE_LOADED 7
+#define TEXTURE_LOADED 8
 #define DEFAULT_GRASS_COLOR vec4(0.61, 0.80, 0.42, 1.0)
 
 in vec2 v_TexCoords;
@@ -33,7 +33,10 @@ void main() {
 
     vec4 specialColor = vec4(1.0);
     if(index == 2)
-    specialColor = DEFAULT_GRASS_COLOR;
+        specialColor = DEFAULT_GRASS_COLOR;
+
+    if(index == 7)
+        specialColor = vec4(0.14, 0.21, 0.42, 1.0);
 
     vec4 result = mix(startingColor * specialColor, vec4(fogColor, 1.0), frac);
 

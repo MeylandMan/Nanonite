@@ -34,7 +34,8 @@ public class ChunkGen {
         STONE((byte)2),
         GRAVEL((byte)3),
         BEDROCK((byte)4),
-        DEEPSLATE((byte)5);
+        DEEPSLATE((byte)5),
+        WATER((byte)6);
 
         private final byte id;
 
@@ -238,6 +239,6 @@ public class ChunkGen {
         AddChunkSurface(chunk);
 
         // check if there's blocks at the top of the dirt
-        ResolveChunkSurface(chunk);
+        //ResolveChunkSurface(chunk);
     }
 }
