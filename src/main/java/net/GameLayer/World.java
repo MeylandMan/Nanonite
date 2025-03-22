@@ -24,7 +24,9 @@ public class World {
     Shader[] ChunkShaders = new Shader[2];
     public Shader shader;
     public static final float GRAVITY = 0;
+    public static Player player;
 
+    public static Vector3d SpawnPoint = new Vector3d(8, 150, 8);
     // Procedural generation datas
     static ModuleBasisFunction basis;
     public static long seed;
@@ -79,6 +81,8 @@ public class World {
 
         ChunkShaders[0].CreateShader("Chunk.comp", "Chunk.frag");
         ChunkShaders[1].CreateShader("Liquid.comp", "Liquid.frag");
+
+        player = new Player(SpawnPoint);
     }
 
     public World(long sd) {

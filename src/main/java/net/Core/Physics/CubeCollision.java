@@ -18,6 +18,8 @@ public class CubeCollision {
         this.size = size;
     }
 
+    public CubeCollision() {}
+
     public boolean intersects(CubeCollision other) {
         return this.max.x + position.x > other.min.x + other.position.x && this.min.x + position.x < other.max.x  + other.position.x&&
                 this.max.y + position.y > other.min.y + other.position.y && this.min.y + position.y < other.max.y + other.position.y&&
