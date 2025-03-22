@@ -35,7 +35,7 @@ public class App {
     float lastY;
     public Renderer renderer;
     Scene scene = new Scene();
-    Camera camera = new Camera(new Vector3d(8, 150, 8));
+    Camera camera = new Camera();
     World world;
     float delta;
     float lastFrame;
@@ -55,34 +55,34 @@ public class App {
     private void ProcessInput(long window) {
         if (Input.is_locked) {
             if (Input.isKeyPressed(Input.KEY_SPRINT) && !Input.isKeyNotUsed(Input.KEY_UP)) {
-                camera.targetSpeed = Camera.MAX_SPEED;
+                World.player.targetSpeed = World.player.MAX_SPEED;
                 camera.targetZoom = Camera.ZOOM*1.3f;
             } else {
-                camera.targetSpeed = Camera.SPEED;
+                World.player.targetSpeed = World.player.SPEED;
                 camera.targetZoom = Camera.ZOOM;
             }
 
             if(Input.isKeyJustPressed(Input.KEY_RESET_POSITION)) {
-                Camera.Position = new Vector3d(8, 70, 8);
+                World.player.position = new Vector3d(8, 70, 8);
             }
 
 
             if (Input.isMoveKeyNotUsed()) {
-                camera.targetSpeed = 0;
+                World.player.targetSpeed = 0;
             }
-
+            
             if (Input.isKeyPressed(Input.KEY_UP))
-                camera.ProcessKeyboard(Camera.Camera_Movement.FORWARD, delta);
+                World.player.ProcessKeyboard(Camera.Camera_Movement.FORWARD, delta);
             if (Input.isKeyPressed(Input.KEY_DOWN))
-                camera.ProcessKeyboard(Camera.Camera_Movement.BACKWARD, delta);
+                World.player.ProcessKeyboard(Camera.Camera_Movement.BACKWARD, delta);
             if (Input.isKeyPressed(Input.KEY_LEFT))
-                camera.ProcessKeyboard(Camera.Camera_Movement.LEFT, delta);
+                World.player.ProcessKeyboard(Camera.Camera_Movement.LEFT, delta);
             if (Input.isKeyPressed(Input.KEY_RIGHT))
-                camera.ProcessKeyboard(Camera.Camera_Movement.RIGHT, delta);
+                World.player.ProcessKeyboard(Camera.Camera_Movement.RIGHT, delta);
             if(Input.isKeyPressed(Input.KEY_JUMP))
-                camera.ProcessKeyboard(Camera.Camera_Movement.UP, delta);
+                World.player.ProcessKeyboard(Camera.Camera_Movement.UP, delta);
             if(Input.isKeyPressed(Input.KEY_SNEAK))
-                camera.ProcessKeyboard(Camera.Camera_Movement.DOWN, delta);
+                World.player.ProcessKeyboard(Camera.Camera_Movement.DOWN, delta);
         }
     }
 
@@ -210,18 +210,32 @@ public class App {
 
             Logger.catchOpenGLErrors();
             glfwSwapInterval(Client.Vsync);
-            delta = (fps[0] == 0)? 0.1f : 1/fps[0];
+
+            // Updates
             ProcessInput(window);
 
+            delta = (fps[0] == 0)? 0.1f : 1/fps[0];
+            world.onUpdate(camera, delta);
+            fpsMonitor.update();
+
+            fps =  new float[] {
+                    fpsMonitor.getFPS(),
+                    fpsMonitor.getAverageFPS(),
+                    fpsMonitor.getMinFPS(),
+                    fpsMonitor.getMaxFPS()
+            };
+            Input.Update(window, camera, scene, delta);
+            World.player.updateCameraVectors(delta);
+
             Vector3d chunkPos = new Vector3d(
-                    floor(camera.Position.x / ChunkGen.X_DIMENSION),
-                    floor(camera.Position.y / ChunkGen.Z_DIMENSION),
-                    floor(camera.Position.z / ChunkGen.Z_DIMENSION)
+                    floor(World.player.position.x / ChunkGen.X_DIMENSION),
+                    floor(World.player.position.y / ChunkGen.Z_DIMENSION),
+                    floor(World.player.position.z / ChunkGen.Z_DIMENSION)
             );
 
-            int X = (int) floor((camera.Position.x % ChunkGen.X_DIMENSION + ChunkGen.X_DIMENSION) % ChunkGen.X_DIMENSION);
-            int Y = (int) clamp(floor(camera.Position.y) + abs(ChunkGen.Y_CHUNK), 0, ChunkGen.Y_DIMENSION-1);
-            int Z = (int) floor((camera.Position.z % ChunkGen.Z_DIMENSION + ChunkGen.Z_DIMENSION) % ChunkGen.Z_DIMENSION);
+            int X = (int) floor((World.player.position.x % ChunkGen.X_DIMENSION + ChunkGen.X_DIMENSION) % ChunkGen.X_DIMENSION);
+            int Y = (int) clamp(floor(World.player.position.y) + abs(ChunkGen.Y_CHUNK), 0, ChunkGen.Y_DIMENSION-1);
+            int Z = (int) floor((World.player.position.z % ChunkGen.Z_DIMENSION + ChunkGen.Z_DIMENSION) % ChunkGen.Z_DIMENSION);
 
             Chunk actualChunk = World.loadedChunks.get(new Vector2f((float) chunkPos.x, (float) chunkPos.z));
             if(actualChunk != null) {
@@ -240,6 +254,7 @@ public class App {
             }
 
 
+            // Rendering
             renderer.ClearColor();
 
             camera.SetViewMatrix();
@@ -252,7 +267,7 @@ public class App {
             //renderer.DrawScene(scene, shader);
             //world.onRender(camera.GetViewMatrix(), camera.GetProjectionMatrix(m_Width, m_Height));
 
-            //raycast.origin = camera.Position;
+            //raycast.origin = World.player.position;
             //raycast.direction = camera.getFront();
             //raycast.drawRay(10);
 
@@ -269,19 +284,6 @@ public class App {
             Debugger.render(camera, textRenderer);
             glfwSwapBuffers(window);
             glfwPollEvents();
-
-
-            world.onUpdate(camera, delta);
-            fpsMonitor.update();
-
-            fps =  new float[] {
-                    fpsMonitor.getFPS(),
-                    fpsMonitor.getAverageFPS(),
-                    fpsMonitor.getMinFPS(),
-                    fpsMonitor.getMaxFPS()
-            };
-            Input.Update(window, camera, scene, delta);
-            camera.updateCameraVectors(delta);
         }
 
     }

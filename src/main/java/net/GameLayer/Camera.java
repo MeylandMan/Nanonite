@@ -57,49 +57,29 @@ public class Camera {
     // Default camera values
     private static final float YAW = 0.0f;
     private static final float PITCH = -45.0f;
-    public  static final float SPEED = 5.f;
-    public static final float MAX_SPEED = 15.0f; // Vitesse max en mode spectateur 7
-    public static final float ACCELERATION_FACTOR = 3.0f; // Influence de l'accélération
-    public static final float DRAG_FACTOR = 10.0f; // Influence du ralentissement
     private static final float SENSITIVITY = 0.1f;
     public  static final float ZOOM = 45.0f;
 
-    // Multiplier
-    public static final float FLYING_SPEED = 10;
-    public static final float RUNNING_SPEED = 0.5f;
-
     // camera Attributes
-    public CubeCollision collision;
-    public Raycast raycast;
-    public static Vector3d Position;
-    private Vector3f Front = new Vector3f(0.0f, 0.0f, -1.0f);
-    private final Vector3f Up = new Vector3f();
-    private final Vector3f Right = new Vector3f();
-    private final Vector3f WorldUp;
-    private boolean UP = true;
+    private static Vector3f Front = new Vector3f(0.0f, 0.0f, -1.0f);
+    private static final Vector3f Up = new Vector3f();
+    private static Vector3f Right = new Vector3f();
+    private static final Vector3f WorldUp = new Vector3f(0.f, 1.f, 0.f);
+
     // euler Angles
-    public float Yaw;
-    public float Pitch;
-    public float Roll = 0;
+    public static float Yaw;
+    public static float Pitch;
+    public static float Roll = 0;
 
     // camera options
-    public Vector3f velocity;
-    public float targetSpeed = SPEED;
-    public float currentSpeed = SPEED;
-    public float targetZoom = ZOOM;
-    public float MouseSensitivity = SENSITIVITY;
-    public float Zoom = ZOOM;
-    public float dragFactor = 1;
+    public static float targetZoom = ZOOM;
+    public static float MouseSensitivity = SENSITIVITY;
+    public static float Zoom = ZOOM;
 
     // Camera constructor
-    public Camera(Vector3d position) {
-        Position = position;
-        this.WorldUp = new Vector3f(0.f, 1.f, 0.f);
+    public Camera() {
         this.Yaw = YAW;
         this.Pitch = PITCH;
-        collision = new CubeCollision(new Vector3d(), new Vector3d(1, 2, 1));
-        this.raycast = new Raycast(new Vector3d(Position.x, Position.y+1, Position.z), new Vector3d(getFront()));
-        this.velocity = new Vector3f();
     }
 
     // returns the view matrix calculated using Euler Angles and the LookAt Matrix
@@ -109,7 +89,11 @@ public class Camera {
                 .rotate(toRadians(Roll), new Vector3d(0, 0, 1))
                 .rotate(toRadians(-Pitch), new Vector3d(1, 0, 0))
                 .rotate(toRadians(Yaw), new Vector3d(0, 1, 0))
-                .translate(new Vector3d(-Position.x, -Position.y, -Position.z));
+                .translate(new Vector3d(
+                        -World.player.position.x,
+                        -World.player.position.y,
+                        -World.player.position.z
+                ));
     }
 
     /*
@@ -146,37 +130,6 @@ public class Camera {
                 );
     }
 
-    public void ProcessKeyboard(Camera_Movement direction, float deltaTime) {
-
-        UP = false;
-        float pitchRad = toRadians(Pitch);
-        if (direction == Camera_Movement.FORWARD) {
-            velocity.x += Front.x;
-            velocity.z += Front.z;
-        }
-        if (direction == Camera_Movement.BACKWARD) {
-            velocity.x -= Front.x;
-            velocity.z -= Front.z;
-        }
-        if (direction == Camera_Movement.LEFT) {
-            velocity.x += Right.x / cos(pitchRad);
-            velocity.z += Right.z / cos(pitchRad);
-        }
-        if (direction == Camera_Movement.RIGHT) {
-            velocity.x -= Right.x / cos(pitchRad);
-            velocity.z -= Right.z / cos(pitchRad);
-        }
-        if(direction == Camera_Movement.UP) {
-            velocity.y += SPEED * 5;
-            UP = true;
-        }
-        if(direction == Camera_Movement.DOWN) {
-            velocity.y -= SPEED * 5;
-            UP = true;
-        }
-
-    }
-
     // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
     public void ProcessMouseMovement(float x_offset, float y_offset, boolean constrainPitch)
     {
@@ -189,45 +142,6 @@ public class Camera {
         // make sure that when pitch is out of bounds, screen doesn't get flipped
         if (constrainPitch)
             Pitch = Math.clamp(Pitch, -89.0f, 89.0f);
-    }
-
-    public void updateCameraVectors(float deltaTime) {
-        float yawRad = toRadians(Yaw);
-        float pitchRad = toRadians(Pitch);
-
-        Right.set(
-                -(cos(yawRad) * cos(pitchRad)),
-                sin(pitchRad),
-                -(sin(yawRad) * cos(pitchRad))
-        ).normalize();
-
-        // also re-calculate the Right and Up vector
-        Front.set(Right).cross(WorldUp).normalize();
-        Up.set(Front).cross(Right).normalize();
-
-        float acceleration = ACCELERATION_FACTOR * deltaTime;
-
-        Zoom = lerp(Zoom, targetZoom, acceleration*3);
-        currentSpeed = lerp(currentSpeed, targetSpeed, acceleration);
-
-            float speed = currentSpeed * deltaTime;
-
-        if(targetSpeed == 0 && !UP) {
-            velocity.x = clamp(lerp(velocity.x, 0, acceleration/dragFactor), -1, 1);
-            velocity.z = clamp(lerp(velocity.z, 0, acceleration/dragFactor), -1, 1);
-            dragFactor -= deltaTime * DRAG_FACTOR;
-            dragFactor = max(dragFactor, 1);
-
-        } else {
-            dragFactor = DRAG_FACTOR;
-            velocity.x *= speed;
-            velocity.z *= speed;
-            velocity.y *= deltaTime;
-        }
-        Position.add(velocity);
-
-        raycast.update(new Vector3d(Position.x, Position.y+1, Position.z), new Vector3d(getFront()));
-        collision.position = new Vector3d(Position.x-0.5f, Position.y-1.5f, Position.z-0.5f);
     }
 
     // Frustum 
@@ -274,7 +188,10 @@ public class Camera {
         return result;
     }
     // Getters
-    public Vector3f getFront() { return Front; }
-    public Vector3f getRight() { return Right; }
-    public Vector3f getUp() { return Up; }
+    public static Vector3f getFront() { return Front; }
+
+    public static void setRight(Vector3f r) { Right = new Vector3f(r); }
+    public static Vector3f getRight() { return Right; }
+    public static Vector3f getUp() { return Up; }
+    public static Vector3f getWorldUp() { return WorldUp; }
 }

@@ -2,6 +2,7 @@ package net.Core.Rendering;
 
 import net.Core.Rendering.UI.UserInterface;
 import net.GameLayer.Camera;
+import net.GameLayer.World;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class Renderer {
         mesh.Draw();
     }
     public void ClearColor() {
-        Vector3f fogColor = interpolateFogColor(Camera.Position.y);
+        Vector3f fogColor = interpolateFogColor(World.player.position.y);
         if(fogColor.x > SURFACE_DEFAULT_COLOR.x)
             glClearColor(SURFACE_DEFAULT_COLOR.x, SURFACE_DEFAULT_COLOR.y, SURFACE_DEFAULT_COLOR.z, 0.f);
         else

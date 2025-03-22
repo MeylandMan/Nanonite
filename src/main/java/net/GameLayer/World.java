@@ -100,6 +100,8 @@ public class World {
 
         ChunkShaders[0].CreateShader("Chunk.comp", "Chunk.frag");
         ChunkShaders[1].CreateShader("Liquid.comp", "Liquid.frag");
+
+        player = new Player(SpawnPoint);
     }
 
     public static void addChunksToQueue(Camera camera, boolean reset) {
@@ -117,8 +119,8 @@ public class World {
         }
 
 
-        long chunkX = (long) (Camera.Position.x / ChunkGen.X_DIMENSION);
-        long chunkZ = (long) (Camera.Position.z / ChunkGen.Z_DIMENSION);
+        long chunkX = (long) (player.position.x / ChunkGen.X_DIMENSION);
+        long chunkZ = (long) (player.position.z / ChunkGen.Z_DIMENSION);
         int radius = Client.renderDistance / 2;
         isAllRendered = false;
 
@@ -287,8 +289,8 @@ public class World {
     public void ResolveChunkRender(Camera camera, float deltaTime) {
         if (!isAllRendered) return;
 
-        long chunkX = (long) (Camera.Position.x / ChunkGen.X_DIMENSION);
-        long chunkZ = (long) (Camera.Position.z / ChunkGen.Z_DIMENSION);
+        long chunkX = (long) (player.position.x / ChunkGen.X_DIMENSION);
+        long chunkZ = (long) (player.position.z / ChunkGen.Z_DIMENSION);
         float radius = Client.renderDistance / 2.f;
 
         List<Chunk> chunksToProcess = new ArrayList<>();
@@ -362,7 +364,7 @@ public class World {
 
         Vector3f fogColor = (WorldEnvironment.isUnderWater)?
                 new Vector3f(0.14f, 0.21f, 0.42f) :
-                WorldEnvironment.interpolateFogColor(Camera.Position.y);
+                WorldEnvironment.interpolateFogColor(player.position.y);
 
         ChunkShaders[0].Bind();
         ChunkShaders[0].Uniform1iv("u_Textures", Client.samplers);
@@ -374,7 +376,7 @@ public class World {
         ChunkShaders[0].Uniform1i("UnderWater", (WorldEnvironment.isUnderWater)?1:0);
 
         ChunkShaders[0].Uniform1f("renderDistance", Client.renderDistance);
-        ChunkShaders[0].Uniform3f("cameraPos", new Vector3f(Camera.Position));
+        ChunkShaders[0].Uniform3f("cameraPos", new Vector3f(player.position));
         ChunkShaders[0].UniformMatrix4x4("view", new Matrix4f(camera.GetViewMatrix()));
         ChunkShaders[0].UniformMatrix4x4("projection", new Matrix4f(camera.GetProjectionMatrix()));
         ChunkShaders[0].Uniform4dv("viewFrustum", camera.getFrustumData());
@@ -406,7 +408,7 @@ public class World {
         ChunkShaders[1].Uniform1i("UnderWater", (WorldEnvironment.isUnderWater)?1:0);
         ChunkShaders[1].Uniform1f("Time", (float) glfwGetTime());
         ChunkShaders[1].Uniform1f("renderDistance", Client.renderDistance);
-        ChunkShaders[1].Uniform3f("cameraPos", new Vector3f(Camera.Position));
+        ChunkShaders[1].Uniform3f("cameraPos", new Vector3f(player.position));
         ChunkShaders[1].UniformMatrix4x4("view", new Matrix4f(camera.GetViewMatrix()));
         ChunkShaders[1].UniformMatrix4x4("projection", new Matrix4f(camera.GetProjectionMatrix()));
         ChunkShaders[1].Uniform4dv("viewFrustum", camera.getFrustumData());

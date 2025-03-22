@@ -54,7 +54,7 @@ public class Debugger {
             if(isDebugKeyJustPressed(DEBUG_COPY)) {
                 debug_timestamp = actual_debug_timestamp = 0;
                 Logger.log(Logger.Level.DEBUG,"Copied position !");
-                copyPosition = new Vector3f(camera.Position);
+                copyPosition = new Vector3f(World.player.position);
                 is_combined = true;
             }
 
@@ -66,7 +66,7 @@ public class Debugger {
 
                 debug_timestamp = actual_debug_timestamp = 0;
                 Logger.log(Logger.Level.DEBUG,"Teleported to the copied position !");
-                camera.Position = new Vector3d(copyPosition);
+                World.player.position = new Vector3d(copyPosition);
 
                 is_combined = true;
             }
@@ -169,15 +169,15 @@ public class Debugger {
         textRenderer.renderText(stateInfo,10, 10, 0.3f, false);
 
         Vector3d chunkPosition = new Vector3d(
-                floor(camera.Position.x / ChunkGen.X_DIMENSION),
-                floor(camera.Position.y / ChunkGen.Z_DIMENSION),
-                floor(camera.Position.z / ChunkGen.Z_DIMENSION)
+                floor(World.player.position.x / ChunkGen.X_DIMENSION),
+                floor(World.player.position.y / ChunkGen.Z_DIMENSION),
+                floor(World.player.position.z / ChunkGen.Z_DIMENSION)
         );
 
         Vector3d blockPosition = new Vector3d(
-                floor((camera.Position.x % ChunkGen.X_DIMENSION + ChunkGen.X_DIMENSION) % ChunkGen.X_DIMENSION),
-                floor((camera.Position.y % ChunkGen.Y_DIMENSION + ChunkGen.Y_DIMENSION) % ChunkGen.Y_DIMENSION),
-                floor((camera.Position.z % ChunkGen.Z_DIMENSION + ChunkGen.Z_DIMENSION) % ChunkGen.Z_DIMENSION)
+                floor((World.player.position.x % ChunkGen.X_DIMENSION + ChunkGen.X_DIMENSION) % ChunkGen.X_DIMENSION),
+                floor((World.player.position.y % ChunkGen.Y_DIMENSION + ChunkGen.Y_DIMENSION) % ChunkGen.Y_DIMENSION),
+                floor((World.player.position.z % ChunkGen.Z_DIMENSION + ChunkGen.Z_DIMENSION) % ChunkGen.Z_DIMENSION)
         );
 
         /*
@@ -191,9 +191,9 @@ public class Debugger {
         */
 
 
-        String gameInfo = "XYZ: " + df.format(camera.Position.x) +
-                " / " + df.format(camera.Position.y) +
-                " / " + df.format(camera.Position.z) +
+        String gameInfo = "XYZ: " + df.format(World.player.position.x) +
+                " / " + df.format(World.player.position.y) +
+                " / " + df.format(World.player.position.z) +
                 "\nBlocks: " +
                 df.format(blockPosition.x) + " " +
                 df.format(blockPosition.y) + " " +
@@ -207,16 +207,16 @@ public class Debugger {
                 df.format(camera.getFront().y) + " / " +
                 df.format(camera.getFront().z) +
                 "\nVelocity: " +
-                df.format(camera.velocity.x) + " / " +
-                df.format(camera.velocity.y) + " / " +
-                df.format(camera.velocity.z) +
+                df.format(World.player.velocity.x) + " / " +
+                df.format(World.player.velocity.y) + " / " +
+                df.format(World.player.velocity.z) +
                 "\nRight Vector: " +
                 df.format(round(camera.getRight().x)) + " / " +
                 df.format(round(camera.getRight().y)) + " / " +
                 df.format(round(camera.getRight().z)) +
-                "\ntarget speed: " + df.format(camera.targetSpeed) +
-                "\nCurrent Speed: " + df.format(camera.currentSpeed) +
-                "\nDrag Factor: " + df.format(camera.dragFactor);
+                "\ntarget speed: " + df.format(World.player.targetSpeed) +
+                "\nCurrent Speed: " + df.format(World.player.currentSpeed) +
+                "\nDrag Factor: " + df.format(World.player.dragFactor);
 
         textRenderer.renderText(gameInfo,10, 150, 0.3f, false);
     }
