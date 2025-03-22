@@ -51,8 +51,7 @@ public class Camera {
     }
 
     // Matrices
-    Matrix4d projection = new Matrix4d();
-    Matrix4d view = new Matrix4d();
+    static Matrix4d projection = new Matrix4d();
 
     // Default camera values
     private static final float YAW = 0.0f;
@@ -67,8 +66,8 @@ public class Camera {
     private static final Vector3f WorldUp = new Vector3f(0.f, 1.f, 0.f);
 
     // euler Angles
-    public static float Yaw;
-    public static float Pitch;
+    public static float Yaw = YAW;
+    public static float Pitch = PITCH;
     public static float Roll = 0;
 
     // camera options
@@ -76,14 +75,8 @@ public class Camera {
     public static float MouseSensitivity = SENSITIVITY;
     public static float Zoom = ZOOM;
 
-    // Camera constructor
-    public Camera() {
-        this.Yaw = YAW;
-        this.Pitch = PITCH;
-    }
-
     // returns the view matrix calculated using Euler Angles and the LookAt Matrix
-    public Matrix4d GetViewMatrix()
+    public static Matrix4d GetViewMatrix()
     {
         return new Matrix4d().identity()
                 .rotate(toRadians(Roll), new Vector3d(0, 0, 1))
@@ -96,32 +89,9 @@ public class Camera {
                 ));
     }
 
-    /*
-    public Matrix4d GetViewMatrix()
-    {
-        return new Matrix4d().lookAt(Position, new Vector3d(Position).add(Front), new Vector3d(Up));
-    }
-    */
+    public static Matrix4d GetProjectionMatrix() { return projection; }
 
-    public Matrix4d GetProjectionMatrix(int width, int height) {
-        return new Matrix4d().identity()
-                .perspective(toRadians(Zoom),
-                        (double)width / (double)Math.max(height, 1),
-                        0.1f,
-                        ChunkGen.X_DIMENSION * Client.renderDistance
-                );
-    }
-
-    public Matrix4d GetProjectionMatrix() {
-        return projection;
-    }
-
-
-    public void SetViewMatrix() {
-        view = GetViewMatrix();
-    }
-
-    public void SetProjectionMatrix(int width, int height) {
+    public static void SetProjectionMatrix(int width, int height) {
         projection = new Matrix4d().identity()
                 .perspective((float)Math.toRadians(Zoom),
                         (float)width / (float)Math.max(height, 1),
@@ -131,7 +101,7 @@ public class Camera {
     }
 
     // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
-    public void ProcessMouseMovement(float x_offset, float y_offset, boolean constrainPitch)
+    public static void ProcessMouseMovement(float x_offset, float y_offset, boolean constrainPitch)
     {
         x_offset *= MouseSensitivity;
         y_offset *= MouseSensitivity;
@@ -145,9 +115,9 @@ public class Camera {
     }
 
     // Frustum 
-    public Plane[] getFrustumPlanes() {
+    public static Plane[] getFrustumPlanes() {
         Matrix4d vpMatrix = new Matrix4d();
-        projection.mul(view, vpMatrix);
+        projection.mul(GetViewMatrix(), vpMatrix);
 
         Plane[] planes = new Plane[6];
         for (int i = 0; i < 6; i++) {
@@ -170,7 +140,7 @@ public class Camera {
         return planes;
     }
 
-    public double[] getFrustumData() {
+    public static double[] getFrustumData() {
         ArrayList<Double> data = new ArrayList<>();
 
         for(int i = 0; i < 6; i++) {

@@ -29,7 +29,7 @@ public class Debugger {
     public static float[] fps = new float[4];
 
 
-    public static void PressedCombinaisonKey(Scene scene, Camera camera) {
+    public static void PressedCombinaisonKey() {
         if(!debug || !is_locked)
             return;
 
@@ -47,7 +47,7 @@ public class Debugger {
                 debug_timestamp = actual_debug_timestamp = 0;
                 Logger.log(Logger.Level.DEBUG,"Reload Chunks");
 
-                World.addChunksToQueue(camera, true);
+                World.addChunksToQueue(true);
                 is_combined = true;
             }
 
@@ -77,7 +77,7 @@ public class Debugger {
                 Client.renderDistance = min(Client.renderDistance, Client.MAX_RENDER_DISTANCE);
                 Logger.log(Logger.Level.DEBUG,"Increased Render distance: " + Client.renderDistance);
 
-                World.addChunksToQueue(camera, true);
+                World.addChunksToQueue(true);
                 is_combined = true;
             }
 
@@ -87,7 +87,7 @@ public class Debugger {
                 Client.renderDistance = max(Client.renderDistance, Client.MIN_RENDER_DISTANCE);
                 Logger.log(Logger.Level.DEBUG,"Decreased Render distance: " + Client.renderDistance);
 
-                World.addChunksToQueue(camera, true);
+                World.addChunksToQueue(true);
                 is_combined = true;
             }
 
@@ -160,7 +160,7 @@ public class Debugger {
         }
     }
 
-    protected static void render(Camera camera, TextRenderer textRenderer) {
+    protected static void render(TextRenderer textRenderer) {
         if(!debug || !is_debug)
             return;
 
@@ -203,17 +203,17 @@ public class Debugger {
                 df.format(chunkPosition.y) + " " +
                 df.format(chunkPosition.z) +
                 "\nFacing Direction: " +
-                df.format(camera.getFront().x) + " / " +
-                df.format(camera.getFront().y) + " / " +
-                df.format(camera.getFront().z) +
+                df.format(Camera.getFront().x) + " / " +
+                df.format(Camera.getFront().y) + " / " +
+                df.format(Camera.getFront().z) +
                 "\nVelocity: " +
                 df.format(World.player.velocity.x) + " / " +
                 df.format(World.player.velocity.y) + " / " +
                 df.format(World.player.velocity.z) +
                 "\nRight Vector: " +
-                df.format(round(camera.getRight().x)) + " / " +
-                df.format(round(camera.getRight().y)) + " / " +
-                df.format(round(camera.getRight().z)) +
+                df.format(round(Camera.getRight().x)) + " / " +
+                df.format(round(Camera.getRight().y)) + " / " +
+                df.format(round(Camera.getRight().z)) +
                 "\ntarget speed: " + df.format(World.player.targetSpeed) +
                 "\nCurrent Speed: " + df.format(World.player.currentSpeed) +
                 "\nDrag Factor: " + df.format(World.player.dragFactor);

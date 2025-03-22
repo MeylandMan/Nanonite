@@ -35,7 +35,6 @@ public class App {
     float lastY;
     public Renderer renderer;
     Scene scene = new Scene();
-    Camera camera = new Camera();
     World world;
     float delta;
     float lastFrame;
@@ -56,10 +55,10 @@ public class App {
         if (Input.is_locked) {
             if (Input.isKeyPressed(Input.KEY_SPRINT) && !Input.isKeyNotUsed(Input.KEY_UP)) {
                 World.player.targetSpeed = World.player.MAX_SPEED;
-                camera.targetZoom = Camera.ZOOM*1.3f;
+                Camera.targetZoom = Camera.ZOOM*1.3f;
             } else {
                 World.player.targetSpeed = World.player.SPEED;
-                camera.targetZoom = Camera.ZOOM;
+                Camera.targetZoom = Camera.ZOOM;
             }
 
             if(Input.isKeyJustPressed(Input.KEY_RESET_POSITION)) {
@@ -215,7 +214,7 @@ public class App {
             ProcessInput(window);
 
             delta = (fps[0] == 0)? 0.1f : 1/fps[0];
-            world.onUpdate(camera, delta);
+            world.onUpdate(delta);
             fpsMonitor.update();
 
             fps =  new float[] {
@@ -224,7 +223,7 @@ public class App {
                     fpsMonitor.getMinFPS(),
                     fpsMonitor.getMaxFPS()
             };
-            Input.Update(window, camera, scene, delta);
+            Input.Update(window, scene, delta);
             World.player.updateCameraVectors(delta);
 
             Vector3d chunkPos = new Vector3d(
@@ -257,18 +256,17 @@ public class App {
             // Rendering
             renderer.ClearColor();
 
-            camera.SetViewMatrix();
-            camera.SetProjectionMatrix(m_Width, m_Height);
+            Camera.SetProjectionMatrix(m_Width, m_Height);
 
             //Draw chunks
-            world.renderChunks(camera);
+            world.renderChunks();
 
             //Draw entities
             //renderer.DrawScene(scene, shader);
-            //world.onRender(camera.GetViewMatrix(), camera.GetProjectionMatrix(m_Width, m_Height));
+            //world.onRender(Camera.GetViewMatrix(), Camera.GetProjectionMatrix(m_Width, m_Height));
 
             //raycast.origin = World.player.position;
-            //raycast.direction = camera.getFront();
+            //raycast.direction = Camera.getFront();
             //raycast.drawRay(10);
 
 
@@ -281,7 +279,7 @@ public class App {
             renderer.renderInterfaces();
 
 
-            Debugger.render(camera, textRenderer);
+            Debugger.render(textRenderer);
             glfwSwapBuffers(window);
             glfwPollEvents();
         }

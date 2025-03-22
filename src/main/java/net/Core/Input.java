@@ -276,14 +276,14 @@ public class Input {
         glfwSetCursorPos(window, x, y);
     }
 
-    public static void Update(long window, Camera camera, Scene scene, float deltaTime) {
+    public static void Update(long window, Scene scene, float deltaTime) {
         if (is_locked) {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             //
         }
 
         Debugger.PressedDebugKey(window, deltaTime);
-        Debugger.PressedCombinaisonKey(scene, camera);
+        Debugger.PressedCombinaisonKey();
         for(int i = 0; i < Debug_bindings.length; i++) {
             if (glfwGetKey(window, Debug_bindings[i]) == GLFW_PRESS)
             {
@@ -351,7 +351,7 @@ public class Input {
 
             // Si la souris est verrouillée, on transmet le mouvement à la caméra
             if (is_locked) {
-                camera.ProcessMouseMovement(mouseDeltaX, mouseDeltaY, true);
+                Camera.ProcessMouseMovement(mouseDeltaX, mouseDeltaY, true);
             }
         });
     }

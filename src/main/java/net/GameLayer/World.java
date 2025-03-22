@@ -104,7 +104,7 @@ public class World {
         player = new Player(SpawnPoint);
     }
 
-    public static void addChunksToQueue(Camera camera, boolean reset) {
+    public static void addChunksToQueue(boolean reset) {
 
         chunkQueueSpeed[0] = glfwGetTime();
 
@@ -125,7 +125,7 @@ public class World {
         isAllRendered = false;
 
         // Takes the view Frustum
-        frustumPlanes = camera.getFrustumPlanes();
+        frustumPlanes = Camera.getFrustumPlanes();
 
         for (int dz = -radius; dz <= radius; dz++) {
             for (int dx = -radius; dx <= radius; dx++) {
@@ -272,21 +272,21 @@ public class World {
         return buffer;
     }
 
-    public void onUpdate(Camera camera, float deltaTime) {
+    public void onUpdate(float deltaTime) {
         if(firstLoad) {
             firstLoad = false;
             // Load chunks to the queue
-            addChunksToQueue(camera, true);
+            addChunksToQueue(true);
         }
-        addChunksToQueue(camera, false);
+        addChunksToQueue(false);
 
         // Load chunks
         loadChunks();
         //Check if the surrounding chunks are still worthy of staying in the array
-        ResolveChunkRender(camera, deltaTime);
+        ResolveChunkRender();
     }
 
-    public void ResolveChunkRender(Camera camera, float deltaTime) {
+    public void ResolveChunkRender() {
         if (!isAllRendered) return;
 
         long chunkX = (long) (player.position.x / ChunkGen.X_DIMENSION);
@@ -338,14 +338,14 @@ public class World {
         while (!chunkDeletionQueue.isEmpty()) {
             Chunk chunk = chunkDeletionQueue.poll();
             if (chunk != null) {
-                chunk.Delete(); // Exécute OpenGL dans le thread principal
+                chunk.Delete();
                 Vector2f chunkPos = new Vector2f(chunk.positionX,chunk.positionZ);
                 loadedChunks.remove(chunkPos);
             }
         }
     }
 
-    public void renderChunks(Camera camera) {
+    public void renderChunks() {
 
         processChunkDeletions();
 
@@ -377,9 +377,9 @@ public class World {
 
         ChunkShaders[0].Uniform1f("renderDistance", Client.renderDistance);
         ChunkShaders[0].Uniform3f("cameraPos", new Vector3f(player.position));
-        ChunkShaders[0].UniformMatrix4x4("view", new Matrix4f(camera.GetViewMatrix()));
-        ChunkShaders[0].UniformMatrix4x4("projection", new Matrix4f(camera.GetProjectionMatrix()));
-        ChunkShaders[0].Uniform4dv("viewFrustum", camera.getFrustumData());
+        ChunkShaders[0].UniformMatrix4x4("view", new Matrix4f(Camera.GetViewMatrix()));
+        ChunkShaders[0].UniformMatrix4x4("projection", new Matrix4f(Camera.GetProjectionMatrix()));
+        ChunkShaders[0].Uniform4dv("viewFrustum", Camera.getFrustumData());
 
         for(Chunk chunk : loadedChunks.values()) {
 
@@ -409,9 +409,9 @@ public class World {
         ChunkShaders[1].Uniform1f("Time", (float) glfwGetTime());
         ChunkShaders[1].Uniform1f("renderDistance", Client.renderDistance);
         ChunkShaders[1].Uniform3f("cameraPos", new Vector3f(player.position));
-        ChunkShaders[1].UniformMatrix4x4("view", new Matrix4f(camera.GetViewMatrix()));
-        ChunkShaders[1].UniformMatrix4x4("projection", new Matrix4f(camera.GetProjectionMatrix()));
-        ChunkShaders[1].Uniform4dv("viewFrustum", camera.getFrustumData());
+        ChunkShaders[1].UniformMatrix4x4("view", new Matrix4f(Camera.GetViewMatrix()));
+        ChunkShaders[1].UniformMatrix4x4("projection", new Matrix4f(Camera.GetProjectionMatrix()));
+        ChunkShaders[1].Uniform4dv("viewFrustum", Camera.getFrustumData());
 
         for(Chunk chunk : loadedChunks.values()) {
 
