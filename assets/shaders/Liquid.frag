@@ -1,7 +1,6 @@
 #version 330 core
 out vec4 fragColor;
 
-
 #define TEXTURE_LOADED 9
 #define DEFAULT_WATER_COLOR vec4(0.14, 0.21, 0.42, 1.0)
 
@@ -10,11 +9,13 @@ in vec3 fragPos;
 in vec3 worldPos;
 in float inside;
 in float TextureIndex;
+in float CdotH;
 
 uniform vec3 cameraPos;
 uniform vec3 fogColor;
 uniform float renderDistance;
 uniform float fogDistance;
+
 
 uniform bool UnderWater;
 
@@ -27,6 +28,7 @@ void main() {
     int index = int(TextureIndex);
     //fragColor = vec4(TextureIndex, TextureIndex, 0.0, 1.0);
     vec4 startingColor = texture(u_Textures[index], v_TexCoords);
+    startingColor.a = CdotH;
 
     if(UnderWater)
         startingColor *= DEFAULT_WATER_COLOR;

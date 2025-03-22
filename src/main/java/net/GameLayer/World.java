@@ -382,7 +382,8 @@ public class World {
 
             glEnable(GL_CULL_FACE);
 
-            if(chunk.StaticBlocks == null || !ChunkGen.isChunkInFrustum(frustumPlanes, chunk.positionX * ChunkGen.X_DIMENSION,
+            if(chunk.StaticBlocks == null || !ChunkGen.isChunkInFrustum(frustumPlanes, chunk.Y_MAX,
+                    chunk.positionX * ChunkGen.X_DIMENSION,
                     chunk.positionZ * ChunkGen.Z_DIMENSION))
                 continue;
 

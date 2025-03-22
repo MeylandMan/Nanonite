@@ -59,11 +59,9 @@ void main() {
     float NDotL = max(dot(v_Normal, lightDir), 0.0);
     vec3 diffuse = NDotL * diffuseColor;
 
-    vec3 lightResult = ambient+diffuse;
-    vec4 result = fogResult * vec4(lightResult, 1.0);
+    vec4 lightResult = mix(vec4(ambient + diffuse, 1.0), vec4(fogColor, 1.0), frac);
 
-    if(fogResult.xyz == fogColor)
-        result /= vec4(lightResult, 1.0);
+    vec4 result = (lightResult == fogResult)? fogResult : fogResult * lightResult;
 
     fragColor = result;
     //fragColor = vec4(max(v_Normal, vec3(0.0)), 1.0);

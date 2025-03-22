@@ -56,7 +56,7 @@ public class Camera {
 
     // Default camera values
     private static final float YAW = 0.0f;
-    private static final float PITCH = -90.0f;
+    private static final float PITCH = -45.0f;
     public  static final float SPEED = 5.f;
     public static final float MAX_SPEED = 15.0f; // Vitesse max en mode spectateur 7
     public static final float ACCELERATION_FACTOR = 3.0f; // Influence de l'accélération
@@ -134,11 +134,7 @@ public class Camera {
 
 
     public void SetViewMatrix() {
-        view = new Matrix4d().identity()
-                .rotate(toRadians(Roll), new Vector3d(0, 0, 1))
-                .rotate(toRadians(-Pitch), new Vector3d(1, 0, 0))
-                .rotate(toRadians(Yaw), new Vector3d(0, 1, 0))
-                .translate(new Vector3d(-Position.x, -Position.y, -Position.z));
+        view = GetViewMatrix();
     }
 
     public void SetProjectionMatrix(int width, int height) {

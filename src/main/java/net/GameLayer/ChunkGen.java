@@ -20,7 +20,7 @@ public class ChunkGen {
     // Surface data
     public static int MAX_HEIGHT = 157;
     public static int MIN_HEIGHT = 40;
-    public static int SURFACE_HEIGHT = 70;
+    public static int SURFACE_HEIGHT = 50;
     public final static int WATER_LEVEL = 64;
 
     // Depths data
@@ -57,19 +57,19 @@ public class ChunkGen {
                 ModuleBasisFunction.InterpolationType.QUINTIC // fluid interpolation
         );
         baseTerrain.setSeed(World.seed);
-        baseTerrain.setNumOctaves(4);
+        baseTerrain.setNumOctaves(5);
 
         ModuleScaleOffset surfaceScaleOffset = new ModuleScaleOffset();
         surfaceScaleOffset.setSource(baseTerrain);
-        surfaceScaleOffset.setScale(0.2);
-        surfaceScaleOffset.setOffset(0.3);
+        surfaceScaleOffset.setScale(0.25);
+        surfaceScaleOffset.setOffset(0.6);
 
         // Clamping to avoid extreme values
         ModuleClamp clamping = new ModuleClamp();
         clamping.setSource(surfaceScaleOffset);
         clamping.setRange(0.0, 0.9);
 
-        double surfaceFrequency = 1.0 / 128.0;
+        double surfaceFrequency = 1.0 / 171.03;
         double depthFrequency = 1.0 / 64.0;
 
         long worldX = chunk.positionX * ChunkGen.X_DIMENSION;
@@ -89,6 +89,8 @@ public class ChunkGen {
 
                 int y = (int) (MIN_HEIGHT + (SURFACE_HEIGHT * baseHeight));
                 y = abs(Y_CHUNK) + min(MAX_HEIGHT, max(MIN_HEIGHT, y));
+
+                chunk.Y_MAX = max(y, chunk.Y_MAX);
                 chunk.blocks[x][y][z] = BlockType.STONE;
 
             }
@@ -247,14 +249,42 @@ public class ChunkGen {
         return true;
     }
 
+    public static boolean isChunkInFrustum(Camera.Plane[] frustumPlanes, float y, double chunkX, double chunkZ) {
+        float chunkSize = ChunkGen.X_DIMENSION; // Length of a chunk
+        float chunkHeight = y;
+        float chunkY = ChunkGen.Y_CHUNK;
+
+        // Try the 4 corners of a chunk (ground)
+        double[][] corners = {
+                {chunkX, chunkY, chunkZ},                                    // Bas-gauche
+                {chunkX + chunkSize, chunkY, chunkZ},                        // Bas-droite
+                {chunkX, chunkY, chunkZ + chunkSize},                        // Bas-gauche arrière
+                {chunkX + chunkSize, chunkY, chunkZ + chunkSize},            // Bas-droite arrière
+                {chunkX, chunkHeight, chunkZ},                               // Haut-gauche
+                {chunkX + chunkSize, chunkHeight, chunkZ},                   // Haut-droite
+                {chunkX, chunkHeight, chunkZ + chunkSize},                   // Haut-gauche arrière
+                {chunkX + chunkSize, chunkHeight, chunkZ + chunkSize}        // Haut-droite arrière
+        };
+
+        for (Camera.Plane plane : frustumPlanes) {
+            boolean inside = false;
+            for (double[] corner : corners) {
+                if (plane.isPointInside(corner[0], corner[1], corner[2])) {
+                    inside = true;
+                    break;
+                }
+            }
+
+            if (!inside) return false; // If no corners is inside the view Frustum, eject the chunk
+        }
+
+        return true;
+    }
+
     protected static void setupChunk(Chunk chunk) {
 
-       chunk.blocks = new BlockType[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
-
-        // Add Terrain Surface
+        chunk.blocks = new BlockType[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
         AddChunkSurface(chunk);
-
-        // check if there's blocks at the top of the dirt
         ResolveChunkSurface(chunk);
     }
 }

@@ -24,7 +24,7 @@ public class Chunk {
     int[] faceDrawn = new int[2];
     int blockDrawn = 0;
 
-    public int Y_MAX;
+    public int Y_MAX = 0;
     public long positionX, positionY, positionZ;
 
     public Chunk() { }

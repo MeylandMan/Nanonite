@@ -35,7 +35,7 @@ public class App {
     float lastY;
     public Renderer renderer;
     Scene scene = new Scene();
-    Camera camera = new Camera(new Vector3d(8, 200, 8));
+    Camera camera = new Camera(new Vector3d(8, 150, 8));
     World world;
     float delta;
     float lastFrame;
@@ -63,7 +63,7 @@ public class App {
             }
 
             if(Input.isKeyJustPressed(Input.KEY_RESET_POSITION)) {
-                Camera.Position = new Vector3d(8);
+                Camera.Position = new Vector3d(8, 70, 8);
             }
 
 
@@ -220,7 +220,7 @@ public class App {
             );
 
             int X = (int) floor((camera.Position.x % ChunkGen.X_DIMENSION + ChunkGen.X_DIMENSION) % ChunkGen.X_DIMENSION);
-            int Y = (int) max(floor(camera.Position.y) + abs(ChunkGen.Y_CHUNK), 0);
+            int Y = (int) clamp(floor(camera.Position.y) + abs(ChunkGen.Y_CHUNK), 0, ChunkGen.Y_DIMENSION-1);
             int Z = (int) floor((camera.Position.z % ChunkGen.Z_DIMENSION + ChunkGen.Z_DIMENSION) % ChunkGen.Z_DIMENSION);
 
             Chunk actualChunk = World.loadedChunks.get(new Vector2f((float) chunkPos.x, (float) chunkPos.z));
