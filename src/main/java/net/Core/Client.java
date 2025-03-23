@@ -20,6 +20,11 @@ public class Client {
     public static String version = "Alpha1.0";
 
 
+    public static String processorBrand = "";
+    public static String GPUBrand = "";
+    public static String glVersion;
+    public static int mainGPU = 0;
+
     public static final String[] modelPaths = {
             "blocks/dirt",
             "blocks/grass_block",

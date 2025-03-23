@@ -50,7 +50,9 @@ public class Input {
             //SPRINT
             GLFW_KEY_LEFT_CONTROL,
             //RESET POSITION
-            GLFW_KEY_R
+            GLFW_KEY_R,
+            // FULLSCREEN
+            GLFW_KEY_F11
     };
 
     // Debug Binding
@@ -107,6 +109,8 @@ public class Input {
             //SPRINT
             InputState.NOTHING,
             //RESET POSITION
+            InputState.NOTHING,
+            //FULLSCREEN
             InputState.NOTHING
     };
 
@@ -138,6 +142,8 @@ public class Input {
     public static final int KEY_SNEAK = 7;
     public static final int KEY_SPRINT = 8;
     public static final int KEY_RESET_POSITION = 9;
+
+    public static final int KEY_FULLSCREEN = 10;
 
     //DEBUG
     public static final int DEBUG_KEY = 0;
@@ -332,6 +338,9 @@ public class Input {
             glfwSetWindowShouldClose(window, true);
         }
 
+        if(isKeyJustPressed(KEY_FULLSCREEN)) {
+
+        }
         if(isKeyJustPressed(KEY_LOCK) && Debugger.debug_timestamp == 0) {
             is_locked = !is_locked;
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);

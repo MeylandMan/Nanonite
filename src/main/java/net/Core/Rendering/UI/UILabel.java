@@ -48,7 +48,7 @@ public class UILabel extends UIElement {
         lineCount = lines.length;
         float totalHeight = lineCount * textHeight;
 
-        textRenderer.renderText(text, position.x, position.y, size.x, centered);
+        textRenderer.renderText(text, position.x, position.y, size.x, TextRenderer.TextType.LEFT);
 
         if (bordered) {
             spriteRenderer.drawRectangle(

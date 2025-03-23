@@ -7,7 +7,7 @@ out vec4 fragColor;
 in vec2 v_TexCoords;
 in vec3 fragPos;
 in vec3 worldPos;
-in float inside;
+in vec3 v_Normal;
 in float TextureIndex;
 in float CdotH;
 
@@ -22,8 +22,6 @@ uniform bool UnderWater;
 uniform sampler2D u_Textures[TEXTURE_LOADED];
 
 void main() {
-    if(inside == 0.0)
-    discard;
 
     int index = int(TextureIndex);
     //fragColor = vec4(TextureIndex, TextureIndex, 0.0, 1.0);
@@ -44,7 +42,25 @@ void main() {
     if(index == 7)
         specialColor = DEFAULT_WATER_COLOR;
 
-    vec4 result = mix(startingColor * specialColor, vec4(fogColor, 1.0), frac);
+    vec4 fogResult = mix(startingColor * specialColor, vec4(fogColor, 1.0), frac);
+
+    // Directional Lighting
+    vec3 lightColor = vec3(1.0);
+    vec3 diffuseColor = vec3(0.5);
+
+    vec3 lightDir = vec3(0.8, 0.8, 0.6);
+
+    // Ambient
+    float ambientStrength = 0.5;
+    vec3 ambient = ambientStrength * lightColor;
+
+    // Diffuse
+    float NDotL = max(dot(v_Normal, lightDir), 0.0);
+    vec3 diffuse = NDotL * diffuseColor;
+
+    vec4 lightResult = mix(vec4(ambient + diffuse, 1.0), vec4(fogColor, 1.0), frac);
+
+    vec4 result = fogResult * lightResult;
 
     fragColor = result;
     //fragColor = vec4(v_TexCoords, 1.0, 1.0);

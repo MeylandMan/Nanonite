@@ -1,8 +1,8 @@
 package net.Core;
 
+import net.Core.Rendering.Text.TextRenderer;
 import net.GameLayer.Camera;
 import net.Core.Rendering.Scene;
-import net.Core.Rendering.Text.TextRenderer;
 import net.GameLayer.Chunk;
 import net.GameLayer.ChunkGen;
 import net.GameLayer.World;
@@ -160,13 +160,13 @@ public class Debugger {
         }
     }
 
-    protected static void render(TextRenderer textRenderer) {
+    protected static void render(TextRenderer textRenderer, int width, int height) {
         if(!debug || !is_debug)
             return;
 
         String stateInfo = Client.name + Client.version + " " + Client.type + "\n" +
                 (int)fps[0] + " fps (avg: " + (int)fps[1] + ", min: " + (int)fps[2] + ", max: " + (int)fps[3] + ")";
-        textRenderer.renderText(stateInfo,10, 10, 0.3f, false);
+        textRenderer.renderText(stateInfo,10, 10, 0.25f, TextRenderer.TextType.LEFT);
 
         Vector3d chunkPosition = new Vector3d(
                 floor(World.player.position.x / ChunkGen.X_DIMENSION),
@@ -218,6 +218,25 @@ public class Debugger {
                 "\nCurrent Speed: " + df.format(World.player.currentSpeed) +
                 "\nDrag Factor: " + df.format(World.player.dragFactor);
 
-        textRenderer.renderText(gameInfo,10, 150, 0.3f, false);
+        textRenderer.renderText(gameInfo,10, 150, 0.25f, TextRenderer.TextType.LEFT);
+
+        long FreeMemory = (Runtime.getRuntime().freeMemory() / 1024) / 1024;
+        long MaxMemory = (Runtime.getRuntime().maxMemory() / 1024) / 1024;
+        long TotalMemory = (Runtime.getRuntime().totalMemory() / 1024) / 1024;
+
+        double MemPercentage = (double) FreeMemory/MaxMemory;
+        double AllocPercentage = (double) TotalMemory/MaxMemory;
+
+        String JavaVersion = "Java: " + System.getProperty("java.version");
+        String UsedMem = "mem: " + df.format(MemPercentage * 100.0) + "% (" + FreeMemory + " / " + MaxMemory + " MB)";
+        String AllocatedMem = "Allocated: " + df.format(AllocPercentage * 100.0) + "% " + TotalMemory + " MB";
+
+        textRenderer.renderText(JavaVersion, width - 10, 10, 0.25f, TextRenderer.TextType.RIGHT);
+        textRenderer.renderText(UsedMem, width - 10, 30, 0.25f, TextRenderer.TextType.RIGHT);
+        textRenderer.renderText(AllocatedMem, width - 10, 50, 0.25f, TextRenderer.TextType.RIGHT);
+        textRenderer.renderText("CPU: " + Client.processorBrand, width - 10, 100, 0.25f, TextRenderer.TextType.RIGHT);
+        textRenderer.renderText("Display: " + width + "x" + height, width - 10, 150, 0.25f, TextRenderer.TextType.RIGHT);
+        textRenderer.renderText("GPU: " + Client.GPUBrand, width - 10, 170, 0.25f, TextRenderer.TextType.RIGHT);
+        textRenderer.renderText(Client.glVersion, width - 10, 190, 0.25f, TextRenderer.TextType.RIGHT);
     }
 }

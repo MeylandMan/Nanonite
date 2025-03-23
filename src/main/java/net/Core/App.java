@@ -165,7 +165,6 @@ public class App {
 
         // Make the window visible
         glfwShowWindow(window);
-
     }
 
     private void loop() {
@@ -180,6 +179,7 @@ public class App {
 
         GL.createCapabilities();
         Client.LoadingBlockTextures();
+        Client.glVersion = glGetString(GL_VERSION);
 
         glEnable(GL43.GL_DEBUG_OUTPUT);
         glEnable(GL43.GL_DEBUG_OUTPUT_SYNCHRONOUS);
@@ -233,7 +233,8 @@ public class App {
             );
 
             int X = (int) floor((World.player.position.x % ChunkGen.X_DIMENSION + ChunkGen.X_DIMENSION) % ChunkGen.X_DIMENSION);
-            int Y = (int) clamp(floor(World.player.position.y) + abs(ChunkGen.Y_CHUNK), 0, ChunkGen.Y_DIMENSION-1);
+            int Y = (int) floor(World.player.position.y) + abs(ChunkGen.Y_CHUNK);
+            Y = (Y < 0)? 0 : (Y >= ChunkGen.Y_DIMENSION) ? ChunkGen.Y_DIMENSION-1 : Y;
             int Z = (int) floor((World.player.position.z % ChunkGen.Z_DIMENSION + ChunkGen.Z_DIMENSION) % ChunkGen.Z_DIMENSION);
 
             Chunk actualChunk = World.loadedChunks.get(new Vector2f((float) chunkPos.x, (float) chunkPos.z));
@@ -278,8 +279,7 @@ public class App {
             spriteRenderer.getMatrixProjection(orthoMatrix);
             renderer.renderInterfaces();
 
-
-            Debugger.render(textRenderer);
+            Debugger.render(textRenderer, m_Width, m_Height);
             glfwSwapBuffers(window);
             glfwPollEvents();
         }

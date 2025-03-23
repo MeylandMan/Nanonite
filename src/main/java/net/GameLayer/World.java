@@ -16,6 +16,7 @@ import java.util.concurrent.Future;
 
 import com.sudoplay.joise.module.ModuleBasisFunction;
 
+import static org.joml.Math.round;
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -43,8 +44,6 @@ public class World {
 
     public static Camera.Plane[] frustumPlanes;
 
-    public static boolean renderQuery = false;
-    static double[] chunkRenderSpeed = new double[2];
     static double[] chunkQueueSpeed = new double[2];
 
     // Chunk Queues
@@ -154,7 +153,7 @@ public class World {
         if(reset) {
             chunkQueueSpeed[1] = glfwGetTime();
             double result = chunkQueueSpeed[1] - chunkQueueSpeed[0];
-            Logger.log(Logger.Level.INFO, "Chunk queue filled in " + String.format("%.3f", result) + "s");
+            Logger.log(Logger.Level.INFO, "Chunk queue filled in " + String.format("%.3f", result*1000.0) + "ms");
             Logger.log(Logger.Level.INFO, "Rendering chunks...");
         }
         allowQuery = reset;
@@ -182,19 +181,10 @@ public class World {
 
     public void loadChunks() {
         if (chunksPos.isEmpty()) {
-            if (renderQuery) {
-                chunkRenderSpeed[1] = glfwGetTime();
-                double result = Math.abs(chunkQueueSpeed[1] - chunkRenderSpeed[0]);
-                Logger.log(Logger.Level.INFO, "Rendered chunks in " + String.format("%.3f", result) + "s");
-                renderQuery = false;
-            }
             isAllRendered = true;
             chunksToRemove.clear();
             return;
         }
-
-        renderQuery = allowQuery;
-        chunkRenderSpeed[0] = glfwGetTime();
 
         int maxChunksPerFrame = Client.renderDistance / 2;
         for (int i = 0; i < maxChunksPerFrame && !chunksPos.isEmpty(); i++) {
@@ -217,7 +207,7 @@ public class World {
         Chunk chunk = loadedChunks.get(chunkID);
 
         // 3 positions + 3 min + 3 max + 1 texID + 1 FaceID
-        int estimatedSizeBuffer = (ChunkGen.getBlocksNumber(chunk) * 6) * 11;
+        int estimatedSizeBuffer = (int) ((ChunkGen.getBlocksNumber(chunk) * 6) * 11 * 0.5f);
         FloatBuffer buffer = MemoryUtil.memAllocFloat(estimatedSizeBuffer);
 
 
@@ -381,7 +371,6 @@ public class World {
         ChunkShaders[0].Uniform3f("cameraPos", new Vector3f(player.position));
         ChunkShaders[0].UniformMatrix4x4("view", new Matrix4f(Camera.GetViewMatrix()));
         ChunkShaders[0].UniformMatrix4x4("projection", new Matrix4f(Camera.GetProjectionMatrix()));
-        ChunkShaders[0].Uniform4dv("viewFrustum", Camera.getFrustumData());
 
         for(Chunk chunk : loadedChunks.values()) {
 
@@ -413,7 +402,6 @@ public class World {
         ChunkShaders[1].Uniform3f("cameraPos", new Vector3f(player.position));
         ChunkShaders[1].UniformMatrix4x4("view", new Matrix4f(Camera.GetViewMatrix()));
         ChunkShaders[1].UniformMatrix4x4("projection", new Matrix4f(Camera.GetProjectionMatrix()));
-        ChunkShaders[1].Uniform4dv("viewFrustum", Camera.getFrustumData());
 
         for(Chunk chunk : loadedChunks.values()) {
 

@@ -43,7 +43,7 @@ public class UISlider extends UIElement {
 
     @Override
     public void render(SpriteRenderer spriteRenderer, TextRenderer textRenderer) {
-        textRenderer.renderText(text, size.x/2, size.y/2, 0.5f, true);
+        textRenderer.renderText(text, size.x/2, size.y/2, 0.5f, TextRenderer.TextType.CENTER);
         spriteRenderer.drawRectangle(new Vector3f(position), new Vector2f(size), RectangleColor, RectangleAlpha);
         spriteRenderer.drawRectangle(new Vector3f(sliderX, 0, 1), new Vector2f(0.1f, 1),
                 sliderColor, RectangleAlpha);

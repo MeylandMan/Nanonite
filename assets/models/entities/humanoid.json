@@ -1,0 +1,11 @@
+{
+  "type": "SINGLE",
+  "texture": "blocks/dirt.png",
+
+  "elements": [
+    {
+      "from": [ 0, -16, 0 ],
+      "to": [ 16, 32, 16 ]
+    }
+  ]
+}

@@ -6,11 +6,18 @@ import org.joml.Matrix4f;
 import static org.lwjgl.opengl.GL11C.glEnable;
 import static org.lwjgl.opengl.GL30.*;
 
+
 public class TextRenderer {
     private int vao, vbo;
     private Shader shader;
     private Font font;
     Matrix4f matrix;
+
+    public enum TextType {
+        LEFT,
+        CENTER,
+        RIGHT
+    }
 
     public TextRenderer() {
 
@@ -41,8 +48,8 @@ public class TextRenderer {
     }
 
 
-    public void renderText(String text, float x, float y, float scale, boolean centered) {
-        if (centered) {
+    public void renderText(String text, float x, float y, float scale, TextType type) {
+        if (type == TextType.CENTER) {
             float textWidth = getTextWidth(text, scale);
             x -= textWidth / 3.9f;
         }
@@ -53,7 +60,7 @@ public class TextRenderer {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         shader.Bind();
-        float cursorX = x;
+        float cursorX = (type == TextType.RIGHT)? x -getTextWidth(text, scale) : x;
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, font.getTextureID());
@@ -68,7 +75,7 @@ public class TextRenderer {
         for (char c : text.toCharArray()) {
             Font.CharInfo charInfo = font.getChar((int) c);
             if (c == '\n') {
-                cursorX = x;
+                cursorX = (type == TextType.RIGHT)? x -getTextWidth(text, scale) : x;
                 y += font.lineHeight * scale;
                 continue;
             } else if (charInfo == null) continue;

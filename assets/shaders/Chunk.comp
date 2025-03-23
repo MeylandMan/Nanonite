@@ -6,7 +6,6 @@
 out vec3 fragPos;
 out vec3 worldPos;
 
-out float inside;
 out vec2 v_TexCoords;
 out vec3 v_Normal;
 out float TextureIndex;
@@ -27,11 +26,6 @@ struct BlockFace {
     float FaceID;
 };
 
-struct Plane {
-    double a, b, c, d;
-};
-
-
 layout(std430, binding = 0) buffer BlockData {
     BlockFace faces[];
 };
@@ -40,14 +34,10 @@ uniform mat4 projection;
 uniform mat4 view;
 uniform vec3 Position;
 
-uniform Plane viewFrustum[6];
-
 #define PROJECTION_VIEW_MATRIX mat4(projection * view)
 
 vec3[6] getVertices(uint faceID, vec3 mn, vec3 mx);
 vec3 getNormal(uint faceID);
-
-bool isPointInside(Plane plane, double x, double y, double z);
 
 void main() {
 
@@ -78,16 +68,6 @@ void main() {
     vec3 worldPosition = vec3(FaceVertices[vertexIndex]+localPosition+chunkPosition);
 
     fragPos = chunkPosition + FaceVertices[vertexIndex];
-
-    bool isInside;
-    for(uint i = 0; i < 6; i++) {
-        isInside = isPointInside(viewFrustum[i], worldPosition.x, worldPosition.y, worldPosition.z);
-    }
-
-    worldPosition = (!isInside)? vec3(VERTICES_CLIPPING, VERTICES_CLIPPING, VERTICES_CLIPPING) :
-    worldPosition; // Put the vertices very far AWAY
-
-    inside = (isInside)? 1.0 : 0.0;
 
     worldPos = worldPosition;
     gl_Position = PROJECTION_VIEW_MATRIX * vec4(worldPosition, 1.0);
@@ -170,8 +150,4 @@ vec3[6] getVertices(uint faceID, vec3 mn, vec3 mx) {
     }
 
     return vertices;
-}
-
-bool isPointInside(Plane plane, double x, double y, double z) {
-    return plane.a * x + plane.b * y + plane.c * z + plane.d >= 0;
 }

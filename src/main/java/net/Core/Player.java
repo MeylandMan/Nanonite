@@ -85,6 +85,7 @@ public class Player extends Entity {
         if(targetSpeed == 0 && !UP) {
             velocity.x = clamp(lerp(velocity.x, 0, acceleration/dragFactor), -1, 1);
             velocity.z = clamp(lerp(velocity.z, 0, acceleration/dragFactor), -1, 1);
+
             dragFactor -= deltaTime * DRAG_FACTOR;
             dragFactor = max(dragFactor, 1);
 
@@ -92,8 +93,13 @@ public class Player extends Entity {
             dragFactor = DRAG_FACTOR;
             velocity.x *= speed;
             velocity.z *= speed;
+
             velocity.y *= deltaTime;
         }
+
+        velocity.x = (velocity.x < -1)? -1 : (velocity.x > 1)? 1 : velocity.x;
+        velocity.z = (velocity.z < -1)? -1 : (velocity.z > 1)? 1 : velocity.z;
+
         position.add(velocity);
     }
 }

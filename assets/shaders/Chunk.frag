@@ -10,8 +10,6 @@ in vec2 v_TexCoords;
 in vec3 fragPos;
 in vec3 worldPos;
 in vec3 v_Normal;
-
-in float inside;
 in float TextureIndex;
 
 uniform vec3 cameraPos;
@@ -23,8 +21,6 @@ uniform bool UnderWater;
 uniform sampler2D u_Textures[TEXTURE_LOADED];
 
 void main() {
-    if(inside == 0.0)
-        discard;
 
     int index = int(TextureIndex);
     //fragColor = vec4(TextureIndex, TextureIndex, 0.0, 1.0);
@@ -61,7 +57,7 @@ void main() {
 
     vec4 lightResult = mix(vec4(ambient + diffuse, 1.0), vec4(fogColor, 1.0), frac);
 
-    vec4 result = (lightResult == fogResult)? fogResult : fogResult * lightResult;
+    vec4 result = fogResult * lightResult;
 
     fragColor = result;
     //fragColor = vec4(max(v_Normal, vec3(0.0)), 1.0);
