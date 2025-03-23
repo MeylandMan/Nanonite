@@ -40,7 +40,7 @@ public class Client {
     public static void loadModels() {
         try {
             for(String modelPath : modelPaths) {
-                modelLoader.loadModel(modelPath);
+                modelLoader.loadModel(modelPath, ModelType.BLOCKS);
             }
         } catch (IOException e) {
             Logger.log(Logger.Level.ERROR, "Failed to load model: " + e.getMessage());

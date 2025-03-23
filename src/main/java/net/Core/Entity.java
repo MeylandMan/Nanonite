@@ -2,6 +2,7 @@ package net.Core;
 
 import net.Core.Physics.CharacterBody;
 import net.Core.Physics.Raycast;
+import net.Core.Rendering.Texture;
 import org.joml.Vector3d;
 
 public class Entity {
@@ -12,6 +13,9 @@ public class Entity {
 
     public Vector3d velocity = new Vector3d();
     public Vector3d direction = new Vector3d(); // The direction the entity is looking at
+
+    // Textures
+    Texture alias;
 
     // Collisions
     public CharacterBody body;
@@ -51,5 +55,9 @@ public class Entity {
 
         this.body = new CharacterBody();
         this.raycast = new Raycast(position, direction);
+    }
+
+    public void setTexture(String path) {
+        alias = new Texture(path);
     }
 }

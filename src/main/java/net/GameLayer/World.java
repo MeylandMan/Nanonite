@@ -83,6 +83,7 @@ public class World {
         ChunkShaders[1].CreateShader("Liquid.comp", "Liquid.frag");
 
         player = new Player(SpawnPoint);
+        player.setTexture("blocks/dirt.png");
     }
 
     public World(long sd) {
@@ -102,6 +103,7 @@ public class World {
         ChunkShaders[1].CreateShader("Liquid.comp", "Liquid.frag");
 
         player = new Player(SpawnPoint);
+        player.setTexture("blocks/dirt.png");
     }
 
     public static void addChunksToQueue(boolean reset) {

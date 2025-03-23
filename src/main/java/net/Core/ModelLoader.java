@@ -9,45 +9,90 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+enum ModelType {
+    BLOCKS,
+    ENTITY
+}
+
 public class ModelLoader {
     private static final Gson gson = new Gson();
-    private final Map<String, BlockModel> models = new HashMap<>();
+    private final Map<String, BlockModel> BlockModels = new HashMap<>();
+    private final Map<String, EntityModel> EntityModels = new HashMap<>();
 
-    public BlockModel loadModel(String modelName) throws IOException {
+    public Model loadModel(String modelName, ModelType type) throws IOException {
         // Check if the model is already loaded
-        if (models.containsKey(modelName)) {
-            return models.get(modelName);
+        if (BlockModels.containsKey(modelName)) {
+            return BlockModels.get(modelName);
         }
 
         // Loading the Model's JSON file
 
         String modelFilePath = "assets/models/" + modelName + ".json";
         FileReader reader = new FileReader(modelFilePath);
-        BlockModel model = gson.fromJson(reader, BlockModel.class);
+        Model model = null;
+
+        if(type == ModelType.BLOCKS)
+            model = gson.fromJson(reader, BlockModel.class);
+        else if(type == ModelType.ENTITY)
+            model = gson.fromJson(reader, EntityModel.class);
+
         reader.close();
 
         // If the Model has a parent, solve the inheritance
         if (model.getParent() != null && !model.getParent().isEmpty()) {
-            BlockModel parentModel = loadModel(model.getParent()); // Load recursively the parent
-            mergeModels(model, parentModel); // Merge the parent datas to the actual Model
+            Model parentModel = loadModel(model.getParent(), type); // Load recursively the parent
+            mergeModels(model, parentModel, type); // Merge the parent datas to the actual Model
         }
 
-        resolveTextures(model);
-
         Logger.log(Logger.Level.INFO, "Loading model " + modelName);
-        models.put(modelName, model); // Put the Model in cache
+        AddModel(modelName, model, type);
+
         return model;
     }
 
-    private void mergeModels(BlockModel model, BlockModel parentModel) {
+    private void AddModel(String modelName, Model model, ModelType type) {
+        switch(type) {
+            case BLOCKS:
+                BlockModel blockModel = new BlockModel();
+                blockModel.setElements(model.getElements());
+                blockModel.setTextures(model.getTextures());
+                blockModel.setParent(model.getParent());
+
+                resolveTextures(blockModel);
+                BlockModels.put(modelName, blockModel);
+
+                break;
+            case ENTITY:
+                EntityModel entityModel = new EntityModel();
+                entityModel.setElements(model.getElements());
+                entityModel.setTexture(model.getTexture());
+                entityModel.setParent(model.getParent());
+
+                EntityModels.put(modelName, entityModel);
+                break;
+        }
+    }
+
+    private void mergeModels(Model model, Model parentModel, ModelType type) {
 
         // Merge the textures (priority to those from the actual model)
-        if (parentModel.getTextures() != null) {
-            if (model.getTextures() == null) {
-                model.setTextures(new HashMap<>(parentModel.getTextures()));
-            } else {
-                model.getTextures().putAll(parentModel.getTextures());
-            }
+
+        switch(type) {
+            case BLOCKS:
+                if (parentModel.getTextures() != null) {
+                    if (model.getTextures() == null) {
+                        model.setTextures(new HashMap<>(parentModel.getTextures()));
+                    } else {
+                        model.getTextures().putAll(parentModel.getTextures());
+                    }
+                }
+                break;
+            case ENTITY:
+                if (parentModel.getTexture() != null) {
+                    model.setTexture(parentModel.getTexture());
+                }
+                break;
+
         }
 
         // Merge elements (priority to those from the actual model)
@@ -60,7 +105,7 @@ public class ModelLoader {
         }
     }
 
-    private void resolveTextures(BlockModel model) {
+    private void resolveTextures(Model model) {
         if (model.getTextures() == null) {
             return;
         }
@@ -81,10 +126,10 @@ public class ModelLoader {
     }
 
     public BlockModel getModel(String modelName) {
-        return models.get(modelName);
+        return BlockModels.get(modelName);
     }
 
-    public Map<String, BlockModel> getModels() {
-        return models;
+    public Map<String, BlockModel> getBlockModels() {
+        return BlockModels;
     }
 }
