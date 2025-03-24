@@ -23,7 +23,6 @@ public class Client {
     public static String processorBrand = "";
     public static String GPUBrand = "";
     public static String glVersion;
-    public static int mainGPU = 0;
 
     public static final String[] modelPaths = {
             "blocks/dirt",
@@ -36,6 +35,10 @@ public class Client {
             "blocks/sand"
     };
 
+    public static final String[] EModelPaths = {
+            "entities/player"
+    };
+
     public static ModelLoader modelLoader = new ModelLoader();
     public static ArrayList<String> blockTexturePath = new ArrayList<>();
     public static Texture[] blockTextures;
@@ -46,6 +49,10 @@ public class Client {
         try {
             for(String modelPath : modelPaths) {
                 modelLoader.loadModel(modelPath, ModelType.BLOCKS);
+            }
+
+            for(String modelPath : EModelPaths) {
+                modelLoader.loadModel(modelPath, ModelType.ENTITY);
             }
         } catch (IOException e) {
             Logger.log(Logger.Level.ERROR, "Failed to load model: " + e.getMessage());

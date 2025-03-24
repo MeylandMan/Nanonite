@@ -25,6 +25,8 @@ public class Model {
         this.parent = parent;
     }
 
+    public String getType() { return type; }
+    public void setType(String type) { this.type = type; }
     // Single Texture
     public String getTexture() {
         return texture;

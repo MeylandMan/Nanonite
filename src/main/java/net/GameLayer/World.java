@@ -24,6 +24,7 @@ public class World {
     public static ArrayList<CubeCollision> worldCollisions;
     Shader[] ChunkShaders = new Shader[2];
     public Shader shader;
+    Shader EntitiesShader;
     public static final float GRAVITY = 0;
     public static Player player;
 
@@ -31,6 +32,9 @@ public class World {
     // Procedural generation datas
     static ModuleBasisFunction basis;
     public static long seed;
+
+    // Entities
+    ArrayList<Entity> entities = new ArrayList<>();
 
     // Chunks datas
     public static boolean allowQuery = true;
@@ -77,12 +81,16 @@ public class World {
 
         ChunkShaders[0] = new Shader();
         ChunkShaders[1] = new Shader();
+        EntitiesShader = new Shader();
 
         ChunkShaders[0].CreateShader("Chunk.comp", "Chunk.frag");
         ChunkShaders[1].CreateShader("Liquid.comp", "Liquid.frag");
+        EntitiesShader.CreateShader("Entity.comp", "Entity.frag");
 
         player = new Player(SpawnPoint);
-        player.setTexture("blocks/dirt.png");
+        player.setModel("entities/player");
+
+        entities.add(player);
     }
 
     public World(long sd) {
@@ -97,12 +105,16 @@ public class World {
 
         ChunkShaders[0] = new Shader();
         ChunkShaders[1] = new Shader();
+        EntitiesShader = new Shader();
 
         ChunkShaders[0].CreateShader("Chunk.comp", "Chunk.frag");
         ChunkShaders[1].CreateShader("Liquid.comp", "Liquid.frag");
+        EntitiesShader.CreateShader("Entity.comp", "Entity.frag");
 
         player = new Player(SpawnPoint);
-        player.setTexture("blocks/dirt.png");
+        player.setModel("entities/player");
+
+        entities.add(player);
     }
 
     public static void addChunksToQueue(boolean reset) {
@@ -485,6 +497,36 @@ public class World {
         return 0;
     }
 
+
+    public void renderEntities() {
+
+        // Depth render
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+        glDisable(GL_CULL_FACE);
+
+        Vector3f fogColor = (WorldEnvironment.isUnderWater)?
+                new Vector3f(0.14f, 0.21f, 0.42f) :
+                WorldEnvironment.interpolateFogColor(player.position.y);
+        EntitiesShader.Bind();
+
+        if(fogColor.x > WorldEnvironment.SURFACE_DEFAULT_COLOR.x)
+            EntitiesShader.Uniform3f("fogColor", WorldEnvironment.SURFACE_DEFAULT_COLOR);
+        else EntitiesShader.Uniform3f("fogColor", fogColor);
+        EntitiesShader.Uniform1f("fogDistance", WorldEnvironment.fogDistance);
+        EntitiesShader.Uniform1i("UnderWater", (WorldEnvironment.isUnderWater)?1:0);
+
+        EntitiesShader.Uniform1f("renderDistance", Client.renderDistance);
+        EntitiesShader.Uniform3f("cameraPos", new Vector3f(player.position));
+        EntitiesShader.UniformMatrix4x4("view", new Matrix4f(Camera.GetViewMatrix()));
+        EntitiesShader.UniformMatrix4x4("projection", new Matrix4f(Camera.GetProjectionMatrix()));
+
+        for(Entity entity : entities) {
+            entity.Draw(EntitiesShader);
+        }
+    }
 
     public void addCollision(CubeCollision collision) {
         worldCollisions.add(collision);

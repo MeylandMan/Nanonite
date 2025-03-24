@@ -183,9 +183,12 @@ public class App {
 
         glEnable(GL43.GL_DEBUG_OUTPUT);
         glEnable(GL43.GL_DEBUG_OUTPUT_SYNCHRONOUS);
-        glDebugMessageCallback((source, type, id, severity, length, message, userParam) -> {
-            Logger.log(Logger.Level.WARNING, "GL DEBUG MESSAGE: " + glGetShaderInfoLog(id));
-        }, 0);
+
+        /*
+            glDebugMessageCallback((source, type, id, severity, length, message, userParam) -> {
+                Logger.log(Logger.Level.WARNING, "GL DEBUG MESSAGE: " + glGetShaderInfoLog(id));
+            }, 0);
+        */
 
 
 
@@ -225,6 +228,7 @@ public class App {
             };
             Input.Update(window, scene, delta);
             World.player.updateCameraVectors(delta);
+            Camera.UpdateCameraPosition();
 
             Vector3d chunkPos = new Vector3d(
                     floor(World.player.position.x / ChunkGen.X_DIMENSION),
@@ -232,10 +236,10 @@ public class App {
                     floor(World.player.position.z / ChunkGen.Z_DIMENSION)
             );
 
-            int X = (int) floor((World.player.position.x % ChunkGen.X_DIMENSION + ChunkGen.X_DIMENSION) % ChunkGen.X_DIMENSION);
-            int Y = (int) floor(World.player.position.y) + abs(ChunkGen.Y_CHUNK);
+            int X = (int) floor((Camera.Position.x % ChunkGen.X_DIMENSION + ChunkGen.X_DIMENSION) % ChunkGen.X_DIMENSION);
+            int Y = (int) floor(Camera.Position.y) + abs(ChunkGen.Y_CHUNK);
             Y = (Y < 0)? 0 : (Y >= ChunkGen.Y_DIMENSION) ? ChunkGen.Y_DIMENSION-1 : Y;
-            int Z = (int) floor((World.player.position.z % ChunkGen.Z_DIMENSION + ChunkGen.Z_DIMENSION) % ChunkGen.Z_DIMENSION);
+            int Z = (int) floor((Camera.Position.z % ChunkGen.Z_DIMENSION + ChunkGen.Z_DIMENSION) % ChunkGen.Z_DIMENSION);
 
             Chunk actualChunk = World.loadedChunks.get(new Vector2f((float) chunkPos.x, (float) chunkPos.z));
             if(actualChunk != null) {
@@ -260,6 +264,7 @@ public class App {
             Camera.SetProjectionMatrix(m_Width, m_Height);
 
             //Draw chunks
+            world.renderEntities();
             world.renderChunks();
 
             //Draw entities

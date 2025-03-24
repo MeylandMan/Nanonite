@@ -57,9 +57,11 @@ public class Camera {
     private static final float YAW = 0.0f;
     private static final float PITCH = -45.0f;
     private static final float SENSITIVITY = 0.1f;
-    public  static final float ZOOM = 45.0f;
+    public  static final float ZOOM = 72.0f;
 
     // camera Attributes
+    public static Vector3d Position = new Vector3d(0.0, 150.0, 0.0);
+
     private static Vector3f Front = new Vector3f(0.0f, 0.0f, -1.0f);
     private static final Vector3f Up = new Vector3f();
     private static Vector3f Right = new Vector3f();
@@ -71,6 +73,8 @@ public class Camera {
     public static float Roll = 0;
 
     // camera options
+
+    public static float distanceFromPlayer = 5.0f;
     public static float targetZoom = ZOOM;
     public static float MouseSensitivity = SENSITIVITY;
     public static float Zoom = ZOOM;
@@ -78,15 +82,8 @@ public class Camera {
     // returns the view matrix calculated using Euler Angles and the LookAt Matrix
     public static Matrix4d GetViewMatrix()
     {
-        return new Matrix4d().identity()
-                .rotate(toRadians(Roll), new Vector3d(0, 0, 1))
-                .rotate(toRadians(-Pitch), new Vector3d(1, 0, 0))
-                .rotate(toRadians(Yaw), new Vector3d(0, 1, 0))
-                .translate(new Vector3d(
-                        -World.player.position.x,
-                        -World.player.position.y,
-                        -World.player.position.z
-                ));
+        Vector3d playerPos = new Vector3d(World.player.position.x, World.player.position.y + 1.0, World.player.position.z);
+        return new Matrix4d().lookAt(Position, playerPos, new Vector3d(WorldUp));
     }
 
     public static Matrix4d GetProjectionMatrix() { return projection; }
@@ -112,6 +109,17 @@ public class Camera {
         // make sure that when pitch is out of bounds, screen doesn't get flipped
         if (constrainPitch)
             Pitch = Math.clamp(Pitch, -89.0f, 89.0f);
+    }
+
+    public static void UpdateCameraPosition() {
+        float yawRad = toRadians(Yaw);
+        float pitchRad = toRadians(Pitch);
+
+        double x = World.player.position.x + distanceFromPlayer * cos(pitchRad) * cos(yawRad);
+        double y = World.player.position.y - distanceFromPlayer * sin(pitchRad);
+        double z = World.player.position.z + distanceFromPlayer * cos(pitchRad) * sin(yawRad);
+
+        Position = new Vector3d(x, y ,z);
     }
 
     // Frustum 
@@ -158,6 +166,7 @@ public class Camera {
         return result;
     }
     // Getters
+    public static void setFront(Vector3f f) { Front = new Vector3f(f); }
     public static Vector3f getFront() { return Front; }
 
     public static void setRight(Vector3f r) { Right = new Vector3f(r); }

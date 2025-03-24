@@ -1,0 +1,80 @@
+#version 460 core
+
+#define BLOCK_SIZE 16
+
+out vec3 fragPos;
+out vec3 worldPos;
+out vec2 v_TexCoords;
+out vec3 v_Normal;
+
+// Positions locales des sommets d’un cube
+
+const vec2 texCoords[6] = vec2[](
+vec2(0.0, 0.0), vec2(1.0, 0.0), vec2(1.0, 1.0),
+vec2(0.0, 0.0), vec2(1.0, 1.0), vec2(0.0, 1.0)
+);
+
+const vec3 normals[6] = vec3[] (
+    vec3(0.0, 0.0, 1.0),
+    vec3(0.0, 0.0, -1.0),
+    vec3(-1.0, 0.0, 0.0),
+    vec3(1.0, 0.0, 0.0),
+    vec3(0.0, 1.0, 0.0),
+    vec3(0.0, -1.0, 0.0)
+);
+
+uniform vec3 From;
+uniform vec3 To;
+
+uniform mat4 projection;
+uniform mat4 view;
+uniform mat4 model;
+
+#define PROJECTION_VIEW_MATRIX projection * view
+#define PROJECTION_VIEW_WORLD_MATRIX projection * view * model
+
+vec3[36] getVertices(vec3 mn, vec3 mx);
+
+void main() {
+
+    vec3 mn = vec3(From.x/BLOCK_SIZE, From.y/BLOCK_SIZE, From.z/BLOCK_SIZE);
+    vec3 mx = vec3(To.x/BLOCK_SIZE, To.y/BLOCK_SIZE, To.z/BLOCK_SIZE);
+
+    int vertexIndex = gl_VertexID % 36;
+    vec3 cubeVertices[36] = getVertices(mn, mx);
+
+    // Assigner les coordonnées de texture (UV)
+    v_TexCoords = texCoords[vertexIndex % 6];
+    v_Normal = mat3(transpose(inverse(model))) * normals[gl_VertexID / 6];
+
+    fragPos = cubeVertices[gl_VertexID];
+
+    worldPos = (model * vec4(fragPos, 1.0)).xyz;
+    gl_Position = PROJECTION_VIEW_WORLD_MATRIX * vec4(fragPos, 1.0);
+
+}
+
+vec3[36] getVertices(vec3 mn, vec3 mx) {
+    vec3 vertices[36] = vec3[] (
+        // FRONT
+        vec3(mn.x, mn.y, mx.z), vec3(mx.x, mn.y, mx.z), vec3(mx.x, mx.y, mx.z),
+        vec3(mn.x, mn.y, mx.z), vec3(mx.x, mx.y, mx.z), vec3(mn.x, mx.y, mx.z),
+        // BACK
+        vec3(mx.x, mn.y, mn.z), vec3(mn.x, mn.y, mn.z), vec3(mn.x, mx.y, mn.z),
+        vec3(mx.x, mn.y, mn.z), vec3(mn.x, mx.y, mn.z), vec3(mx.x, mx.y, mn.z),
+        // RIGHT
+        vec3(mn.x, mn.y, mn.z), vec3(mn.x, mn.y, mx.z), vec3(mn.x, mx.y, mx.z),
+        vec3(mn.x, mn.y, mn.z), vec3(mn.x, mx.y, mx.z), vec3(mn.x, mx.y, mn.z),
+        // LEFT
+        vec3(mx.x, mn.y, mx.z), vec3(mx.x, mn.y, mn.z), vec3(mx.x, mx.y, mn.z),
+        vec3(mx.x, mn.y, mx.z), vec3(mx.x, mx.y, mn.z), vec3(mx.x, mx.y, mx.z),
+        // TOP
+        vec3(mn.x, mx.y, mx.z), vec3(mx.x, mx.y, mx.z), vec3(mx.x, mx.y, mn.z),
+        vec3(mn.x, mx.y, mx.z), vec3(mx.x, mx.y, mn.z), vec3(mn.x, mx.y, mn.z),
+        // BOTTOM
+        vec3(mn.x, mn.y, mn.z), vec3(mx.x, mn.y, mn.z), vec3(mx.x, mn.y, mx.z),
+        vec3(mn.x, mn.y, mn.z), vec3(mx.x, mn.y, mx.z), vec3(mn.x, mn.y, mx.z)
+    );
+
+    return vertices;
+}

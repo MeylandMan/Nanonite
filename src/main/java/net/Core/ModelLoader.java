@@ -57,6 +57,7 @@ public class ModelLoader {
                 blockModel.setElements(model.getElements());
                 blockModel.setTextures(model.getTextures());
                 blockModel.setParent(model.getParent());
+                blockModel.setType(model.getType());
 
                 resolveTextures(blockModel);
                 BlockModels.put(modelName, blockModel);
@@ -67,6 +68,7 @@ public class ModelLoader {
                 entityModel.setElements(model.getElements());
                 entityModel.setTexture(model.getTexture());
                 entityModel.setParent(model.getParent());
+                entityModel.setType(model.getType());
 
                 EntityModels.put(modelName, entityModel);
                 break;
@@ -102,7 +104,11 @@ public class ModelLoader {
             } else {
                 model.getElements().addAll(parentModel.getElements());
             }
+
+            // Merge types
+            model.setType(parentModel.getType());
         }
+
     }
 
     private void resolveTextures(Model model) {
@@ -127,6 +133,10 @@ public class ModelLoader {
 
     public BlockModel getModel(String modelName) {
         return BlockModels.get(modelName);
+    }
+
+    public EntityModel getEntityModel(String modelName) {
+        return EntityModels.get(modelName);
     }
 
     public Map<String, BlockModel> getBlockModels() {
