@@ -217,41 +217,9 @@ public class ChunkGen {
         return -1.0f; // In case the path is not found
     }
 
-    public static boolean isChunkInFrustum(Camera.Plane[] frustumPlanes, double chunkX, double chunkZ) {
+    public static boolean isChunkInFrustum(Camera.Plane[] frustumPlanes, float Y, double chunkX, double chunkZ) {
         float chunkSize = ChunkGen.X_DIMENSION; // Length of a chunk
         float chunkHeight = ChunkGen.Y_DIMENSION;
-        float chunkY = ChunkGen.Y_CHUNK;
-
-        // Try the 4 corners of a chunk (ground)
-        double[][] corners = {
-                {chunkX, chunkY, chunkZ},                                    // Bas-gauche
-                {chunkX + chunkSize, chunkY, chunkZ},                        // Bas-droite
-                {chunkX, chunkY, chunkZ + chunkSize},                        // Bas-gauche arrière
-                {chunkX + chunkSize, chunkY, chunkZ + chunkSize},            // Bas-droite arrière
-                {chunkX, chunkHeight, chunkZ},                               // Haut-gauche
-                {chunkX + chunkSize, chunkHeight, chunkZ},                   // Haut-droite
-                {chunkX, chunkHeight, chunkZ + chunkSize},                   // Haut-gauche arrière
-                {chunkX + chunkSize, chunkHeight, chunkZ + chunkSize}        // Haut-droite arrière
-        };
-
-        for (Camera.Plane plane : frustumPlanes) {
-            boolean inside = false;
-            for (double[] corner : corners) {
-                if (plane.isPointInside(corner[0], corner[1], corner[2])) {
-                    inside = true;
-                    break;
-                }
-            }
-
-            if (!inside) return false; // If no corners is inside the view Frustum, eject the chunk
-        }
-
-        return true;
-    }
-
-    public static boolean isChunkInFrustum(Camera.Plane[] frustumPlanes, float y, double chunkX, double chunkZ) {
-        float chunkSize = ChunkGen.X_DIMENSION; // Length of a chunk
-        float chunkHeight = y;
         float chunkY = ChunkGen.Y_CHUNK;
 
         // Try the 4 corners of a chunk (ground)
@@ -284,7 +252,17 @@ public class ChunkGen {
     protected static void setupChunk(Chunk chunk) {
 
         chunk.blocks = new BlockType[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
-        AddChunkSurface(chunk);
-        ResolveChunkSurface(chunk);
+
+        for(int x = 0; x < X_DIMENSION; x++) {
+            for(int z = 0; z < Z_DIMENSION; z++) {
+                chunk.blocks[x][2 + abs(Y_CHUNK)][z] = BlockType.DIRT;
+                chunk.blocks[x][3 + abs(Y_CHUNK)][z] = BlockType.GRASS;
+                chunk.blocks[x][4 + abs(Y_CHUNK)][z] = BlockType.SAND;
+                chunk.blocks[x][5 + abs(Y_CHUNK)][z] = BlockType.STONE;
+            }
+        }
+
+        //AddChunkSurface(chunk);
+        //ResolveChunkSurface(chunk);
     }
 }

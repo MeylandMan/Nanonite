@@ -145,7 +145,7 @@ public class World {
                 long worldX = (chunkX + dx);
                 long worldZ = (chunkZ + dz);
 
-                if (!ChunkGen.isChunkInFrustum(frustumPlanes, worldX * ChunkGen.X_DIMENSION,
+                if (!ChunkGen.isChunkInFrustum(frustumPlanes, ChunkGen.Y_DIMENSION, worldX * ChunkGen.X_DIMENSION,
                         worldZ * ChunkGen.Z_DIMENSION)) continue;
 
                 Vector2f chunkID = new Vector2f(worldX, worldZ);
@@ -422,7 +422,7 @@ public class World {
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-            if(chunk.LiquidBlocks == null || !ChunkGen.isChunkInFrustum(frustumPlanes, chunk.positionX * ChunkGen.X_DIMENSION,
+            if(chunk.LiquidBlocks == null || !ChunkGen.isChunkInFrustum(frustumPlanes, chunk.Y_MAX, chunk.positionX * ChunkGen.X_DIMENSION,
                     chunk.positionZ * ChunkGen.Z_DIMENSION))
                 continue;
 
