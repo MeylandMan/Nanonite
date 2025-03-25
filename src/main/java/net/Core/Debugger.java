@@ -180,17 +180,6 @@ public class Debugger {
                 floor((World.player.position.z % ChunkGen.Z_DIMENSION + ChunkGen.Z_DIMENSION) % ChunkGen.Z_DIMENSION)
         );
 
-        /*
-        String blockID = "NAH";
-        if(World.loadedChunks.containsKey(new Vector2f(chunkPosition.x, chunkPosition.z))) {
-            ChunkGen.BlockType block = World.loadedChunks.get(new Vector2f(chunkPosition.x, chunkPosition.z))
-                    .blocks[(int)blockPosition.x][(int)blockPosition.y][(int)blockPosition.z];
-            if(block != null)
-                blockID = block.toString();
-        }
-        */
-
-
         String gameInfo = "XYZ: " + df.format(World.player.position.x) +
                 " / " + df.format(World.player.position.y) +
                 " / " + df.format(World.player.position.z) +
@@ -202,6 +191,7 @@ public class Debugger {
                 df.format(chunkPosition.x) + " " +
                 df.format(chunkPosition.y) + " " +
                 df.format(chunkPosition.z) +
+                "\nChunks draw calls: " + World.ChunkDrawCalls +
                 "\nFacing Direction: " +
                 df.format(Camera.getFront().x) + " / " +
                 df.format(Camera.getFront().y) + " / " +

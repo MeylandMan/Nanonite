@@ -63,7 +63,7 @@ void main() {
     TextureIndex = faces[faceIndex].id;
 
 
-    vec3 chunkPosition = vec3(Position.x * 16, Position.y, Position.z * 16);
+    vec3 chunkPosition = Position * 16;
     vec3 worldPosition = vec3(FaceVertices[vertexIndex]+localPosition+chunkPosition);
 
     fragPos = chunkPosition + FaceVertices[vertexIndex];

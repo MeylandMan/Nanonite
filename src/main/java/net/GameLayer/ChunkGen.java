@@ -5,6 +5,7 @@ import net.Core.BlockModel;
 import net.Core.Client;
 import net.Core.Face;
 import org.joml.Random;
+import org.joml.Vector3f;
 
 import java.util.Map;
 
@@ -14,7 +15,7 @@ public class ChunkGen {
     public final static int Y_CHUNK = -64;
 
     public final static byte X_DIMENSION = 16;
-    public final static int Y_DIMENSION = 256 + abs(Y_CHUNK);
+    public final static int Y_DIMENSION = 16;
     public final static byte Z_DIMENSION = 16;
 
     // Surface data
@@ -24,9 +25,9 @@ public class ChunkGen {
     public final static int WATER_LEVEL = 64;
 
     // Depths data
-    public static int MAX_DEPTH_HEIGHT = 64;
-    public static int MIN_DEPTH_HEIGHT = 1;
-    //public static int SURFACE_DEPTH_HEIGHT = 10;
+    public static int MAX_DEPTH_HEIGHT = 0;
+    public static int MIN_DEPTH_HEIGHT = -256;
+    public static int SURFACE_DEPTH_HEIGHT = 64;
 
     public enum BlockType {
         DIRT((byte)0),
@@ -49,7 +50,27 @@ public class ChunkGen {
         }
     }
 
-    public static void AddChunkSurface(Chunk chunk) {
+    public static boolean isChunkNearby(long x, long y, long z) {
+
+        int radius = Client.renderDistance / 2;
+
+        long chunkX = (long) (World.player.position.x / ChunkGen.X_DIMENSION);
+        long chunkY = (long) (World.player.position.y / ChunkGen.Y_DIMENSION);
+        long chunkZ = (long) (World.player.position.z / ChunkGen.Z_DIMENSION);
+
+        long chunkDistX = abs(x - chunkX);
+        long chunkDistY = abs(y - chunkY);
+        long chunkDistZ = abs(z - chunkZ);
+
+        if(chunkDistX >= radius || chunkDistY >= radius || chunkDistZ >= radius)
+            return false;
+
+        return true;
+    }
+
+
+    private static void AddSurface(Chunk chunk) {
+
         // Create the terrain height
         ModuleFractal baseTerrain = new ModuleFractal(
                 ModuleFractal.FractalType.FBM, // Fractal type
@@ -70,7 +91,6 @@ public class ChunkGen {
         clamping.setRange(0.0, 0.9);
 
         double surfaceFrequency = 1.0 / 171.03;
-        double depthFrequency = 1.0 / 64.0;
 
         long worldX = chunk.positionX * ChunkGen.X_DIMENSION;
         long worldZ = chunk.positionZ * ChunkGen.Z_DIMENSION;
@@ -87,11 +107,16 @@ public class ChunkGen {
                 // Final formula to calculate the height
                 //int y = (int) (30 + (40 * baseHeight) + (87 * max(0, moutainFactor)));
 
-                int y = (int) (MIN_HEIGHT + (SURFACE_HEIGHT * baseHeight));
-                y = abs(Y_CHUNK) + min(MAX_HEIGHT, max(MIN_HEIGHT, y));
+                int worldY = (int) (MIN_HEIGHT + (SURFACE_HEIGHT * baseHeight));
+                worldY = min(MAX_HEIGHT, max(MIN_HEIGHT, worldY));
 
-                chunk.Y_MAX = max(y, chunk.Y_MAX);
-                chunk.blocks[x][y][z] = BlockType.STONE;
+                // Find the corresponding Y chunk
+                int chunkY = worldY / ChunkGen.Y_DIMENSION;
+                int localY = worldY % ChunkGen.Y_DIMENSION;
+
+                if(chunk.positionY != chunkY) continue;
+
+                chunk.AddBlock(x, localY, z, BlockType.STONE);
 
             }
         }
@@ -100,12 +125,24 @@ public class ChunkGen {
         for(int x = 0; x < ChunkGen.X_DIMENSION; x++) {
             for(int z = 0; z < ChunkGen.Z_DIMENSION; z++) {
                 for(int y = WATER_LEVEL; y > MIN_HEIGHT; y--) {
-                    int yy = y + abs(Y_CHUNK);
-                    if(chunk.blocks[x][yy][z] == BlockType.STONE) break;
-                    chunk.blocks[x][yy][z] = BlockType.WATER;
+
+                    // Find the corresponding Y chunk
+                    int chunkY = y / ChunkGen.Y_DIMENSION;
+                    int localY = y % ChunkGen.Y_DIMENSION;
+
+                    if(chunk.positionY != chunkY) continue;
+
+                    if(chunk.blocks == null)
+                        chunk.blocks = new BlockType[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
+
+                    if(chunk.blocks[x][localY][z] == BlockType.STONE) break;
+                    chunk.AddBlock(x, localY, z, BlockType.WATER);
                 }
             }
         }
+    }
+
+    private static void AddDepthSurface(Chunk chunk) {
 
         // Add the depth surface
         // Appliquer un scale et un offset pour mieux lisser le terrain
@@ -116,7 +153,12 @@ public class ChunkGen {
 
         ModuleClamp clamp = new ModuleClamp();
         clamp.setSource(scaleOffset);
-        clamp.setRange(0.08, 1.0);
+        clamp.setRange(0.0, 1.0);
+
+        long worldX = chunk.positionX * ChunkGen.X_DIMENSION;
+        long worldZ = chunk.positionZ * ChunkGen.Z_DIMENSION;
+
+        double depthFrequency = 1.0 / 64.0;
 
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int z = 0; z < Z_DIMENSION; z++) {
@@ -125,26 +167,26 @@ public class ChunkGen {
                 double perlinY = (double) (worldZ + z) * depthFrequency;
 
                 double noiseValue = clamp.get(perlinX, perlinY);
-                int y = (int) Math.round(MAX_DEPTH_HEIGHT * noiseValue);
-                chunk.blocks[x][y][z] = BlockType.STONE;
+
+                int y = (int) (MIN_DEPTH_HEIGHT + (SURFACE_DEPTH_HEIGHT * noiseValue));
+
+                // Find the corresponding Y chunk
+                int chunkY = y / ChunkGen.Y_DIMENSION;
+                int localY = (y % ChunkGen.Y_DIMENSION + ChunkGen.Y_DIMENSION) % ChunkGen.Y_DIMENSION;
+
+                if(chunk.positionY != chunkY) continue;
+
+                chunk.AddBlock(x, localY, z, BlockType.STONE);
             }
         }
     }
 
-    public static int getBlocksNumber(Chunk chunk) {
-        int x = 0;
-        for(BlockType[][] blocks : chunk.blocks) {
-            for(BlockType[] block : blocks) {
-                for(BlockType block1 : block) {
-                    if(block1 == null) continue;
+    public static void AddChunkSurface(Chunk chunk) {
 
-                    BlockModel model = Client.modelLoader.getModel(Client.modelPaths[block1.getID()]);
-                    x+= model.getElements().size();
-                }
-            }
-
-        }
-        return x;
+        if(chunk.positionY > 0)
+            AddSurface(chunk);
+        else
+            AddDepthSurface(chunk);
     }
 
     public static void ResolveChunkSurface(Chunk chunk) {
@@ -152,6 +194,8 @@ public class ChunkGen {
         Random rand = new Random(World.seed);
         for(int x = 0; x < X_DIMENSION; x++) {
             for(int z = 0; z < Z_DIMENSION; z++) {
+
+                /*
                 int dirtLevel = max(3, rand.nextInt(5) + 1);
                 int stoneLevel = max(MAX_DEPTH_HEIGHT-4,rand.nextInt(MAX_DEPTH_HEIGHT) + 1);
 
@@ -161,7 +205,7 @@ public class ChunkGen {
                         boolean isUnderWater = (chunk.blocks[x][y+5][z] == BlockType.WATER);
                         chunk.blocks[x][y][z] = (isUnderWater)? BlockType.GRAVEL :
                                 (chunk.blocks[x][y+1][z] == BlockType.WATER)? BlockType.SAND :
-                                        (y == WATER_LEVEL + abs(Y_CHUNK))? BlockType.SAND : BlockType.GRASS;
+                                        (y == WATER_LEVEL)? BlockType.SAND : BlockType.GRASS;
 
                         // Add sub surface blocks
                         for(int i = 1; i < dirtLevel; i++) {
@@ -178,24 +222,28 @@ public class ChunkGen {
                         break;
                     }
                 }
-
-                // Add depths blocks
-                int bedrockLevel = max(2, rand.nextInt(5) + 1);
-
-                // Add bedrock
-                for(int i = 0; i < bedrockLevel; i++) {
-                    chunk.blocks[x][i][z] = BlockType.BEDROCK;
-                }
+                */
 
                 // Add Deepslate
-                for(int i = 0; i < MAX_DEPTH_HEIGHT; i++) {
-                    if(chunk.blocks[x][i][z] == BlockType.STONE) {
-                        chunk.blocks[x][i][z] = BlockType.DEEPSLATE;
+                for(int i = MIN_DEPTH_HEIGHT; i < MAX_DEPTH_HEIGHT; i++) {
+                    int y = i;
+
+                    // Find the corresponding Y chunk
+                    int chunkY = y / ChunkGen.Y_DIMENSION;
+                    int localY = y % ChunkGen.Y_DIMENSION;
+
+                    if(chunk.positionY != chunkY) continue;
+
+                    if(chunk.blocks == null)
+                        chunk.blocks = new BlockType[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
+
+                    if(chunk.blocks[x][localY][z] == BlockType.STONE) {
+                        chunk.AddBlock(x, localY, z, BlockType.DEEPSLATE);
                         break;
                     }
 
-                    if(chunk.blocks[x][i][z] != BlockType.BEDROCK) {
-                        chunk.blocks[x][i][z] = BlockType.DEEPSLATE;
+                    if(chunk.blocks[x][localY][z] != BlockType.BEDROCK) {
+                        chunk.AddBlock(x, localY, z, BlockType.DEEPSLATE);
                     }
                 }
 
@@ -217,10 +265,9 @@ public class ChunkGen {
         return -1.0f; // In case the path is not found
     }
 
-    public static boolean isChunkInFrustum(Camera.Plane[] frustumPlanes, float Y, double chunkX, double chunkZ) {
+    public static boolean isChunkInFrustum(Camera.Plane[] frustumPlanes, double chunkX, double chunkY, double chunkZ) {
         float chunkSize = ChunkGen.X_DIMENSION; // Length of a chunk
         float chunkHeight = ChunkGen.Y_DIMENSION;
-        float chunkY = ChunkGen.Y_CHUNK;
 
         // Try the 4 corners of a chunk (ground)
         double[][] corners = {
@@ -228,10 +275,10 @@ public class ChunkGen {
                 {chunkX + chunkSize, chunkY, chunkZ},                        // Bas-droite
                 {chunkX, chunkY, chunkZ + chunkSize},                        // Bas-gauche arrière
                 {chunkX + chunkSize, chunkY, chunkZ + chunkSize},            // Bas-droite arrière
-                {chunkX, chunkHeight, chunkZ},                               // Haut-gauche
-                {chunkX + chunkSize, chunkHeight, chunkZ},                   // Haut-droite
-                {chunkX, chunkHeight, chunkZ + chunkSize},                   // Haut-gauche arrière
-                {chunkX + chunkSize, chunkHeight, chunkZ + chunkSize}        // Haut-droite arrière
+                {chunkX, chunkY + chunkSize, chunkZ},                               // Haut-gauche
+                {chunkX + chunkSize, chunkY + chunkSize, chunkZ},                   // Haut-droite
+                {chunkX, chunkY + chunkSize, chunkZ + chunkSize},                   // Haut-gauche arrière
+                {chunkX + chunkSize, chunkY + chunkSize, chunkZ + chunkSize}        // Haut-droite arrière
         };
 
         for (Camera.Plane plane : frustumPlanes) {
@@ -251,18 +298,7 @@ public class ChunkGen {
 
     protected static void setupChunk(Chunk chunk) {
 
-        chunk.blocks = new BlockType[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
-
-        for(int x = 0; x < X_DIMENSION; x++) {
-            for(int z = 0; z < Z_DIMENSION; z++) {
-                chunk.blocks[x][2 + abs(Y_CHUNK)][z] = BlockType.DIRT;
-                chunk.blocks[x][3 + abs(Y_CHUNK)][z] = BlockType.GRASS;
-                chunk.blocks[x][4 + abs(Y_CHUNK)][z] = BlockType.SAND;
-                chunk.blocks[x][5 + abs(Y_CHUNK)][z] = BlockType.STONE;
-            }
-        }
-
-        //AddChunkSurface(chunk);
+        AddChunkSurface(chunk);
         //ResolveChunkSurface(chunk);
     }
 }

@@ -20,8 +20,8 @@ public class WorldEnvironment {
     public static boolean isUnderWater = false;
 
     public static Vector3f interpolateFogColor(double playerY) {
-        float startTransition = 16;
-        float endTransition = 32;
+        float startTransition = -100;
+        float endTransition = 0;
 
         float t = clamp(((float) playerY - startTransition) / (endTransition - startTransition), 0, 1);
         return new Vector3f(DEPTHS_DEFAULT_COLOR).lerp(SURFACE_DEFAULT_COLOR, t);

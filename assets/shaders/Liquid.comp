@@ -68,7 +68,7 @@ void main() {
     TextureIndex = faces[faceIndex].id;
     v_Normal = getNormal(uint(faces[faceIndex].FaceID));
 
-    vec3 chunkPosition = vec3(Position.x * 16, Position.y, Position.z * 16);
+    vec3 chunkPosition = Position * 16;
     vec3 worldPosition = vec3(fragPos+chunkPosition);
 
     vec3 eye_space_normal = (view * vec4(v_Normal, 0.0)).xyz;

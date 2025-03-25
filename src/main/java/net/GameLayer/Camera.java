@@ -7,10 +7,9 @@ import static org.joml.Math.*;
 import static org.joml.Math.toRadians;
 
 import net.Core.Physics.Raycast;
-import org.joml.Matrix4d;
-import org.joml.Matrix4f;
-import org.joml.Vector3d;
-import org.joml.Vector3f;
+import org.joml.*;
+
+import java.lang.Math;
 import java.util.*;
 
 public class Camera {
@@ -146,6 +145,53 @@ public class Camera {
         }
 
         return planes;
+    }
+
+    public static Vector3d getFrustumMin() {
+        double minX = Double.POSITIVE_INFINITY;
+        double minY = Double.POSITIVE_INFINITY;
+        double minZ = Double.POSITIVE_INFINITY;
+
+        for(Vector3d corner: getFrustumCorners()) {
+            minX = min(minX, corner.x);
+            minY = min(minY, corner.y);
+            minZ = min(minZ, corner.z);
+        }
+        return new Vector3d(minX, minY, minZ);
+    }
+
+    public static Vector3d getFrustumMax() {
+        double maxX = Double.NEGATIVE_INFINITY;
+        double maxY = Double.NEGATIVE_INFINITY;
+        double maxZ = Double.NEGATIVE_INFINITY;
+
+        for(Vector3d corner: getFrustumCorners()) {
+            maxX = max(maxX, corner.x);
+            maxY = max(maxY, corner.y);
+            maxZ = max(maxZ, corner.z);
+        }
+
+        return new Vector3d(maxX, maxY, maxZ);
+    }
+
+    private static List<Vector3d> getFrustumCorners() {
+        List<Vector3d> corners = new ArrayList<>();
+
+        Matrix4d vpMatrix = new Matrix4d();
+        projection.mul(GetViewMatrix(), vpMatrix).invert();
+
+        Vector4d[] ndcCorners = {
+                new Vector4d(-1, -1, -1, 1), new Vector4d(1, -1, -1, 1),
+                new Vector4d(-1, 1, -1, 1), new Vector4d(1, 1, -1, 1),
+                new Vector4d(-1, -1, 1, 1), new Vector4d(1, -1, 1, 1),
+                new Vector4d(-1, 1, 1, 1), new Vector4d(1, 1, 1, 1)
+        };
+
+        for(Vector4d corner : ndcCorners) {
+            vpMatrix.transform(corner);
+            corners.add(new Vector3d(corner.x / corner.w, corner.y / corner.w, corner.z / corner.w));
+        }
+        return corners;
     }
 
     public static double[] getFrustumData() {

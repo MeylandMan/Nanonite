@@ -15,6 +15,7 @@ import static net.GameLayer.ChunkGen.*;
 
 
 public class Chunk {
+    boolean isEmpty = true;
     boolean updateChunk = true;
     protected FloatBuffer buffer;
 
@@ -24,15 +25,14 @@ public class Chunk {
     int[] faceDrawn = new int[2];
     int blockDrawn = 0;
 
-    public int Y_MAX = 0;
     public long positionX, positionY, positionZ;
 
     public Chunk() { }
 
-    public Chunk(long x, long z) {
+    public Chunk(long x, long y, long z) {
         this.compressedBlocks = new HashMap<>();
         this.positionX = x;
-        this.positionY = Y_CHUNK;
+        this.positionY = y;
         this.positionZ = z;
 
     }
@@ -46,15 +46,22 @@ public class Chunk {
         compressedBlocks = null;
     }
 
+    public void AddBlock(int x ,int y, int z, BlockType type) {
+        if(blocks == null)
+            blocks = new BlockType[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
 
+        blocks[x][y][z] = type;
+        blockDrawn++;
+    }
 
-    public void updateChunk(long xx, long zz) {
-        if(!updateChunk)
+    public void updateChunk(long xx, long yy, long zz) {
+        if(!updateChunk || blocks == null)
             return;
+
         updateChunk = false;
 
         // Updating Static blocks
-        buffer = World.getChunkData(xx, zz, 0);
+        buffer = World.getChunkData(xx, yy, zz, 0);
         faceDrawn[0] = buffer.limit()/11;
 
         StaticBlocks.Bind();
@@ -63,7 +70,7 @@ public class Chunk {
         MemoryUtil.memFree(buffer);
 
         // Updating Liquid blocks
-        buffer = World.getChunkData(xx, zz, 1);
+        buffer = World.getChunkData(xx, yy, zz, 1);
         faceDrawn[1] = buffer.limit()/11;
 
         LiquidBlocks.Bind();

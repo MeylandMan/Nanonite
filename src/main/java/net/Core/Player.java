@@ -33,20 +33,20 @@ public class Player extends Entity {
         UP = false;
         float pitchRad = toRadians(Pitch);
         if (direction == Camera.Camera_Movement.FORWARD) {
-            velocity.x += getFront().x / cos(pitchRad);
-            velocity.z += getFront().z / cos(pitchRad);
-        }
-        if (direction == Camera.Camera_Movement.BACKWARD) {
             velocity.x -= getFront().x / cos(pitchRad);
             velocity.z -= getFront().z / cos(pitchRad);
         }
-        if (direction == Camera.Camera_Movement.LEFT) {
-            velocity.x -= getRight().x;
-            velocity.z -= getRight().z;
+        if (direction == Camera.Camera_Movement.BACKWARD) {
+            velocity.x += getFront().x / cos(pitchRad);
+            velocity.z += getFront().z / cos(pitchRad);
         }
-        if (direction == Camera.Camera_Movement.RIGHT) {
+        if (direction == Camera.Camera_Movement.LEFT) {
             velocity.x += getRight().x;
             velocity.z += getRight().z;
+        }
+        if (direction == Camera.Camera_Movement.RIGHT) {
+            velocity.x -= getRight().x;
+            velocity.z -= getRight().z;
         }
         if(direction == Camera.Camera_Movement.UP) {
             velocity.y += SPEED * 5;
@@ -64,9 +64,9 @@ public class Player extends Entity {
         float pitchRad = toRadians(Pitch);
 
         Vector3f front = new Vector3f().set(
-                -(cos(yawRad) * cos(pitchRad)),
-                sin(pitchRad),
-                -(sin(yawRad) * cos(pitchRad))
+                (cos(yawRad) * cos(pitchRad)),
+                -sin(pitchRad),
+                (sin(yawRad) * cos(pitchRad))
         ).normalize();
 
         setFront(front);
@@ -97,8 +97,8 @@ public class Player extends Entity {
             velocity.y *= deltaTime;
         }
 
-        velocity.x = (velocity.x < -0.1)? -0.1 : min(velocity.x, 0.1);
-        velocity.z = (velocity.z < -0.1)? -0.1 : min(velocity.z, 0.1);
+        //velocity.x = (velocity.x < -0.1)? -0.1 : min(velocity.x, 0.1);
+        //velocity.z = (velocity.z < -0.1)? -0.1 : min(velocity.z, 0.1);
 
         double angle = atan2(getFront().x, getFront().z);
         rotation.y = toDegrees(angle);
