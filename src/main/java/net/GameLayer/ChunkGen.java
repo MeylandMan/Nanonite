@@ -29,6 +29,11 @@ public class ChunkGen {
     public static int MIN_DEPTH_HEIGHT = -256;
     public static int SURFACE_DEPTH_HEIGHT = 64;
 
+
+    // Surface Terrain Simplex noise
+    static ModuleClamp surfaceClamp = new ModuleClamp();
+    static ModuleClamp depthClamp = new ModuleClamp();
+
     public enum BlockType {
         DIRT((byte)0),
         GRASS((byte)1),
@@ -48,6 +53,36 @@ public class ChunkGen {
         public int getID() {
             return id;
         }
+    }
+
+    public static void Init() {
+        // Create the terrain height
+        ModuleFractal baseTerrain = new ModuleFractal(
+                ModuleFractal.FractalType.FBM, // Fractal type
+                ModuleBasisFunction.BasisType.SIMPLEX, // Using SimplexNoise
+                ModuleBasisFunction.InterpolationType.QUINTIC // fluid interpolation
+        );
+        baseTerrain.setSeed(World.seed);
+        baseTerrain.setNumOctaves(5);
+
+        ModuleScaleOffset surfaceScaleOffset = new ModuleScaleOffset();
+        surfaceScaleOffset.setSource(baseTerrain);
+        surfaceScaleOffset.setScale(0.25);
+        surfaceScaleOffset.setOffset(0.6);
+
+        // Clamping to avoid extreme values
+        surfaceClamp.setSource(surfaceScaleOffset);
+        surfaceClamp.setRange(0.0, 0.9);
+
+        // Appliquer un scale et un offset pour mieux lisser le terrain
+        ModuleScaleOffset scaleOffset = new ModuleScaleOffset();
+        scaleOffset.setSource(World.basis);
+        scaleOffset.setScale(0.1);
+        scaleOffset.setOffset(0.1);
+
+        depthClamp.setSource(scaleOffset);
+        depthClamp.setRange(0.0, 1.0);
+
     }
 
     public static boolean isChunkNearby(long x, long y, long z) {
@@ -71,25 +106,6 @@ public class ChunkGen {
 
     private static void AddSurface(Chunk chunk) {
 
-        // Create the terrain height
-        ModuleFractal baseTerrain = new ModuleFractal(
-                ModuleFractal.FractalType.FBM, // Fractal type
-                ModuleBasisFunction.BasisType.SIMPLEX, // Using SimplexNoise
-                ModuleBasisFunction.InterpolationType.QUINTIC // fluid interpolation
-        );
-        baseTerrain.setSeed(World.seed);
-        baseTerrain.setNumOctaves(5);
-
-        ModuleScaleOffset surfaceScaleOffset = new ModuleScaleOffset();
-        surfaceScaleOffset.setSource(baseTerrain);
-        surfaceScaleOffset.setScale(0.25);
-        surfaceScaleOffset.setOffset(0.6);
-
-        // Clamping to avoid extreme values
-        ModuleClamp clamping = new ModuleClamp();
-        clamping.setSource(surfaceScaleOffset);
-        clamping.setRange(0.0, 0.9);
-
         double surfaceFrequency = 1.0 / 171.03;
 
         long worldX = chunk.positionX * ChunkGen.X_DIMENSION;
@@ -102,7 +118,7 @@ public class ChunkGen {
                 double perlinX = (double) (worldX + x) * surfaceFrequency;
                 double perlinY = (double) (worldZ + z) * surfaceFrequency;
 
-                double baseHeight = clamping.get(perlinX, perlinY);
+                double baseHeight = surfaceClamp.get(perlinX, perlinY);
 
                 // Final formula to calculate the height
                 //int y = (int) (30 + (40 * baseHeight) + (87 * max(0, moutainFactor)));
@@ -145,15 +161,6 @@ public class ChunkGen {
     private static void AddDepthSurface(Chunk chunk) {
 
         // Add the depth surface
-        // Appliquer un scale et un offset pour mieux lisser le terrain
-        ModuleScaleOffset scaleOffset = new ModuleScaleOffset();
-        scaleOffset.setSource(World.basis);
-        scaleOffset.setScale(0.1);
-        scaleOffset.setOffset(0.1);
-
-        ModuleClamp clamp = new ModuleClamp();
-        clamp.setSource(scaleOffset);
-        clamp.setRange(0.0, 1.0);
 
         long worldX = chunk.positionX * ChunkGen.X_DIMENSION;
         long worldZ = chunk.positionZ * ChunkGen.Z_DIMENSION;
@@ -166,7 +173,7 @@ public class ChunkGen {
                 double perlinX = (double) (worldX + x) * depthFrequency;
                 double perlinY = (double) (worldZ + z) * depthFrequency;
 
-                double noiseValue = clamp.get(perlinX, perlinY);
+                double noiseValue = depthClamp.get(perlinX, perlinY);
 
                 int y = (int) (MIN_DEPTH_HEIGHT + (SURFACE_DEPTH_HEIGHT * noiseValue));
 

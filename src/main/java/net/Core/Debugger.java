@@ -190,7 +190,7 @@ public class Debugger {
                 "\nChunks: " +
                 df.format(chunkPosition.x) + " " +
                 df.format(chunkPosition.y) + " " +
-                df.format(chunkPosition.z) +
+                df.format(chunkPosition.z) + " (" + World.loadedChunks.size() + ")" +
                 "\nChunks draw calls: " + World.ChunkDrawCalls +
                 "\nFacing Direction: " +
                 df.format(Camera.getFront().x) + " / " +

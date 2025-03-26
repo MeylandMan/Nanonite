@@ -81,6 +81,7 @@ public class World {
         basis.setType(ModuleBasisFunction.BasisType.SIMPLEX);
         basis.setSeed(seed);
 
+        ChunkGen.Init();
         ChunkShaders[0] = new Shader();
         ChunkShaders[1] = new Shader();
         EntitiesShader = new Shader();
@@ -105,6 +106,7 @@ public class World {
         basis.setType(ModuleBasisFunction.BasisType.SIMPLEX);
         basis.setSeed(seed);
 
+        ChunkGen.Init();
         ChunkShaders[0] = new Shader();
         ChunkShaders[1] = new Shader();
         EntitiesShader = new Shader();
@@ -153,7 +155,10 @@ public class World {
 
                     Vector3f chunkID = new Vector3f(worldX, worldY, worldZ);
 
-                    if (loadedChunks.containsKey(chunkID))
+                    if (loadedChunks.containsKey(chunkID) || !ChunkGen.isChunkInFrustum(frustumPlanes,
+                            worldX * ChunkGen.X_DIMENSION,
+                            worldY * ChunkGen.Y_DIMENSION,
+                            worldZ * ChunkGen.Z_DIMENSION))
                         continue;
 
                     Chunk chunk = new Chunk(worldX, worldY, worldZ);
@@ -305,7 +310,7 @@ public class World {
         long chunkX = (long) (player.position.x / ChunkGen.X_DIMENSION);
         long chunkY = (long) (player.position.y / ChunkGen.Y_DIMENSION);
         long chunkZ = (long) (player.position.z / ChunkGen.Z_DIMENSION);
-        float radius = Client.renderDistance / 2.f;
+        int radius = Client.renderDistance / 2;
 
         List<Chunk> chunksToProcess = new ArrayList<>();
 
@@ -429,7 +434,7 @@ public class World {
                     Chunk chunk = loadedChunks.get(chunkID);
 
                     if(chunk == null || chunk.blocks == null) continue;
-                    if(chunk.StaticBlocks == null || !ChunkGen.isChunkInFrustum(frustumPlanes,
+                    if(chunk.StaticBlocks == null|| !ChunkGen.isChunkInFrustum(frustumPlanes,
                             chunk.positionX * ChunkGen.X_DIMENSION,
                             chunk.positionY * ChunkGen.Y_DIMENSION,
                             chunk.positionZ * ChunkGen.Z_DIMENSION))
