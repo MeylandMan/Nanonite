@@ -76,8 +76,6 @@ public class Debugger {
                 Client.renderDistance++;
                 Client.renderDistance = min(Client.renderDistance, Client.MAX_RENDER_DISTANCE);
                 Logger.log(Logger.Level.DEBUG,"Increased Render distance: " + Client.renderDistance);
-
-                World.addChunksToQueue(true);
                 is_combined = true;
             }
 
@@ -86,8 +84,6 @@ public class Debugger {
                 Client.renderDistance--;
                 Client.renderDistance = max(Client.renderDistance, Client.MIN_RENDER_DISTANCE);
                 Logger.log(Logger.Level.DEBUG,"Decreased Render distance: " + Client.renderDistance);
-
-                World.addChunksToQueue(true);
                 is_combined = true;
             }
 

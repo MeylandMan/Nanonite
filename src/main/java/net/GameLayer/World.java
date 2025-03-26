@@ -151,16 +151,20 @@ public class World {
         for (int dz = -radius; dz <= radius; dz++) {
             for (int dx = -radius; dx <= radius; dx++) {
                 for (int dy = -radius; dy <= radius; dy++) {
+
                     long worldX = (chunkX + dx);
                     long worldY = (chunkY + dy);
                     long worldZ = (chunkZ + dz);
 
                     Vector3f chunkID = new Vector3f(worldX, worldY, worldZ);
 
-                    if (loadedChunks.containsKey(chunkID) || !ChunkGen.isChunkInFrustum(frustumPlanes,
+                    /*
+                    || !ChunkGen.isChunkInFrustum(frustumPlanes,
                             worldX * ChunkGen.X_DIMENSION,
                             worldY * ChunkGen.Y_DIMENSION,
-                            worldZ * ChunkGen.Z_DIMENSION))
+                            worldZ * ChunkGen.Z_DIMENSION)
+                     */
+                    if (loadedChunks.containsKey(chunkID))
                         continue;
 
                     Chunk chunk = new Chunk(worldX, worldY, worldZ);
@@ -168,10 +172,10 @@ public class World {
                     ChunkGen.setupChunk(chunk);
 
                     float distanceSquared = dx * dx + dy * dy + dz * dz;
-                    chunksPos.add(new ChunkDistance(chunk, distanceSquared));
-
-                    if(chunk.blocks != null)
+                    if(chunk.blocks != null) {
+                        chunksPos.add(new ChunkDistance(chunk, distanceSquared));
                         loadedChunksID.put(chunkID, chunkID);
+                    }
 
                     loadedChunks.put(chunkID, chunk);
                 }
@@ -412,9 +416,9 @@ public class World {
         ChunkShaders[0].Bind();
         ChunkShaders[0].Uniform1iv("u_Textures", Client.samplers);
 
-        if(fogColor.x > WorldEnvironment.SURFACE_DEFAULT_COLOR.x)
-            ChunkShaders[0].Uniform3f("fogColor", WorldEnvironment.SURFACE_DEFAULT_COLOR);
-        else ChunkShaders[0].Uniform3f("fogColor", fogColor);
+        fogColor = (fogColor.x > WorldEnvironment.SURFACE_DEFAULT_COLOR.x)? WorldEnvironment.SURFACE_DEFAULT_COLOR : fogColor;
+
+        ChunkShaders[0].Uniform3f("fogColor", fogColor);
         ChunkShaders[0].Uniform1f("fogDistance", WorldEnvironment.fogDistance);
         ChunkShaders[0].Uniform1i("UnderWater", (WorldEnvironment.isUnderWater)?1:0);
 
@@ -436,17 +440,14 @@ public class World {
             for(int y = (int) min.y; y <= (int) max.y; y++){
                 for(int z = (int) min.z; z <= (int) max.z; z++) {
 
-                    Vector3f chunkID = new Vector3f(x ,y ,z);
-                    Vector3f checkChunk = loadedChunksID.get(chunkID);
+                    if(loadedChunksID.get(new Vector3f(x ,y ,z)) == null) continue;
 
-                    if(checkChunk == null) continue;
-
-                    Chunk chunk = loadedChunks.get(chunkID);
+                    Chunk chunk = loadedChunks.get(loadedChunksID.get(new Vector3f(x ,y ,z)));
 
                     if(chunk.StaticBlocks == null|| !ChunkGen.isChunkInFrustum(frustumPlanes,
-                            chunkID.x * ChunkGen.X_DIMENSION,
-                            chunkID.y * ChunkGen.Y_DIMENSION,
-                            chunkID.z * ChunkGen.Z_DIMENSION))
+                            chunk.positionX * ChunkGen.X_DIMENSION,
+                            chunk.positionY * ChunkGen.Y_DIMENSION,
+                            chunk.positionZ * ChunkGen.Z_DIMENSION))
                         continue;
 
                     ChunkShaders[0].Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
@@ -460,9 +461,7 @@ public class World {
         ChunkShaders[1].Bind();
         ChunkShaders[1].Uniform1iv("u_Textures", Client.samplers);
 
-        if(fogColor.x > WorldEnvironment.SURFACE_DEFAULT_COLOR.x)
-            ChunkShaders[1].Uniform3f("fogColor", WorldEnvironment.SURFACE_DEFAULT_COLOR);
-        else ChunkShaders[1].Uniform3f("fogColor", fogColor);
+        ChunkShaders[1].Uniform3f("fogColor", fogColor);
         ChunkShaders[1].Uniform1f("fogDistance", WorldEnvironment.fogDistance);
 
         ChunkShaders[1].Uniform1i("UnderWater", (WorldEnvironment.isUnderWater)?1:0);
@@ -481,16 +480,13 @@ public class World {
             for(int y = (int) min.y; y <= (int) max.y; y++){
                 for(int z = (int) min.z; z <= (int) max.z; z++) {
 
-                    Vector3f chunkID = new Vector3f(x ,y ,z);
-                    Vector3f checkChunk = loadedChunksID.get(chunkID);
+                    if(loadedChunksID.get(new Vector3f(x ,y ,z)) == null) continue;
 
-                    if(checkChunk == null) continue;
-
-                    Chunk chunk = loadedChunks.get(chunkID);
+                    Chunk chunk = loadedChunks.get(loadedChunksID.get(new Vector3f(x ,y ,z)));
                     if(chunk.LiquidBlocks == null || !ChunkGen.isChunkInFrustum(frustumPlanes,
-                            chunkID.x * ChunkGen.X_DIMENSION,
-                            chunkID.y * ChunkGen.Y_DIMENSION,
-                            chunkID.z * ChunkGen.Z_DIMENSION))
+                            chunk.positionX * ChunkGen.X_DIMENSION,
+                            chunk.positionY * ChunkGen.Y_DIMENSION,
+                            chunk.positionZ * ChunkGen.Z_DIMENSION))
                         continue;
 
                     ChunkShaders[1].Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
