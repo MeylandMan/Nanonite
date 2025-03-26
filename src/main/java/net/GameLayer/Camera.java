@@ -2,11 +2,10 @@ package net.GameLayer;
 
 
 import net.Core.Client;
-import net.Core.Physics.CubeCollision;
+
 import static org.joml.Math.*;
 import static org.joml.Math.toRadians;
 
-import net.Core.Physics.Raycast;
 import org.joml.*;
 
 import java.lang.Math;
@@ -92,7 +91,7 @@ public class Camera {
                 .perspective((float)Math.toRadians(Zoom),
                         (float)width / (float)Math.max(height, 1),
                         0.1f,
-                        ChunkGen.X_DIMENSION * Client.renderDistance
+                        ChunkGen.SIZE * Client.renderDistance
                 );
     }
 

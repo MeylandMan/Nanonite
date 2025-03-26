@@ -3,8 +3,6 @@ package net.Core;
 
 import net.Core.Rendering.*;
 import net.GameLayer.*;
-import net.Core.Physics.CubeCollision;
-import net.Core.Physics.Raycast;
 import net.Core.Rendering.Text.*;
 import org.joml.*;
 import org.lwjgl.glfw.*;
@@ -231,21 +229,20 @@ public class App {
             Camera.UpdateCameraPosition();
 
             Vector3d chunkPos = new Vector3d(
-                    floor(World.player.position.x / ChunkGen.X_DIMENSION),
-                    floor(World.player.position.y / ChunkGen.Z_DIMENSION),
-                    floor(World.player.position.z / ChunkGen.Z_DIMENSION)
+                    floor(World.player.position.x / ChunkGen.SIZE),
+                    floor(World.player.position.y / ChunkGen.SIZE),
+                    floor(World.player.position.z / ChunkGen.SIZE)
             );
 
-            int X = (int) floor((Camera.Position.x % ChunkGen.X_DIMENSION + ChunkGen.X_DIMENSION) % ChunkGen.X_DIMENSION);
-            int Y = (int) floor((Camera.Position.y % ChunkGen.Y_DIMENSION + ChunkGen.Y_DIMENSION) % ChunkGen.Y_DIMENSION);
-            int Z = (int) floor((Camera.Position.z % ChunkGen.Z_DIMENSION + ChunkGen.Z_DIMENSION) % ChunkGen.Z_DIMENSION);
+            int X = (int) floor((Camera.Position.x % ChunkGen.SIZE + ChunkGen.SIZE) % ChunkGen.SIZE);
+            int Y = (int) floor((Camera.Position.y % ChunkGen.SIZE + ChunkGen.SIZE) % ChunkGen.SIZE);
+            int Z = (int) floor((Camera.Position.z % ChunkGen.SIZE + ChunkGen.SIZE) % ChunkGen.SIZE);
 
-            Chunk actualChunk = World.loadedChunks.get(new Vector2f((float) chunkPos.x, (float) chunkPos.z));
-            if(actualChunk != null) {
-                ChunkGen.BlockType actualBlock =
-                        actualChunk.blocks[X][Y][Z];
+            Chunk actualChunk = World.loadedChunks.get(new Vector3f((float) chunkPos.x, (float)chunkPos.y, (float) chunkPos.z));
+            if(actualChunk != null && actualChunk.blocks != null) {
+                byte actualBlock = actualChunk.getBlock(X,Y,Z);
 
-                WorldEnvironment.isUnderWater = (actualBlock == ChunkGen.BlockType.WATER);
+                WorldEnvironment.isUnderWater = (actualBlock == ChunkGen.BlockType.WATER.getID());
                 float fogFinalDist = (WorldEnvironment.isUnderWater)?
                         WorldEnvironment.WATER_FOG_DISTANCE : WorldEnvironment.DEFAULT_FOG_DISTANCE;
 

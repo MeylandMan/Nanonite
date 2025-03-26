@@ -138,9 +138,9 @@ public class World {
         }
 
 
-        long chunkX = (long) (player.position.x / ChunkGen.X_DIMENSION);
-        long chunkY = (long) (player.position.y / ChunkGen.Y_DIMENSION);
-        long chunkZ = (long) (player.position.z / ChunkGen.Z_DIMENSION);
+        long chunkX = (long) (player.position.x / ChunkGen.SIZE);
+        long chunkY = (long) (player.position.y / ChunkGen.SIZE);
+        long chunkZ = (long) (player.position.z / ChunkGen.SIZE);
 
         int radius = Client.renderDistance / 2;
         isAllRendered = false;
@@ -241,27 +241,27 @@ public class World {
         Chunk chunk = loadedChunks.get(chunkID);
 
         // 3 positions + 3 min + 3 max + 1 texID + 1 FaceID
-        int estimatedSizeBuffer = (chunk.blockDrawn * 6 * 11);
+        int estimatedSizeBuffer = (chunk.blockDrawn * 6 * 11 * 1200);
         FloatBuffer buffer = MemoryUtil.memAllocFloat(estimatedSizeBuffer);
 
 
-        for(int x = 0; x < ChunkGen.X_DIMENSION; x++) {
-            for(int y = 0; y < ChunkGen.Y_DIMENSION; y++) {
-                for(int z = 0; z < ChunkGen.Z_DIMENSION; z++) {
-                    if(chunk.blocks[x][y][z] == null)
+        for(int x = 0; x < ChunkGen.SIZE; x++) {
+            for(int y = 0; y < ChunkGen.SIZE; y++) {
+                for(int z = 0; z < ChunkGen.SIZE; z++) {
+                    if(chunk.getBlock(x,y,z) == ChunkGen.BlockType.AIR.getID())
                         continue;
 
-                    if(type == 0 && chunk.blocks[x][y][z] == ChunkGen.BlockType.WATER)
+                    if(type == 0 && chunk.getBlock(x,y,z) == ChunkGen.BlockType.WATER.getID())
                         continue;
 
-                    if(type == 1 && chunk.blocks[x][y][z] != ChunkGen.BlockType.WATER)
+                    if(type == 1 && chunk.getBlock(x,y,z) != ChunkGen.BlockType.WATER.getID())
                         continue;
 
-                    BlockModel model = Client.modelLoader.getModel(Client.modelPaths[chunk.blocks[x][y][z].getID()]);
+                    BlockModel model = Client.modelLoader.getModel(Client.modelPaths[chunk.getBlock(x,y,z)]);
                     for(Element element : model.getElements()) {
                         Map<String, Face> faces = element.getFaces();
                         for(Map.Entry<String, Face> face : faces.entrySet()) {
-                            if(chunk.blocks[x][y][z] == null)
+                            if(chunk.getBlock(x,y,z) == ChunkGen.BlockType.AIR.getID())
                                 continue;
 
                             int FaceID = face.getValue().getCullFace();
@@ -316,9 +316,9 @@ public class World {
     public void ResolveChunkRender() {
         if (!isAllRendered) return;
 
-        long chunkX = (long) (player.position.x / ChunkGen.X_DIMENSION);
-        long chunkY = (long) (player.position.y / ChunkGen.Y_DIMENSION);
-        long chunkZ = (long) (player.position.z / ChunkGen.Z_DIMENSION);
+        long chunkX = (long) (player.position.x / ChunkGen.SIZE);
+        long chunkY = (long) (player.position.y / ChunkGen.SIZE);
+        long chunkZ = (long) (player.position.z / ChunkGen.SIZE);
         int radius = Client.renderDistance / 2;
 
         List<Chunk> chunksToProcess = new ArrayList<>();
@@ -386,9 +386,9 @@ public class World {
 
     private static Vector3d worldToChunk(Vector3d worldPos) {
         return new Vector3d(
-                floor(worldPos.x / ChunkGen.X_DIMENSION),
-                floor(worldPos.y / ChunkGen.Y_DIMENSION),
-                floor(worldPos.z / ChunkGen.Z_DIMENSION)
+                floor(worldPos.x / ChunkGen.SIZE),
+                floor(worldPos.y / ChunkGen.SIZE),
+                floor(worldPos.z / ChunkGen.SIZE)
         );
     }
 
@@ -445,9 +445,9 @@ public class World {
                     Chunk chunk = loadedChunks.get(loadedChunksID.get(new Vector3f(x ,y ,z)));
 
                     if(chunk.StaticBlocks == null|| !ChunkGen.isChunkInFrustum(frustumPlanes,
-                            chunk.positionX * ChunkGen.X_DIMENSION,
-                            chunk.positionY * ChunkGen.Y_DIMENSION,
-                            chunk.positionZ * ChunkGen.Z_DIMENSION))
+                            chunk.positionX * ChunkGen.SIZE,
+                            chunk.positionY * ChunkGen.SIZE,
+                            chunk.positionZ * ChunkGen.SIZE))
                         continue;
 
                     ChunkShaders[0].Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
@@ -484,9 +484,9 @@ public class World {
 
                     Chunk chunk = loadedChunks.get(loadedChunksID.get(new Vector3f(x ,y ,z)));
                     if(chunk.LiquidBlocks == null || !ChunkGen.isChunkInFrustum(frustumPlanes,
-                            chunk.positionX * ChunkGen.X_DIMENSION,
-                            chunk.positionY * ChunkGen.Y_DIMENSION,
-                            chunk.positionZ * ChunkGen.Z_DIMENSION))
+                            chunk.positionX * ChunkGen.SIZE,
+                            chunk.positionY * ChunkGen.SIZE,
+                            chunk.positionZ * ChunkGen.SIZE))
                         continue;
 
                     ChunkShaders[1].Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
@@ -512,30 +512,30 @@ public class World {
         }
 
         // Vérifier si le chunk actuel est valide et contient un bloc
-        if (actualChunk == null || actualChunk.blocks[x][y][z] == null) {
+        if (actualChunk == null || actualChunk.getBlock(x,y,z) == ChunkGen.BlockType.AIR.getID()) {
             return 0;
         }
 
         // Vérifier si on sort du chunk actuel
-        if (nx < 0 || nx >= ChunkGen.X_DIMENSION || ny < 0 || ny >= ChunkGen.Y_DIMENSION || nz < 0 || nz >= ChunkGen.Z_DIMENSION) {
+        if (nx < 0 || nx >= ChunkGen.SIZE || ny < 0 || ny >= ChunkGen.SIZE || nz < 0 || nz >= ChunkGen.SIZE) {
             // Déterminer le chunk voisin
-            long neighborChunkX = xx + (nx < 0 ? -1 : (nx >= ChunkGen.X_DIMENSION ? 1 : 0));
-            long neighborChunkY = yy + (ny < 0 ? -1 : (ny >= ChunkGen.Y_DIMENSION ? 1 : 0));
-            long neighborChunkZ = zz + (nz < 0 ? -1 : (nz >= ChunkGen.Z_DIMENSION ? 1 : 0));
+            long neighborChunkX = xx + (nx < 0 ? -1 : (nx >= ChunkGen.SIZE ? 1 : 0));
+            long neighborChunkY = yy + (ny < 0 ? -1 : (ny >= ChunkGen.SIZE ? 1 : 0));
+            long neighborChunkZ = zz + (nz < 0 ? -1 : (nz >= ChunkGen.SIZE ? 1 : 0));
 
             // Set nx et nz in neighbor local space
-            nx = (nx + ChunkGen.X_DIMENSION) % ChunkGen.X_DIMENSION;
-            ny = (ny + ChunkGen.Y_DIMENSION) % ChunkGen.Y_DIMENSION;
-            nz = (nz + ChunkGen.Z_DIMENSION) % ChunkGen.Z_DIMENSION;
+            nx = (nx + ChunkGen.SIZE) % ChunkGen.SIZE;
+            ny = (ny + ChunkGen.SIZE) % ChunkGen.SIZE;
+            nz = (nz + ChunkGen.SIZE) % ChunkGen.SIZE;
 
             // Load the neighborChunk
             Chunk neighborChunk = loadedChunks.get(new Vector3f(neighborChunkX,neighborChunkY,neighborChunkZ));
-            if (neighborChunk == null || neighborChunk.blocks == null || neighborChunk.blocks[nx][ny][nz] == null) {
+            if (neighborChunk == null || neighborChunk.blocks == null || neighborChunk.getBlock(nx,ny,nz) == ChunkGen.BlockType.AIR.getID()) {
                 return 1;
             }
 
             // Vérifier l'opacité du bloc adjacent du chunk adjacent
-            BlockModel nextBlock = Client.modelLoader.getModel(Client.modelPaths[neighborChunk.blocks[nx][ny][nz].getID()]);
+            BlockModel nextBlock = Client.modelLoader.getModel(Client.modelPaths[neighborChunk.getBlock(nx,ny,nz)]);
             Element nextBlockFirstElement = nextBlock.getElements().getFirst();
             if (!nextBlockFirstElement.isOpacity()) {
                 return element.isOpacity() ? 1 : 0;
@@ -545,12 +545,12 @@ public class World {
         }
 
         // Check if the neighbor is air
-        if (actualChunk.blocks[nx][ny][nz] == null) {
+        if (actualChunk.getBlock(nx,ny,nz) == ChunkGen.BlockType.AIR.getID()) {
             return 1;
         }
 
         // Vérifier l'opacité du bloc adjacent
-        BlockModel nextBlock = Client.modelLoader.getModel(Client.modelPaths[actualChunk.blocks[nx][ny][nz].getID()]);
+        BlockModel nextBlock = Client.modelLoader.getModel(Client.modelPaths[actualChunk.getBlock(nx,ny,nz)]);
         Element nextBlockFirstElement = nextBlock.getElements().getFirst();
         if (!nextBlockFirstElement.isOpacity()) {
             return element.isOpacity() ? 1 : 0;

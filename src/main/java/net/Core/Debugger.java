@@ -2,11 +2,8 @@ package net.Core;
 
 import net.Core.Rendering.Text.TextRenderer;
 import net.GameLayer.Camera;
-import net.Core.Rendering.Scene;
-import net.GameLayer.Chunk;
 import net.GameLayer.ChunkGen;
 import net.GameLayer.World;
-import org.joml.Vector2f;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
@@ -165,15 +162,15 @@ public class Debugger {
         textRenderer.renderText(stateInfo,10, 10, 0.25f, TextRenderer.TextType.LEFT);
 
         Vector3d chunkPosition = new Vector3d(
-                floor(World.player.position.x / ChunkGen.X_DIMENSION),
-                floor(World.player.position.y / ChunkGen.Z_DIMENSION),
-                floor(World.player.position.z / ChunkGen.Z_DIMENSION)
+                floor(World.player.position.x / ChunkGen.SIZE),
+                floor(World.player.position.y / ChunkGen.SIZE),
+                floor(World.player.position.z / ChunkGen.SIZE)
         );
 
         Vector3d blockPosition = new Vector3d(
-                floor((World.player.position.x % ChunkGen.X_DIMENSION + ChunkGen.X_DIMENSION) % ChunkGen.X_DIMENSION),
-                floor((World.player.position.y % ChunkGen.Y_DIMENSION + ChunkGen.Y_DIMENSION) % ChunkGen.Y_DIMENSION),
-                floor((World.player.position.z % ChunkGen.Z_DIMENSION + ChunkGen.Z_DIMENSION) % ChunkGen.Z_DIMENSION)
+                floor((World.player.position.x % ChunkGen.SIZE + ChunkGen.SIZE) % ChunkGen.SIZE),
+                floor((World.player.position.y % ChunkGen.SIZE + ChunkGen.SIZE) % ChunkGen.SIZE),
+                floor((World.player.position.z % ChunkGen.SIZE + ChunkGen.SIZE) % ChunkGen.SIZE)
         );
 
         String gameInfo = "XYZ: " + df.format(World.player.position.x) +

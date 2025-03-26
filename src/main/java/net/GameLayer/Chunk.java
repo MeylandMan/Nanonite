@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +20,7 @@ public class Chunk {
     boolean updateChunk = true;
     protected FloatBuffer buffer;
 
-    public BlockType[][][] blocks;
+    public byte[] blocks;
     public Map<Integer, Integer[]> compressedBlocks;
     VBO StaticBlocks, LiquidBlocks;
     int[] faceDrawn = new int[2];
@@ -46,12 +47,28 @@ public class Chunk {
         compressedBlocks = null;
     }
 
+    public byte getBlock(int x, int y, int z) {
+        return blocks[index(x, y ,z)];
+    }
+
     public void AddBlock(int x ,int y, int z, BlockType type) {
         if(blocks == null)
-            blocks = new BlockType[X_DIMENSION][Y_DIMENSION][Z_DIMENSION];
+            CreateBlocksArray();
 
-        blocks[x][y][z] = type;
+        blocks[index(x,y,z)] = type.getID();
         blockDrawn++;
+    }
+
+    public void ReplaceBlock(int x ,int y, int z, BlockType type) {
+        if(blocks == null)
+            CreateBlocksArray();
+
+        blocks[index(x,y,z)] = type.getID();
+    }
+
+    public void CreateBlocksArray() {
+        blocks = new byte[SIZE * SIZE * SIZE];
+        System.arraycopy(DefaultChunk, 0, blocks, 0, DefaultChunk.length);
     }
 
     public void updateChunk(long xx, long yy, long zz) {
