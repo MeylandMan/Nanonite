@@ -43,6 +43,8 @@ public class World {
     public static boolean firstLoad = true;
     public static boolean isAllRendered = false;
     public static final Map<Vector3f, Chunk> loadedChunks = new HashMap<>();
+    public static final Map<Vector3f, Vector3f> loadedChunksID = new HashMap<>();
+
     // File des chunks à supprimer dans le thread OpenGL
     private static final ConcurrentLinkedQueue<Chunk> chunkDeletionQueue = new ConcurrentLinkedQueue<>();
 
@@ -167,6 +169,9 @@ public class World {
 
                     float distanceSquared = dx * dx + dy * dy + dz * dz;
                     chunksPos.add(new ChunkDistance(chunk, distanceSquared));
+
+                    if(chunk.blocks != null)
+                        loadedChunksID.put(chunkID, chunkID);
 
                     loadedChunks.put(chunkID, chunk);
                 }
@@ -369,6 +374,7 @@ public class World {
                     chunk.Delete();
                     Vector3f chunkPos = new Vector3f(chunk.positionX, chunk.positionY, chunk.positionZ);
                     loadedChunks.remove(chunkPos);
+                    loadedChunksID.remove(chunkPos);
                 }
             }
         }
@@ -431,13 +437,16 @@ public class World {
                 for(int z = (int) min.z; z <= (int) max.z; z++) {
 
                     Vector3f chunkID = new Vector3f(x ,y ,z);
+                    Vector3f checkChunk = loadedChunksID.get(chunkID);
+
+                    if(checkChunk == null) continue;
+
                     Chunk chunk = loadedChunks.get(chunkID);
 
-                    if(chunk == null || chunk.blocks == null) continue;
                     if(chunk.StaticBlocks == null|| !ChunkGen.isChunkInFrustum(frustumPlanes,
-                            chunk.positionX * ChunkGen.X_DIMENSION,
-                            chunk.positionY * ChunkGen.Y_DIMENSION,
-                            chunk.positionZ * ChunkGen.Z_DIMENSION))
+                            chunkID.x * ChunkGen.X_DIMENSION,
+                            chunkID.y * ChunkGen.Y_DIMENSION,
+                            chunkID.z * ChunkGen.Z_DIMENSION))
                         continue;
 
                     ChunkShaders[0].Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
@@ -473,13 +482,15 @@ public class World {
                 for(int z = (int) min.z; z <= (int) max.z; z++) {
 
                     Vector3f chunkID = new Vector3f(x ,y ,z);
-                    Chunk chunk = loadedChunks.get(chunkID);
+                    Vector3f checkChunk = loadedChunksID.get(chunkID);
 
-                    if(chunk == null || chunk.blocks == null) continue;
+                    if(checkChunk == null) continue;
+
+                    Chunk chunk = loadedChunks.get(chunkID);
                     if(chunk.LiquidBlocks == null || !ChunkGen.isChunkInFrustum(frustumPlanes,
-                            chunk.positionX * ChunkGen.X_DIMENSION,
-                            chunk.positionY * ChunkGen.Y_DIMENSION,
-                            chunk.positionZ * ChunkGen.Z_DIMENSION))
+                            chunkID.x * ChunkGen.X_DIMENSION,
+                            chunkID.y * ChunkGen.Y_DIMENSION,
+                            chunkID.z * ChunkGen.Z_DIMENSION))
                         continue;
 
                     ChunkShaders[1].Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
