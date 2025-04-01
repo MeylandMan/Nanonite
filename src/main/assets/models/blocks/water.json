@@ -1,0 +1,6 @@
+{
+  "parent": "blocks/liquid",
+  "textures": {
+    "alias": "blocks/dirt.png"
+  }
+}

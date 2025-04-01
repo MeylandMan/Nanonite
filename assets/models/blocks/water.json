@@ -1,6 +1,0 @@
-{
-  "parent": "blocks/liquid",
-  "textures": {
-    "alias": "blocks/water_still.png"
-  }
-}

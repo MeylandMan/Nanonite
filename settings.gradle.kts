@@ -1,1 +1,1 @@
-rootProject.name = "Mycraft"
+rootProject.name = "Nanonite"

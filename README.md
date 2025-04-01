@@ -36,23 +36,23 @@ In the entire project, the following features will be implemented and improved f
   	- [ ] Water simulation
 	- [ ] No visual artifacts on textures
 	- [ ] PBR pipeline
+    - [x] Directional light
 	- [ ] Lights
   	- [ ] Lights stored in cube maps
 	- [ ] Sky Box reflection
 	- [ ] SSR
-	- [ ] HBAO / SSAO
+	- [x] Ambient Occlusion
 	- [ ] HDR, ACES tone mapping
 	- [ ] Bloom
 	- [ ] Automatic exposure
 	- [ ] Lens flare
 	- [ ] Color grading
-	- [ ] Fog
-	- [ ] Underwater fog
+	- [x] Fog
+	- [x] Underwater fog
 	- [ ] God rays	
 	- [ ] Fake Shadows for all light types
   	- [ ] Shadows
    	- [ ] Cascaded shadow maps
-	- [ ] Depth of field
   - [ ] Adding ``#include`` in my shader programs
 
 - [x] Chunk system
@@ -63,9 +63,10 @@ In the entire project, the following features will be implemented and improved f
   - [ ] Biome generation
   - [ ] Water cave
   - [ ] caves (and cliffs ?)
+  - [ ] Depths
   - [ ] Structure generations
 
-- [ ] Multy player
+- [ ] Multiplayer
     - [ ] Connection to server and handshake
     - [ ] Server can validate moves
     - [ ] Server knows player position to optimize chunk logic stuff
