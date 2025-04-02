@@ -9,18 +9,18 @@ import static org.joml.Math.*;
 
 public class Player extends Entity {
     // Multiplier
-    public static final float FLYING_SPEED = 10;
-    public static final float RUNNING_SPEED = 0.5f;
+    public static final double FLYING_SPEED = 10;
+    public static final double RUNNING_SPEED = 0.5f;
 
-    public  static final float SPEED = 5.f;
-    public static final float MAX_SPEED = 15.0f; // Vitesse max en mode spectateur 7
-    public static final float ACCELERATION_FACTOR = 3.0f; // Influence de l'accélération
-    public static final float DRAG_FACTOR = 10.0f; // Influence du ralentissement
+    public  static final double SPEED = 5.f;
+    public static final double MAX_SPEED = 15.0f; // Vitesse max en mode spectateur 7
+    public static final double ACCELERATION_FACTOR = 3.0f; // Influence de l'accélération
+    public static final double DRAG_FACTOR = 10.0f; // Influence du ralentissement
 
     // camera options
-    public float targetSpeed = SPEED;
-    public float currentSpeed = SPEED;
-    public float dragFactor = 1;
+    public double targetSpeed = SPEED;
+    public double currentSpeed = SPEED;
+    public double dragFactor = 1;
 
     private boolean UP = true;
 
@@ -28,7 +28,7 @@ public class Player extends Entity {
         super(Position);
     }
 
-    public void ProcessKeyboard(Camera.Camera_Movement direction, float deltaTime) {
+    public void ProcessKeyboard(Camera.Camera_Movement direction) {
 
         UP = false;
         float pitchRad = toRadians(Pitch);
@@ -59,7 +59,7 @@ public class Player extends Entity {
 
     }
 
-    public void updateCameraVectors(float deltaTime) {
+    public void updateCameraVectors(double deltaTime) {
         float yawRad = toRadians(Yaw);
         float pitchRad = toRadians(Pitch);
 
@@ -75,12 +75,12 @@ public class Player extends Entity {
         getRight().set(getFront()).cross(getWorldUp()).normalize();
         getUp().set(getRight()).cross(getFront()).normalize();
 
-        float acceleration = ACCELERATION_FACTOR * deltaTime;
+        double acceleration = ACCELERATION_FACTOR * deltaTime;
 
         Zoom = lerp(Zoom, targetZoom, acceleration*3);
         currentSpeed = lerp(currentSpeed, targetSpeed, acceleration);
 
-        float speed = currentSpeed * deltaTime;
+        double speed = currentSpeed * deltaTime;
 
         if(targetSpeed == 0 && !UP) {
             velocity.x = clamp(lerp(velocity.x, 0, acceleration/dragFactor), -1, 1);

@@ -4,6 +4,7 @@ package Mycraft.Core;
 import Mycraft.Debug.Debugger;
 import Mycraft.Debug.FPSMonitor;
 import Mycraft.Debug.Logger;
+import Mycraft.Debug.MemoryManager;
 import Mycraft.Rendering.*;
 import GameLayer.*;
 import Mycraft.Rendering.Text.*;
@@ -28,17 +29,12 @@ import static Mycraft.Debug.Debugger.*;
 
 public class Application {
     private long window;
-    private final String version = "0.0.0.0";
     private int m_Width = 0;
     private int m_Height = 0;
     private final String m_Title;
-    float lastX;
-    float lastY;
     public Renderer renderer;
     Scene scene = new Scene();
     World world;
-    float delta;
-    float lastFrame;
 
     private final int DEFAULT_WIDTH;
     private final int DEFAULT_HEIGHT;
@@ -46,13 +42,12 @@ public class Application {
     public Application(int width, int height, String title) {
         this.m_Title = title;
 
-        this.lastX = (float)m_Width/2;
-        this.lastY = (float)m_Height/2;
         this.DEFAULT_WIDTH = width;
         this.DEFAULT_HEIGHT = height;
     }
 
-    private void ProcessInput(long window) {
+    private void ProcessInput(double delta) {
+
         if (Input.is_locked) {
             if (Input.isKeyPressed(Input.KEY_SPRINT) && !Input.isKeyNotUsed(Input.KEY_UP)) {
                 World.player.targetSpeed = World.player.MAX_SPEED;
@@ -72,17 +67,17 @@ public class Application {
             }
             
             if (Input.isKeyPressed(Input.KEY_UP))
-                World.player.ProcessKeyboard(Camera.Camera_Movement.FORWARD, delta);
+                World.player.ProcessKeyboard(Camera.Camera_Movement.FORWARD);
             if (Input.isKeyPressed(Input.KEY_DOWN))
-                World.player.ProcessKeyboard(Camera.Camera_Movement.BACKWARD, delta);
+                World.player.ProcessKeyboard(Camera.Camera_Movement.BACKWARD);
             if (Input.isKeyPressed(Input.KEY_LEFT))
-                World.player.ProcessKeyboard(Camera.Camera_Movement.LEFT, delta);
+                World.player.ProcessKeyboard(Camera.Camera_Movement.LEFT);
             if (Input.isKeyPressed(Input.KEY_RIGHT))
-                World.player.ProcessKeyboard(Camera.Camera_Movement.RIGHT, delta);
+                World.player.ProcessKeyboard(Camera.Camera_Movement.RIGHT);
             if(Input.isKeyPressed(Input.KEY_JUMP))
-                World.player.ProcessKeyboard(Camera.Camera_Movement.UP, delta);
+                World.player.ProcessKeyboard(Camera.Camera_Movement.UP);
             if(Input.isKeyPressed(Input.KEY_SNEAK))
-                World.player.ProcessKeyboard(Camera.Camera_Movement.DOWN, delta);
+                World.player.ProcessKeyboard(Camera.Camera_Movement.DOWN);
         }
     }
 
@@ -170,14 +165,6 @@ public class Application {
 
     private void loop() {
 
-        /*
-         This line is critical for LWJGL's interoperation with GLFW's
-         OpenGL context, or any context that is managed externally.
-         LWJGL detects the context that is current in the current thread,
-         creates the GLCapabilities instance and makes the OpenGL
-         bindings available for use.
-        */
-
         GL.createCapabilities();
         Client.LoadingBlockTextures();
         Client.glVersion = glGetString(GL_VERSION);
@@ -185,16 +172,7 @@ public class Application {
         glEnable(GL43.GL_DEBUG_OUTPUT);
         glEnable(GL43.GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
-        /*
-            glDebugMessageCallback((source, type, id, severity, length, message, userParam) -> {
-                Logger.log(Logger.Level.WARNING, "GL DEBUG MESSAGE: " + glGetShaderInfoLog(id));
-            }, 0);
-        */
-
-
-
         //System.out.println("MAX TEXTURE YOU CAN LOAD : " + GL_MAX_TEXTURE_IMAGE_UNITS); 34930
-        FPSMonitor fpsMonitor = new FPSMonitor();
         Font font;
         TextRenderer textRenderer = new TextRenderer();
         try {
@@ -216,43 +194,31 @@ public class Application {
             glfwSwapInterval(Client.Vsync);
 
             // Updates
-            ProcessInput(window);
+            FPSMonitor.update();
+            MemoryManager.Update();
 
-            delta = (fps[0] == 0)? 1000 : 1/fps[0];
-            world.onUpdate(delta);
-            fpsMonitor.update();
+            double delta = FPSMonitor.getDeltaTime();
 
-            fps =  new float[] {
-                    fpsMonitor.getFPS(),
-                    fpsMonitor.getAverageFPS(),
-                    fpsMonitor.getMinFPS(),
-                    fpsMonitor.getMaxFPS()
-            };
-            Input.Update(window, scene, delta);
+            ProcessInput(delta);
+            world.onUpdate();
+
+
+            Input.Update(window, delta);
             World.player.updateCameraVectors(delta);
             Camera.UpdateCameraPosition();
 
-            double chunkX = floor(Camera.Position.x / ChunkGen.CHUNK_SIZE);
-            double chunkY = floor(Camera.Position.y / ChunkGen.CHUNK_SIZE);
-            double chunkZ = floor(Camera.Position.z / ChunkGen.CHUNK_SIZE);
+            long chunkX = (long) ChunkGen.getLocalChunk(World.player.position).x;
+            long chunkY = (long) ChunkGen.getLocalChunk(World.player.position).y;
+            long chunkZ = (long) ChunkGen.getLocalChunk(World.player.position).z;
 
-            int X = (int) floor((Camera.Position.x % ChunkGen.CHUNK_SIZE + ChunkGen.CHUNK_SIZE) % ChunkGen.CHUNK_SIZE);
-            int Y = (int) floor((Camera.Position.y % ChunkGen.CHUNK_SIZE + ChunkGen.CHUNK_SIZE) % ChunkGen.CHUNK_SIZE);
-            int Z = (int) floor((Camera.Position.z % ChunkGen.CHUNK_SIZE + ChunkGen.CHUNK_SIZE) % ChunkGen.CHUNK_SIZE);
+            int X = (int) ChunkGen.getLocalBlock(Camera.Position).x;
+            int Y = (int) ChunkGen.getLocalBlock(Camera.Position).y;
+            int Z = (int) ChunkGen.getLocalBlock(Camera.Position).z;
 
             Chunk actualChunk = World.loadedChunks.get(new Vector3f((float) chunkX, (float)chunkY, (float) chunkZ));
             byte actualBlock = (actualChunk == null)? -1 : actualChunk.getBlock(X,Y,Z);
 
             WorldEnvironment.isUnderWater = (actualBlock == ChunkGen.BlockType.WATER.getID());
-            float fogFinalDist = (WorldEnvironment.isUnderWater)?
-                    WorldEnvironment.WATER_FOG_DISTANCE : WorldEnvironment.DEFAULT_FOG_DISTANCE;
-
-
-            float acc = WorldEnvironment.FOG_DISTANCE_ACCELERATION;
-            float fogDist = lerp(WorldEnvironment.fogDistance, fogFinalDist, acc * delta);
-
-            WorldEnvironment.fogDistance = fogDist;
-
 
             // Rendering
             renderer.ClearColor();
@@ -262,15 +228,6 @@ public class Application {
             //Draw chunks
             world.renderEntities();
             world.renderChunks();
-
-            //Draw entities
-            //renderer.DrawScene(scene, shader);
-            //world.onRender(Camera.GetViewMatrix(), Camera.GetProjectionMatrix(m_Width, m_Height));
-
-            //raycast.origin = World.player.position;
-            //raycast.direction = Camera.getFront();
-            //raycast.drawRay(10);
-
 
             // Rendering something //
             Matrix4f orthoMatrix = new Matrix4f().identity()

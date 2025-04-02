@@ -76,7 +76,7 @@ public class Camera {
     public static float distanceFromPlayer = 5.0f;
     public static float targetZoom = ZOOM;
     public static float MouseSensitivity = SENSITIVITY;
-    public static float Zoom = ZOOM;
+    public static double Zoom = ZOOM;
 
     // returns the view matrix calculated using Euler Angles and the LookAt Matrix
     public static Matrix4d GetViewMatrix()

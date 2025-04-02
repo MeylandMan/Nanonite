@@ -3,29 +3,38 @@ package Mycraft.Debug;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FPSMonitor {
-    private long lastTime = System.nanoTime();
-    private int frameCount = 0;
-    private float currentFPS = 0;
-    private List<Float> fpsHistory = new ArrayList<>();
+import static org.joml.Math.clamp;
+import static org.joml.Math.max;
 
-    public void update() {
+public class FPSMonitor {
+    private static long lastTime = System.nanoTime();
+    private static double deltaTime = 0.0;
+    private static int frameCount = 0;
+    private static float currentFPS = 0;
+    private static List<Float> fpsHistory = new ArrayList<>();
+
+    public static void update() {
+
         long currentTime = System.nanoTime();
+
         frameCount++;
 
-        if (currentTime - lastTime >= 1_000_000_000) { // 1 seconde écoulée
+        if (currentTime - lastTime >= 1_000_000_000) {
             currentFPS = frameCount;
             fpsHistory.add(currentFPS);
             frameCount = 0;
+
+            deltaTime = 1 / currentFPS; // Convert to seconds
             lastTime = currentTime;
         }
     }
 
-    public float getFPS() {
+    public static float getFPS() {
         return currentFPS;
     }
+    public static double getDeltaTime() { return deltaTime; }
 
-    public float getAverageFPS() {
+    public static float getAverageFPS() {
         if (fpsHistory.isEmpty()) return 0;
         float sum = 0;
         for (float fps : fpsHistory) {
@@ -34,12 +43,12 @@ public class FPSMonitor {
         return sum / fpsHistory.size();
     }
 
-    public float getMinFPS() {
+    public static float getMinFPS() {
         if (fpsHistory.isEmpty()) return 0;
         return fpsHistory.stream().min(Float::compare).orElse(0f);
     }
 
-    public float getMaxFPS() {
+    public static float getMaxFPS() {
         if (fpsHistory.isEmpty()) return 0;
         return fpsHistory.stream().max(Float::compare).orElse(0f);
     }

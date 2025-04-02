@@ -152,9 +152,9 @@ public class World {
         }
 
 
-        long chunkX = (long) (player.position.x / ChunkGen.CHUNK_SIZE);
-        long chunkY = (long) (player.position.y / ChunkGen.CHUNK_SIZE);
-        long chunkZ = (long) (player.position.z / ChunkGen.CHUNK_SIZE);
+        long chunkX = (long) ChunkGen.getLocalChunk(player.position).x;
+        long chunkY = (long) ChunkGen.getLocalChunk(player.position).y;
+        long chunkZ = (long) ChunkGen.getLocalChunk(player.position).z;
 
         int radius = Client.renderDistance / 2;
 
@@ -439,7 +439,7 @@ public class World {
         };
         return data;
     }
-    public void onUpdate(float deltaTime) {
+    public void onUpdate() {
 
         // Look at the name Damian...
         addChunksToQueue(false);
@@ -453,9 +453,9 @@ public class World {
 
     public void ResolveChunkRender() {
 
-        long chunkX = (long) (player.position.x / ChunkGen.CHUNK_SIZE);
-        long chunkY = (long) (player.position.y / ChunkGen.CHUNK_SIZE);
-        long chunkZ = (long) (player.position.z / ChunkGen.CHUNK_SIZE);
+        long chunkX = (long) ChunkGen.getLocalChunk(player.position).x;
+        long chunkY = (long) ChunkGen.getLocalChunk(player.position).y;
+        long chunkZ = (long) ChunkGen.getLocalChunk(player.position).z;
         int radius = Client.renderDistance / 2;
 
         List<Chunk> chunksToProcess = new ArrayList<>();

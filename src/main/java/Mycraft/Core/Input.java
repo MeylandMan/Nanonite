@@ -291,14 +291,15 @@ public class Input {
         glfwSetCursorPos(window, x, y);
     }
 
-    public static void Update(long window, Scene scene, float deltaTime) {
+    public static void Update(long window, double deltaTime) {
         if (is_locked) {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             //
         }
 
-        Debugger.PressedDebugKey(window, deltaTime);
+        Debugger.PressedDebugKey(deltaTime);
         Debugger.PressedCombinaisonKey();
+
         for(int i = 0; i < Debug_bindings.length; i++) {
             if (glfwGetKey(window, Debug_bindings[i]) == GLFW_PRESS)
             {

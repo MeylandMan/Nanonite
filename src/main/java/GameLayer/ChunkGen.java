@@ -6,6 +6,7 @@ import Mycraft.Models.BlockModel;
 import Mycraft.Core.Client;
 import Mycraft.Models.Face;
 import org.joml.Random;
+import org.joml.Vector3d;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -93,6 +94,22 @@ public class ChunkGen {
         depthClamp.setSource(scaleOffset);
         depthClamp.setRange(0.0, 1.0);
 
+    }
+
+    public static Vector3d getLocalChunk(Vector3d position) {
+        long x = (long) floor(position.x / CHUNK_SIZE);
+        long y = (long) floor(position.y / CHUNK_SIZE);
+        long z = (long) floor(position.z / CHUNK_SIZE);
+
+        return new Vector3d(x, y, z);
+    }
+
+    public static Vector3d getLocalBlock(Vector3d position) {
+        long x = (long) floor((position.x % CHUNK_SIZE + CHUNK_SIZE) % CHUNK_SIZE);
+        long y = (long) floor((position.y % CHUNK_SIZE + CHUNK_SIZE) % CHUNK_SIZE);
+        long z = (long) floor((position.z % CHUNK_SIZE + CHUNK_SIZE) % CHUNK_SIZE);
+
+        return new Vector3d(x, y, z);
     }
 
     public static int index(int x , int y, int z, int mod) {
@@ -341,7 +358,13 @@ public class ChunkGen {
 
     protected static void setupChunk(Chunk chunk) {
 
-        AddChunkSurface(chunk);
-        ResolveChunk(chunk);
+        if(chunk.positionY <= 5 && chunk.positionY > 0) {
+            chunk.CreateBlocksArray();
+            chunk.blockDrawn = CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE;
+            Arrays.fill(chunk.blocks, BlockType.DIRT.getID());
+        }
+
+        //AddChunkSurface(chunk);
+        //ResolveChunk(chunk);
     }
 }

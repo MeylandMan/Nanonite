@@ -17,7 +17,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Debugger {
     public static final boolean debug = true;
-    public static boolean is_debug = false;
+    public static boolean is_debug = true;
     public static boolean is_combined;
     public static boolean AmbientOcclusion = true;
     public static int Rendering = GL_FILL;
@@ -27,11 +27,8 @@ public class Debugger {
 
     private static Vector3f copyPosition;
 
-    public static float debug_timestamp = 0;
-    protected static float actual_debug_timestamp = 0;
-
-    public static float[] fps = new float[4];
-
+    public static double debug_timestamp = 0;
+    protected static double actual_debug_timestamp = 0;
 
     public static void PressedCombinaisonKey() {
         if(!debug || !is_locked)
@@ -146,7 +143,7 @@ public class Debugger {
                 """);
     }
 
-    public static void PressedDebugKey(long window, float delta) {
+    public static void PressedDebugKey(double delta) {
         if(!debug)
             return;
 
@@ -180,21 +177,20 @@ public class Debugger {
         if(!debug || !is_debug)
             return;
 
-        String stateInfo = Client.name + Client.version + " " + Client.type + "\n" +
-                (int)fps[0] + " fps (avg: " + (int)fps[1] + ", min: " + (int)fps[2] + ", max: " + (int)fps[3] + ")";
+        int FPS = (int) FPSMonitor.getFPS();
+        int avgFPS = (int) FPSMonitor.getAverageFPS();
+        int minFPS = (int) FPSMonitor.getMinFPS();
+        int maxFPS = (int) FPSMonitor.getMaxFPS();
+        double delta = FPSMonitor.getDeltaTime();
+
+        String stateInfo = Client.name + " " + Client.version +
+                " (" + Client.EngineName + " " + Client.EngineVersion + ")\n" +
+                FPS + " fps (avg: " + avgFPS + ", min: " + minFPS + ", max: " + maxFPS + ")" +
+                "\ndelta: " + df.format(delta);
         textRenderer.renderText(stateInfo,10, 10, 0.25f, TextRenderer.TextType.LEFT);
 
-        Vector3d chunkPosition = new Vector3d(
-                floor(World.player.position.x / ChunkGen.CHUNK_SIZE),
-                floor(World.player.position.y / ChunkGen.CHUNK_SIZE),
-                floor(World.player.position.z / ChunkGen.CHUNK_SIZE)
-        );
-
-        Vector3d blockPosition = new Vector3d(
-                floor((World.player.position.x % ChunkGen.CHUNK_SIZE + ChunkGen.CHUNK_SIZE) % ChunkGen.CHUNK_SIZE),
-                floor((World.player.position.y % ChunkGen.CHUNK_SIZE + ChunkGen.CHUNK_SIZE) % ChunkGen.CHUNK_SIZE),
-                floor((World.player.position.z % ChunkGen.CHUNK_SIZE + ChunkGen.CHUNK_SIZE) % ChunkGen.CHUNK_SIZE)
-        );
+        Vector3d chunkPosition = ChunkGen.getLocalChunk(World.player.position);
+        Vector3d blockPosition = ChunkGen.getLocalBlock(World.player.position);
 
         String gameInfo = "XYZ: " + df.format(World.player.position.x) +
                 " / " + df.format(World.player.position.y) +
@@ -226,12 +222,12 @@ public class Debugger {
 
         textRenderer.renderText(gameInfo,10, 150, 0.25f, TextRenderer.TextType.LEFT);
 
-        long FreeMemory = (Runtime.getRuntime().freeMemory() / 1024) / 1024;
-        long MaxMemory = (Runtime.getRuntime().maxMemory() / 1024) / 1024;
-        long TotalMemory = (Runtime.getRuntime().totalMemory() / 1024) / 1024;
+        long FreeMemory = MemoryManager.getFreeMemory();
+        long MaxMemory = MemoryManager.getMaxMemory();
+        long TotalMemory = MemoryManager.getTotalMemory();
 
-        double MemPercentage = (double) FreeMemory/MaxMemory;
-        double AllocPercentage = (double) TotalMemory/MaxMemory;
+        double MemPercentage = MemoryManager.getMemPercentage();
+        double AllocPercentage = MemoryManager.getAllocPercentage();
 
         String JavaVersion = "Java: " + System.getProperty("java.version");
         String UsedMem = "mem: " + df.format(MemPercentage * 100.0) + "% (" + FreeMemory + " / " + MaxMemory + " MB)";
