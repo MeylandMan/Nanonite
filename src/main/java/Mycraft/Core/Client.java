@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Client {
-    public static int renderDistance = 2;
+    public static int renderDistance = 16;
     public static final int MAX_RENDER_DISTANCE = 92;
     public static final int MIN_RENDER_DISTANCE = 8;
 

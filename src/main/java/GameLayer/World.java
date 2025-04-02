@@ -41,7 +41,7 @@ public class World {
     public static long ChunkDrawCalls = 0;
     public static boolean QueueQuery = true;
 
-    public static Vector3d SpawnPoint = new Vector3d(8, 80, 8);
+    public static Vector3d SpawnPoint = new Vector3d(8, 100, 8);
     // Procedural generation data's
     static ModuleBasisFunction basis;
     public static long seed;
@@ -56,19 +56,21 @@ public class World {
     // File des chunks à supprimer dans le thread OpenGL
     private static final ConcurrentLinkedQueue<Chunk> chunkDeletionQueue = new ConcurrentLinkedQueue<>();
 
-    private static final int CHUNK_THREADS = Client.MAX_THREADS;
 
+    // Frustum Data
     public static Camera.Plane[] frustumPlanes;
+    public static Vector3d min = new Vector3d();
+    public static Vector3d max = new Vector3d();
 
     static double[] chunkQueueSpeed = new double[2];
 
     // Chunk Queues
-    public static PriorityQueue<ChunkDistance> chunksPos;
+    public static final PriorityQueue<ChunkDistance> chunksPos = new PriorityQueue<>(Comparator.comparingDouble(c -> c.distance));
     private static final Queue<Chunk> chunksToRemove = new LinkedList<>();
 
     // Macros
-    private static final int MAX_CHUNKS_TO_REMOVE_PER_FRAME = 128;
-    private static final int MAX_CHUNKS_TO_RENDER_PER_FRAME = 5;
+    private static final int MAX_CHUNKS_TO_REMOVE_PER_FRAME = 256;
+    private static final int MAX_CHUNKS_TO_RENDER_PER_FRAME = 16;
 
     protected static class ChunkDistance {
         Chunk chunk;
@@ -82,7 +84,6 @@ public class World {
 
     public World() {
         worldCollisions = new ArrayList<>();
-        chunksPos = new PriorityQueue<>(Comparator.comparingDouble(c -> c.distance));
         shader = new Shader();
         shader.CreateShader("Physics.vert", "Physics.frag");
 
@@ -111,7 +112,6 @@ public class World {
 
     public World(long sd) {
         worldCollisions = new ArrayList<>();
-        chunksPos = new PriorityQueue<>(Comparator.comparingDouble(c -> c.distance));
         shader = new Shader();
         shader.CreateShader("Physics.vert", "Physics.frag");
         seed = sd;
@@ -138,7 +138,7 @@ public class World {
 
     public static void addChunksToQueue(boolean reset) {
 
-        chunkQueueSpeed[0] = glfwGetTime();
+        chunkQueueSpeed[0] = System.nanoTime();
 
         if(reset) {
 
@@ -151,50 +151,73 @@ public class World {
             Logger.log(Logger.Level.INFO, "Loading chunks...");
         }
 
-
         long chunkX = (long) ChunkGen.getLocalChunk(player.position).x;
         long chunkY = (long) ChunkGen.getLocalChunk(player.position).y;
         long chunkZ = (long) ChunkGen.getLocalChunk(player.position).z;
 
         int radius = Client.renderDistance / 2;
 
-        // Takes the view Frustum
-        frustumPlanes = Camera.getFrustumPlanes();
+        // List of Tasks
+        List<Future<?>> futures = new ArrayList<>();
 
         for (int dz = -radius; dz <= radius; dz++) {
             for (int dx = -radius; dx <= radius; dx++) {
                 for (int dy = -radius; dy <= radius; dy++) {
 
-                    long worldX = (chunkX + dx);
-                    long worldY = (chunkY + dy);
-                    long worldZ = (chunkZ + dz);
+                    long localX = (chunkX + dx);
+                    long localY = (chunkY + dy);
+                    long localZ = (chunkZ + dz);
 
-                    Vector3f chunkID = new Vector3f(worldX, worldY, worldZ);
-                    //|| !ChunkGen.isChunkInFrustum(frustumPlanes,
-                    //                            worldX * ChunkGen.SIZE,
-                    //                            worldY * ChunkGen.SIZE,
-                    //                            worldZ * ChunkGen.SIZE)
+                    Vector3f chunkID = new Vector3f(localX, localY, localZ);
+
                     if (loadedChunks.containsKey(chunkID)) continue;
 
+                    /*
+                    || !ChunkGen.isChunkInFrustum(frustumPlanes,
+                            localX * ChunkGen.CHUNK_SIZE,
+                            localY * ChunkGen.CHUNK_SIZE,
+                            localZ * ChunkGen.CHUNK_SIZE
+                    )
+                    */
 
-                    Chunk chunk = new Chunk(worldX, worldY, worldZ);
+                    int finalDx = dx;
+                    int finalDy = dy;
+                    int finalDz = dz;
+
+                    Chunk chunk = new Chunk(localX, localY, localZ);
                     ChunkGen.setupChunk(chunk);
-                    loadedChunks.put(chunkID, chunk);
+                    synchronized (loadedChunks) {
+                        loadedChunks.put(chunkID, chunk);
+                    }
 
-                    float distanceSquared = dx * dx + dy * dy + dz * dz;
+                    float distanceSquared = finalDx * finalDx + finalDy * finalDy + finalDz * finalDz;
                     if(chunk.blocks != null) {
-                        chunksPos.add(new ChunkDistance(chunk, distanceSquared));
-                        loadedChunksID.put(chunkID, chunkID);
+                        synchronized (chunksPos) {
+                            chunksPos.add(new ChunkDistance(chunk, distanceSquared));
+                        }
+
+                        synchronized (loadedChunksID) {
+                            loadedChunksID.put(chunkID, chunkID);
+                        }
                     }
                 }
             }
         }
 
+
+        for(Future<?> future : futures) {
+            try {
+                future.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+
         if(Debugger.debug && QueueQuery) {
             QueueQuery = false;
-            chunkQueueSpeed[1] = glfwGetTime();
-            double result = chunkQueueSpeed[1] - chunkQueueSpeed[0];
-            Logger.log(Logger.Level.INFO, "Chunk queue filled in " + String.format("%.3f", result*1000.0) + "ms");
+            chunkQueueSpeed[1] = System.nanoTime();
+            double result = (chunkQueueSpeed[1] - chunkQueueSpeed[0]) / 1_000_000.0;
+            Logger.log(Logger.Level.INFO, "Chunk queue filled in " + String.format("%.3f", result) + "ms");
             Logger.log(Logger.Level.INFO, "Rendering chunks...");
         }
     }
@@ -223,10 +246,22 @@ public class World {
 
     public void loadChunks() {
 
+        long chunkX = (long) ChunkGen.getLocalChunk(player.position).x;
+        long chunkY = (long) ChunkGen.getLocalChunk(player.position).y;
+        long chunkZ = (long) ChunkGen.getLocalChunk(player.position).z;
+        int radius = Client.renderDistance / 2;
+
         for (int i = 0; i < MAX_CHUNKS_TO_RENDER_PER_FRAME && !chunksPos.isEmpty(); i++) {
 
             Chunk getID = chunksPos.poll().chunk;
             if (getID == null) break;
+
+            long chunkDistX = abs(getID.positionX - chunkX);
+            long chunkDistY = abs(getID.positionY - chunkY);
+            long chunkDistZ = abs(getID.positionZ - chunkZ);
+            if (chunkDistX > radius || chunkDistZ > radius || chunkDistY > radius) {
+                continue;
+            }
 
             Vector3f chunkID = new Vector3f(getID.positionX, getID.positionY, getID.positionZ);
             Chunk chunk = loadedChunks.get(chunkID);
@@ -234,7 +269,7 @@ public class World {
             if (chunk == null) continue;
             if (chunk.StaticBlocks == null) chunk.Init();
 
-            updateNearbyChunks(chunkID);
+            //updateNearbyChunks(chunkID);
             chunk.updateChunk((long) chunkID.x, (long) chunkID.y, (long) chunkID.z);
         }
 
@@ -441,14 +476,26 @@ public class World {
     }
     public void onUpdate() {
 
+        UpdateCameraFrustum();
+
         // Look at the name Damian...
         addChunksToQueue(false);
 
         // Yup, the name
         loadChunks();
 
-        // May not be both clear and unclear
+        // it may be both clear and unclear
         ResolveChunkRender();
+    }
+
+    public void UpdateCameraFrustum() {
+        // Takes the view Frustum
+        frustumPlanes = Camera.getFrustumPlanes();
+
+        // Get the Frsutum AABB
+        min = ChunkGen.getLocalChunk(Camera.getFrustumMin());
+        max = ChunkGen.getLocalChunk(Camera.getFrustumMax());
+
     }
 
     public void ResolveChunkRender() {
@@ -456,21 +503,21 @@ public class World {
         long chunkX = (long) ChunkGen.getLocalChunk(player.position).x;
         long chunkY = (long) ChunkGen.getLocalChunk(player.position).y;
         long chunkZ = (long) ChunkGen.getLocalChunk(player.position).z;
-        int radius = Client.renderDistance / 2;
+        int radiusXYZ = Client.renderDistance / 2;
 
         List<Chunk> chunksToProcess = new ArrayList<>();
 
         // Multithreading pour déterminer les chunks à supprimer
         List<Future<List<Chunk>>> futures = new ArrayList<>();
         List<Chunk> chunkList = new ArrayList<>(loadedChunks.values());
-        int chunkSize = chunkList.size() / CHUNK_THREADS;
+        int chunkSize = chunkList.size() / MultiThreading.CHUNK_THREADS;
 
-        for (int i = 0; i < CHUNK_THREADS; i++) {
+        for (int i = 0; i < MultiThreading.CHUNK_THREADS; i++) {
             int start = i * chunkSize;
-            int end = (i == CHUNK_THREADS - 1) ? chunkList.size() : (i + 1) * chunkSize;
+            int end = (i == MultiThreading.CHUNK_THREADS - 1) ? chunkList.size() : (i + 1) * chunkSize;
 
             List<Chunk> sublist = chunkList.subList(start, end);
-            futures.add(MultiThreading.submitTask(() -> {
+            futures.add(MultiThreading.submitChunkTask(() -> {
                 List<Chunk> localChunksToRemove = new ArrayList<>();
                 for (Chunk chunk : sublist) {
                     if (chunk == null) continue;
@@ -481,7 +528,7 @@ public class World {
                     long chunkDistX = abs(chunk.positionX - chunkX);
                     long chunkDistY = abs(chunk.positionY - chunkY);
                     long chunkDistZ = abs(chunk.positionZ - chunkZ);
-                    if (chunkDistX > radius || chunkDistZ > radius || chunkDistY > radius) {
+                    if (chunkDistX > radiusXYZ || chunkDistZ > radiusXYZ || chunkDistY > radiusXYZ) {
                         localChunksToRemove.add(chunk);
                     }
                 }
@@ -511,22 +558,12 @@ public class World {
                 Chunk chunk = chunkDeletionQueue.poll();
                 if(chunk == null) break;
 
-                if (chunk != null) {
-                    chunk.Delete();
-                    Vector3f chunkPos = new Vector3f(chunk.positionX, chunk.positionY, chunk.positionZ);
-                    loadedChunks.remove(chunkPos);
-                    loadedChunksID.remove(chunkPos);
-                }
+                chunk.Delete();
+                Vector3f chunkPos = new Vector3f(chunk.positionX, chunk.positionY, chunk.positionZ);
+                loadedChunks.remove(chunkPos);
+                loadedChunksID.remove(chunkPos);
             }
         }
-    }
-
-    private static Vector3d worldToChunk(Vector3d worldPos) {
-        return new Vector3d(
-                floor(worldPos.x / ChunkGen.CHUNK_SIZE),
-                floor(worldPos.y / ChunkGen.CHUNK_SIZE),
-                floor(worldPos.z / ChunkGen.CHUNK_SIZE)
-        );
     }
 
     public void renderChunks() {
@@ -564,10 +601,6 @@ public class World {
         ChunkShaders[0].Uniform3f("cameraPos", new Vector3f(Camera.Position));
         ChunkShaders[0].UniformMatrix4x4("view", new Matrix4f(Camera.GetViewMatrix()));
         ChunkShaders[0].UniformMatrix4x4("projection", new Matrix4f(Camera.GetProjectionMatrix()));
-
-
-        Vector3d min = worldToChunk(Camera.getFrustumMin());
-        Vector3d max = worldToChunk(Camera.getFrustumMax());
 
         // Draw static blocks
         glDisable(GL_BLEND);

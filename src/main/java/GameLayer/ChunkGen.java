@@ -358,13 +358,15 @@ public class ChunkGen {
 
     protected static void setupChunk(Chunk chunk) {
 
+        /*
         if(chunk.positionY <= 5 && chunk.positionY > 0) {
             chunk.CreateBlocksArray();
             chunk.blockDrawn = CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE;
             Arrays.fill(chunk.blocks, BlockType.DIRT.getID());
         }
+        */
 
-        //AddChunkSurface(chunk);
+        AddChunkSurface(chunk);
         //ResolveChunk(chunk);
     }
 }
