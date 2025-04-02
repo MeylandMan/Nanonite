@@ -1,7 +1,7 @@
 package GameLayer;
 
-import Core.*;
-import Core.Rendering.VBO;
+import Mycraft.Debug.Logger;
+import Mycraft.Rendering.VBO;
 
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryUtil;
@@ -46,14 +46,14 @@ public class Chunk {
     }
 
     public byte getBlock(int x, int y, int z) {
-        return (blocks == null)? -1 : blocks[index(x, y ,z)];
+        return (blocks == null)? -1 : blocks[index(x, y ,z, CHUNK_SIZE)];
     }
 
     public void AddBlock(int x ,int y, int z, BlockType type) {
         if(blocks == null)
             CreateBlocksArray();
 
-        blocks[index(x,y,z)] = type.getID();
+        blocks[index(x,y,z, CHUNK_SIZE)] = type.getID();
         blockDrawn++;
     }
 
@@ -61,7 +61,7 @@ public class Chunk {
         if(blocks == null)
             CreateBlocksArray();
 
-        blocks[index(x,y,z)] = type.getID();
+        blocks[index(x,y,z, CHUNK_SIZE)] = type.getID();
     }
 
     public void CreateBlocksArray() {

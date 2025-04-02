@@ -1,9 +1,10 @@
 package GameLayer;
 
+import Mycraft.Core.Camera;
 import com.sudoplay.joise.module.*;
-import Core.BlockModel;
-import Core.Client;
-import Core.Face;
+import Mycraft.Models.BlockModel;
+import Mycraft.Core.Client;
+import Mycraft.Models.Face;
 import org.joml.Random;
 
 import java.util.Arrays;
@@ -14,14 +15,17 @@ import static org.joml.Math.*;
 public class ChunkGen {
 
     public final static byte CHUNK_SIZE = 16;
+    public final static byte BLOCK_SIZE = 16;
     public static byte[] DefaultChunk = new byte[CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE];
 
 
     // Surface data
+    public static int MAX_SURFACE_HEIGHT = 3000;
+
     public static int MAX_HEIGHT = 157;
     public static int MIN_HEIGHT = 40;
     public static int SURFACE_HEIGHT = 50;
-    public final static int WATER_LEVEL = 64;
+    public final static int WATER_LEVEL = 62;
 
     // Depths data
     public static int MAX_DEPTH_HEIGHT = 0;
@@ -78,7 +82,7 @@ public class ChunkGen {
 
         // Clamping to avoid extreme values
         surfaceClamp.setSource(surfaceScaleOffset);
-        surfaceClamp.setRange(0.0, 0.9);
+        surfaceClamp.setRange(0.0, 1.0);
 
         // Appliquer un scale et un offset pour mieux lisser le terrain
         ModuleScaleOffset scaleOffset = new ModuleScaleOffset();
@@ -91,8 +95,8 @@ public class ChunkGen {
 
     }
 
-    public static int index(int x , int y, int z) {
-        return x + (z * CHUNK_SIZE) + (y * CHUNK_SIZE * CHUNK_SIZE);
+    public static int index(int x , int y, int z, int mod) {
+        return x + (z * mod) + (y * mod * mod);
     }
 
     private static void AddSurface(Chunk chunk) {

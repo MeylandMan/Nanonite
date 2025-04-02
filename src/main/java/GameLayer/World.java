@@ -1,8 +1,18 @@
 package GameLayer;
 
-import Core.*;
-import Core.Physics.CubeCollision;
-import Core.Rendering.Shader;
+import Mycraft.Core.Camera;
+import Mycraft.Core.Client;
+import Mycraft.Core.MultiThreading;
+import Mycraft.Debug.Debugger;
+import Mycraft.Debug.Logger;
+import GameLayer.Entities.Entity;
+import Mycraft.Core.Player;
+import Mycraft.Models.BlockModel;
+import Mycraft.Models.Element;
+import Mycraft.Models.Face;
+import Mycraft.Physics.CubeCollision;
+import Mycraft.Rendering.Shader;
+import Mycraft.Rendering.WorldEnvironment;
 import org.joml.*;
 import org.lwjgl.system.MemoryUtil;
 
@@ -265,10 +275,15 @@ public class World {
                             if(shouldRenderFace(xx, yy, zz, element, x,y,z, FaceID) == 0)
                                 continue;
 
-                            // Position
-                            buffer.put(x);
-                            buffer.put(y);
-                            buffer.put(z);
+                            // Position index
+                            if(type == 0)
+                                buffer.put(ChunkGen.index(x, y, z, ChunkGen.CHUNK_SIZE));
+                            else {
+                                buffer.put(x);
+                                buffer.put(y);
+                                buffer.put(z);
+                            }
+
                             // Minimum AABB
                             buffer.put(element.getFrom(0));
                             buffer.put(element.getFrom(1));
@@ -277,14 +292,16 @@ public class World {
                             buffer.put(element.getTo(0));
                             buffer.put(element.getTo(1));
                             buffer.put(element.getTo(2));
+
                             //Texture Index
                             buffer.put(ChunkGen.getTextureID(model, face));
                             // Face ID
                             buffer.put((float)FaceID);
 
                             // Ambient Occlusion
+                            boolean canAmbientOcclusion = model.getAO();
                             if(type == 0) {
-                                buffer.put(AO(FaceID,
+                                buffer.put(AO(FaceID, canAmbientOcclusion,
                                         x + (int)(xx * ChunkGen.CHUNK_SIZE),
                                         y + (int)(yy * ChunkGen.CHUNK_SIZE),
                                         z + (int)(zz * ChunkGen.CHUNK_SIZE)
@@ -328,8 +345,12 @@ public class World {
         return blockID != ChunkGen.BlockType.AIR.getID() && blockID != ChunkGen.BlockType.WATER.getID();
     }
 
-    private static float[] AO(int faceID, int x, int y, int z) {
+    private static float[] AO(int faceID, boolean canAO, int x, int y, int z) {
         float[] data;
+
+        if(!canAO) {
+            return new float[] { 1.0f, 1.0f, 1.0f, 1.0f };
+        }
 
         boolean top = false;
         boolean left = false;
@@ -540,7 +561,7 @@ public class World {
         ChunkShaders[0].Uniform1i("UnderWater", (WorldEnvironment.isUnderWater)?1:0);
 
         ChunkShaders[0].Uniform1f("renderDistance", Client.renderDistance);
-        ChunkShaders[0].Uniform3f("cameraPos", new Vector3f(player.position));
+        ChunkShaders[0].Uniform3f("cameraPos", new Vector3f(Camera.Position));
         ChunkShaders[0].UniformMatrix4x4("view", new Matrix4f(Camera.GetViewMatrix()));
         ChunkShaders[0].UniformMatrix4x4("projection", new Matrix4f(Camera.GetProjectionMatrix()));
 
@@ -584,7 +605,7 @@ public class World {
         ChunkShaders[1].Uniform1i("UnderWater", (WorldEnvironment.isUnderWater)?1:0);
         ChunkShaders[1].Uniform1f("Time", (float) glfwGetTime());
         ChunkShaders[1].Uniform1f("renderDistance", Client.renderDistance);
-        ChunkShaders[1].Uniform3f("cameraPos", new Vector3f(player.position));
+        ChunkShaders[1].Uniform3f("cameraPos", new Vector3f(Camera.Position));
         ChunkShaders[1].UniformMatrix4x4("view", new Matrix4f(Camera.GetViewMatrix()));
         ChunkShaders[1].UniformMatrix4x4("projection", new Matrix4f(Camera.GetProjectionMatrix()));
 

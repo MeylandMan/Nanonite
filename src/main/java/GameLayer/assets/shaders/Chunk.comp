@@ -1,0 +1,172 @@
+#version 460 core
+
+#define BLOCK_SIZE 16
+#define CHUNK_SIZE 16
+
+out vec3 fragPos;
+out vec3 worldPos;
+
+out vec2 v_TexCoords;
+out vec3 v_Normal;
+out float TextureIndex;
+out float AOFactor;
+
+// Positions locales des sommets d’un cube
+
+const vec2 texCoords[6] = vec2[](
+    vec2(0.0, 0.0), vec2(1.0, 0.0), vec2(1.0, 1.0),
+    vec2(0.0, 0.0), vec2(1.0, 1.0), vec2(0.0, 1.0)
+);
+
+struct BlockFace {
+    float index;
+    float minAABBX, minAABBY, minAABBZ;
+    float maxAABBX, maxAABBY, maxAABBZ;
+
+    float id;
+    float FaceID;
+
+    float AO[4];
+};
+
+layout(std430, binding = 0) buffer FaceMesh {
+    BlockFace faces[];
+};
+
+uniform mat4 projection;
+uniform mat4 view;
+uniform vec3 Position;
+
+#define PROJECTION_VIEW_MATRIX mat4(projection * view)
+
+vec3[6] getVertices(uint faceID, vec3 mn, vec3 mx);
+vec3 getNormal(uint faceID);
+float[6] getAOArray(float[4] AmbientOcclusion);
+
+void main() {
+
+    int faceIndex = int(gl_VertexID/6);
+    int vertexIndex = gl_VertexID % 6;
+
+    vec3 mn = vec3(faces[faceIndex].minAABBX/BLOCK_SIZE,
+    faces[faceIndex].minAABBY/BLOCK_SIZE,
+    faces[faceIndex].minAABBZ/BLOCK_SIZE);
+
+    vec3 mx = vec3(faces[faceIndex].maxAABBX/BLOCK_SIZE,
+    faces[faceIndex].maxAABBY/BLOCK_SIZE,
+    faces[faceIndex].maxAABBZ/BLOCK_SIZE);
+
+    vec3 FaceVertices[6] = getVertices(uint(faces[faceIndex].FaceID), mn, mx);
+
+    // Get Mesh Position
+    int index = int(faces[faceIndex].index);
+    int x = index % CHUNK_SIZE;
+    int y = (index / (CHUNK_SIZE * CHUNK_SIZE));
+    int z = (index / CHUNK_SIZE) % CHUNK_SIZE;
+    vec3 localPosition = vec3(x, y, z);
+
+    // Assigner les coordonnées de texture (UV)
+    v_TexCoords = texCoords[vertexIndex % 6];
+    v_Normal = getNormal(uint(faces[faceIndex].FaceID));
+
+    TextureIndex = faces[faceIndex].id;
+
+    float AmbientOcclusion[6] = getAOArray(faces[faceIndex].AO);
+    AOFactor = AmbientOcclusion[vertexIndex];
+
+    vec3 chunkPosition = Position * CHUNK_SIZE;
+    vec3 worldPosition = vec3(FaceVertices[vertexIndex]+localPosition+chunkPosition);
+
+    fragPos = chunkPosition + FaceVertices[vertexIndex];
+
+    worldPos = worldPosition;
+    gl_Position = PROJECTION_VIEW_MATRIX * vec4(worldPosition, 1.0);
+
+}
+
+float[6] getAOArray(float[4] AmbientOcclusion) {
+    float AO[6] = float[](
+        AmbientOcclusion[2], AmbientOcclusion[3], AmbientOcclusion[1],
+        AmbientOcclusion[2], AmbientOcclusion[1], AmbientOcclusion[0]
+    );
+
+    return AO;
+}
+
+vec3 getNormal(uint faceID) {
+    vec3 norm;
+    switch(faceID) {
+        case 0:
+            norm = vec3(0.0, 0.0, 1.0);
+            break;
+        case 1:
+            norm = vec3(0.0, 0.0, -1.0);
+            break;
+        case 2:
+            norm = vec3(-1.0, 0.0, 0.0);
+            break;
+        case 3:
+            norm = vec3(1.0, 0.0, 0.0);
+            break;
+        case 4:
+            norm = vec3(0.0, 1.0, 0.0);
+            break;
+        case 5:
+            norm = vec3(0.0, -1.0, 0.0);
+            break;
+        default:
+            norm = vec3(1.0);
+            break;
+    }
+    return norm;
+}
+
+vec3[6] getVertices(uint faceID, vec3 mn, vec3 mx) {
+    vec3 vertices[6];
+    switch(faceID) {
+        // FRONT
+        case 0:
+            vertices = vec3[](
+            vec3(mn.x, mn.y, mx.z), vec3(mx.x, mn.y, mx.z), vec3(mx.x, mx.y, mx.z),
+            vec3(mn.x, mn.y, mx.z), vec3(mx.x, mx.y, mx.z), vec3(mn.x, mx.y, mx.z)
+            );
+            break;
+        // BACK
+        case 1:
+            vertices = vec3[](
+            vec3(mx.x, mn.y, mn.z), vec3(mn.x, mn.y, mn.z), vec3(mn.x, mx.y, mn.z),
+            vec3(mx.x, mn.y, mn.z), vec3(mn.x, mx.y, mn.z), vec3(mx.x, mx.y, mn.z)
+            );
+            break;
+        // RIGHT
+        case 2:
+            vertices = vec3[](
+            vec3(mn.x, mn.y, mn.z), vec3(mn.x, mn.y, mx.z), vec3(mn.x, mx.y, mx.z),
+            vec3(mn.x, mn.y, mn.z), vec3(mn.x, mx.y, mx.z), vec3(mn.x, mx.y, mn.z)
+            );
+            break;
+        // LEFT
+        case 3:
+            vertices = vec3[](
+            vec3(mx.x, mn.y, mx.z), vec3(mx.x, mn.y, mn.z), vec3(mx.x, mx.y, mn.z),
+            vec3(mx.x, mn.y, mx.z), vec3(mx.x, mx.y, mn.z), vec3(mx.x, mx.y, mx.z)
+            );
+            break;
+        // TOP
+        case 4:
+            vertices = vec3[](
+            vec3(mn.x, mx.y, mx.z), vec3(mx.x, mx.y, mx.z), vec3(mx.x, mx.y, mn.z),
+            vec3(mn.x, mx.y, mx.z), vec3(mx.x, mx.y, mn.z), vec3(mn.x, mx.y, mn.z)
+            );
+            break;
+        // BOTTOM
+        case 5:
+            vertices = vec3[](
+            vec3(mn.x, mn.y, mn.z), vec3(mx.x, mn.y, mn.z), vec3(mx.x, mn.y, mx.z),
+            vec3(mn.x, mn.y, mn.z), vec3(mx.x, mn.y, mx.z), vec3(mn.x, mn.y, mx.z)
+            );
+            break;
+    }
+
+    return vertices;
+}

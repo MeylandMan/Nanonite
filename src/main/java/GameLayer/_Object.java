@@ -1,6 +1,6 @@
 package GameLayer;
 
-import Core.Rendering.*;
+import Mycraft.Rendering.*;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL;
