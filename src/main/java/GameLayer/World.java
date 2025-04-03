@@ -42,7 +42,7 @@ public class World {
     public static long ChunkDrawCalls = 0;
     public static boolean QueueQuery = true;
 
-    public static Vector3d SpawnPoint = new Vector3d(100_000_000_000_000L, 100, 100_000_000_000_000L);
+    public static Vector3d SpawnPoint = new Vector3d(8, 100, 8);
     // Procedural generation data's
     static ModuleBasisFunction basis;
     public static long seed;
@@ -70,10 +70,10 @@ public class World {
     private static final int MAX_CHUNKS_TO_RENDER_PER_FRAME = 16;
 
     protected static class ChunkDistance {
-        Chunk chunk;
+        Vector3d chunk;
         float distance;
 
-        ChunkDistance(Chunk chunk, float distance) {
+        ChunkDistance(Vector3d chunk, float distance) {
             this.chunk = chunk;
             this.distance = distance;
         }
@@ -177,8 +177,6 @@ public class World {
 
                     int finalDx = dx, finalDy = dy, finalDz = dz;
 
-
-
                     futures.add(MultiThreading.submitChunkTask(() -> {
 
                         if (!loadedChunks.containsKey(chunkID)) {
@@ -243,6 +241,22 @@ public class World {
 
     public void loadChunks() {
 
+        for(Vector3d chunkID : loadedChunksID.values()) {
+
+            if(loadedChunks.get(chunkID).StaticBlocks != null || loadedChunks.get(chunkID).LiquidBlocks != null) continue;
+            if(!ChunkGen.isChunkInFrustum(frustumPlanes,
+                    loadedChunks.get(chunkID).positionX * ChunkGen.CHUNK_SIZE,
+                    loadedChunks.get(chunkID).positionY * ChunkGen.CHUNK_SIZE,
+                    loadedChunks.get(chunkID).positionZ * ChunkGen.CHUNK_SIZE))
+                continue;
+
+            long dx = (int) (loadedChunks.get(chunkID).positionX - player.position.x);
+            long dy = (int) (loadedChunks.get(chunkID).positionY - player.position.y);
+            long dz = (int) (loadedChunks.get(chunkID).positionZ - player.position.z);
+            long distanceSquared = dx * dx + dy * dy + dz * dz;
+            chunksPos.add(new ChunkDistance(chunkID, distanceSquared));
+        }
+
         long chunkX = (long) ChunkGen.getLocalChunk(player.position).x;
         long chunkY = (long) ChunkGen.getLocalChunk(player.position).y;
         long chunkZ = (long) ChunkGen.getLocalChunk(player.position).z;
@@ -250,17 +264,17 @@ public class World {
 
         for (int i = 0; i < MAX_CHUNKS_TO_RENDER_PER_FRAME && !chunksPos.isEmpty(); i++) {
 
-            Chunk getID = chunksPos.poll().chunk;
+            Vector3d getID = chunksPos.poll().chunk;
             if (getID == null) break;
 
-            long chunkDistX = abs(getID.positionX - chunkX);
-            long chunkDistY = abs(getID.positionY - chunkY);
-            long chunkDistZ = abs(getID.positionZ - chunkZ);
+            long chunkDistX = abs(loadedChunks.get(getID).positionX - chunkX);
+            long chunkDistY = abs(loadedChunks.get(getID).positionY - chunkY);
+            long chunkDistZ = abs(loadedChunks.get(getID).positionZ - chunkZ);
             if (chunkDistX > radius || chunkDistZ > radius || chunkDistY > radius) {
                 continue;
             }
 
-            Vector3d chunkID = new Vector3d(getID.positionX, getID.positionY, getID.positionZ);
+            Vector3d chunkID = new Vector3d(loadedChunks.get(getID).positionX, loadedChunks.get(getID).positionY, loadedChunks.get(getID).positionZ);
             Chunk chunk = loadedChunks.get(chunkID);
 
             if (chunk == null) continue;
@@ -596,6 +610,7 @@ public class World {
                             chunk.positionZ * ChunkGen.CHUNK_SIZE))
                         continue;
 
+                    // Add to the rendering
                     localChunksToRender.add(chunk);
                 }
 

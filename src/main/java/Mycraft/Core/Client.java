@@ -9,11 +9,16 @@ import Mycraft.Rendering.Texture;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static org.joml.Math.min;
+
 public class Client {
+
+    /// Game Settings
     public static int renderDistance = 16;
-    public static final int MAX_RENDER_DISTANCE = 92;
+    public static final int MAX_RENDER_DISTANCE = 256;
     public static final int MIN_RENDER_DISTANCE = 8;
 
+    // THREADS
     public static final int MAX_THREADS = Runtime.getRuntime().availableProcessors();
 
     public static int Vsync = 0;
