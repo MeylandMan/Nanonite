@@ -12,7 +12,8 @@ import org.joml.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
-
+import org.lwjgl.opengl.GLX.*;
+import org.lwjgl.opengl.NVXGPUMemoryInfo.*;
 
 import java.nio.IntBuffer;
 import java.util.*;
@@ -23,6 +24,8 @@ import static org.lwjgl.glfw.GLFW.*;
 
 import static org.lwjgl.opengl.GL11C.glViewport;
 import static org.lwjgl.opengl.GL43.*;
+import static org.lwjgl.opengl.NVXGPUMemoryInfo.GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX;
+import static org.lwjgl.opengl.NVXGPUMemoryInfo.GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import static Mycraft.Debug.Debugger.*;
@@ -169,8 +172,17 @@ public class Application {
         Client.LoadingBlockTextures();
         Client.glVersion = glGetString(GL_VERSION);
 
-        glEnable(GL43.GL_DEBUG_OUTPUT);
-        glEnable(GL43.GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        Logger.log(Logger.Level.INFO, "OpenGL Renderer: " + glGetString(GL_RENDERER));
+        Logger.log(Logger.Level.INFO, "OpenGL Vendor: " + glGetString(GL_VENDOR));
+
+        int[] availiableVRAM = new int[1];
+        glGetIntegerv(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX, availiableVRAM);
+
+        String totalVRAM = Client.GPUBrand;
+        Client.GPUBrand = glGetString(GL_RENDERER) + " (" + (availiableVRAM[0] / 1024) + " / " + totalVRAM;
+
+        glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
         //System.out.println("MAX TEXTURE YOU CAN LOAD : " + GL_MAX_TEXTURE_IMAGE_UNITS); 34930
         Font font;
@@ -215,7 +227,7 @@ public class Application {
             int Y = (int) ChunkGen.getLocalBlock(Camera.Position).y;
             int Z = (int) ChunkGen.getLocalBlock(Camera.Position).z;
 
-            Chunk actualChunk = World.loadedChunks.get(new Vector3f((float) chunkX, (float)chunkY, (float) chunkZ));
+            Chunk actualChunk = World.loadedChunks.get(new Vector3d((float) chunkX, (float)chunkY, (float) chunkZ));
             byte actualBlock = (actualChunk == null)? -1 : actualChunk.getBlock(X,Y,Z);
 
             WorldEnvironment.isUnderWater = (actualBlock == ChunkGen.BlockType.WATER.getID());

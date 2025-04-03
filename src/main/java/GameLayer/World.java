@@ -20,6 +20,7 @@ import java.lang.Math;
 import java.nio.FloatBuffer;
 import java.util.*;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -41,7 +42,7 @@ public class World {
     public static long ChunkDrawCalls = 0;
     public static boolean QueueQuery = true;
 
-    public static Vector3d SpawnPoint = new Vector3d(8, 100, 8);
+    public static Vector3d SpawnPoint = new Vector3d(100_000_000_000_000L, 100, 100_000_000_000_000L);
     // Procedural generation data's
     static ModuleBasisFunction basis;
     public static long seed;
@@ -50,12 +51,8 @@ public class World {
     ArrayList<Entity> entities = new ArrayList<>();
 
     // Chunks datas
-    public static final Map<Vector3f, Chunk> loadedChunks = new HashMap<>();
-    public static final Map<Vector3f, Vector3f> loadedChunksID = new HashMap<>();
-
-    // File des chunks à supprimer dans le thread OpenGL
-    private static final ConcurrentLinkedQueue<Chunk> chunkDeletionQueue = new ConcurrentLinkedQueue<>();
-
+    public static final ConcurrentHashMap<Vector3d, Chunk> loadedChunks = new ConcurrentHashMap<>();
+    public static final Map<Vector3d, Vector3d> loadedChunksID = new HashMap<>();
 
     // Frustum Data
     public static Camera.Plane[] frustumPlanes;
@@ -66,7 +63,7 @@ public class World {
 
     // Chunk Queues
     public static final PriorityQueue<ChunkDistance> chunksPos = new PriorityQueue<>(Comparator.comparingDouble(c -> c.distance));
-    private static final Queue<Chunk> chunksToRemove = new LinkedList<>();
+    private static final ConcurrentLinkedQueue<Chunk> chunkDeletionQueue = new ConcurrentLinkedQueue<>();
 
     // Macros
     private static final int MAX_CHUNKS_TO_REMOVE_PER_FRAME = 256;
@@ -158,8 +155,7 @@ public class World {
         int radius = Client.renderDistance / 2;
 
         // List of chunks
-        List<Future<?>> futures = new ArrayList<>();
-
+        List<Future<?>> futures = Collections.synchronizedList(new ArrayList<>());
         for (int dz = -radius; dz <= radius; dz++) {
             for (int dx = -radius; dx <= radius; dx++) {
                 for (int dy = -radius; dy <= radius; dy++) {
@@ -168,34 +164,35 @@ public class World {
                     long localY = (chunkY + dy);
                     long localZ = (chunkZ + dz);
 
-                    Vector3f chunkID = new Vector3f(localX, localY, localZ);
+                    Vector3d chunkID = new Vector3d(localX, localY, localZ);
 
-                    if (loadedChunks.containsKey(chunkID) || !ChunkGen.isChunkInFrustum(frustumPlanes,
+
+                    /*
+                        ||!ChunkGen.isChunkInFrustum(frustumPlanes,
                             localX * ChunkGen.CHUNK_SIZE,
                             localY * ChunkGen.CHUNK_SIZE,
                             localZ * ChunkGen.CHUNK_SIZE
-                    )) continue;
+                    )
+                     */
 
-                    int finalDx = dx;
-                    int finalDy = dy;
-                    int finalDz = dz;
+                    int finalDx = dx, finalDy = dy, finalDz = dz;
+
+
 
                     futures.add(MultiThreading.submitChunkTask(() -> {
 
-                        Chunk chunk = new Chunk(localX, localY, localZ);
-                        ChunkGen.setupChunk(chunk);
-                        synchronized (loadedChunks) {
+                        if (!loadedChunks.containsKey(chunkID)) {
+                            Chunk chunk = new Chunk(localX, localY, localZ);
+                            ChunkGen.setupChunk(chunk);
                             loadedChunks.put(chunkID, chunk);
-                        }
 
-                        float distanceSquared = finalDx * finalDx + finalDy * finalDy + finalDz * finalDz;
-                        if(chunk.blocks != null) {
-                            synchronized (chunksPos) {
-                                chunksPos.add(new ChunkDistance(chunk, distanceSquared));
-                            }
+                            if(chunk.blocks != null) {
+                                float distanceSquared = finalDx * finalDx + finalDy * finalDy + finalDz * finalDz;
 
-                            synchronized (loadedChunksID) {
-                                loadedChunksID.put(chunkID, chunkID);
+                                synchronized (loadedChunksID) {
+                                    loadedChunksID.put(chunkID, chunkID);
+                                }
+
                             }
                         }
 
@@ -223,18 +220,18 @@ public class World {
     }
 
 
-    public static void updateNearbyChunks(Vector3f v) {
+    public static void updateNearbyChunks(Vector3d v) {
 
-        Vector3f[] neighbors = {
-                new Vector3f(v.x + 1, v.y, v.z),
-                new Vector3f(v.x - 1, v.y, v.z),
-                new Vector3f(v.x, v.y + 1, v.z),
-                new Vector3f(v.x, v.y - 1, v.z),
-                new Vector3f(v.x, v.y, v.z - 1),
-                new Vector3f(v.x, v.y, v.z + 1)
+        Vector3d[] neighbors = {
+                new Vector3d(v.x + 1, v.y, v.z),
+                new Vector3d(v.x - 1, v.y, v.z),
+                new Vector3d(v.x, v.y + 1, v.z),
+                new Vector3d(v.x, v.y - 1, v.z),
+                new Vector3d(v.x, v.y, v.z - 1),
+                new Vector3d(v.x, v.y, v.z + 1)
         };
 
-        for (Vector3f neighbor : neighbors) {
+        for (Vector3d neighbor : neighbors) {
             Chunk neighborChunk = loadedChunks.get(neighbor);
             if (neighborChunk != null) {
                  if (neighborChunk.StaticBlocks == null) neighborChunk.Init();
@@ -263,7 +260,7 @@ public class World {
                 continue;
             }
 
-            Vector3f chunkID = new Vector3f(getID.positionX, getID.positionY, getID.positionZ);
+            Vector3d chunkID = new Vector3d(getID.positionX, getID.positionY, getID.positionZ);
             Chunk chunk = loadedChunks.get(chunkID);
 
             if (chunk == null) continue;
@@ -276,7 +273,7 @@ public class World {
     }
 
     protected static FloatBuffer getChunkData(long xx, long yy, long zz, int type) {
-        Vector3f chunkID = new Vector3f(xx, yy, zz);
+        Vector3d chunkID = new Vector3d(xx, yy, zz);
         Chunk chunk = loadedChunks.get(chunkID);
 
         // 3 positions + 3 min + 3 max + 1 texID + 1 FaceID + 4 Ambient Occlusion
@@ -369,7 +366,7 @@ public class World {
         float localY = floor((y % ChunkGen.CHUNK_SIZE + ChunkGen.CHUNK_SIZE) % ChunkGen.CHUNK_SIZE);
         float localZ = floor((z % ChunkGen.CHUNK_SIZE + ChunkGen.CHUNK_SIZE) % ChunkGen.CHUNK_SIZE);
 
-        Chunk chunk = loadedChunks.get(new Vector3f(chunkX, chunkY, chunkZ));
+        Chunk chunk = loadedChunks.get(new Vector3d(chunkX, chunkY, chunkZ));
 
         // If the chunk exists or is empty
         if(chunk == null || chunk.blocks == null)
@@ -476,10 +473,12 @@ public class World {
     }
     public void onUpdate() {
 
+        processChunkDeletions();
         UpdateCameraFrustum();
 
         // Look at the name Damian...
-        addChunksToQueue(false);
+        if(loadedChunks.isEmpty())
+            addChunksToQueue(false);
 
         // Yup, the name
         loadChunks();
@@ -530,6 +529,7 @@ public class World {
                     long chunkDistZ = abs(chunk.positionZ - chunkZ);
                     if (chunkDistX > radiusXYZ || chunkDistZ > radiusXYZ || chunkDistY > radiusXYZ) {
                         localChunksToRemove.add(chunk);
+                        //addChunksToQueue(false);
                     }
                 }
                 return localChunksToRemove;
@@ -559,33 +559,33 @@ public class World {
                 if(chunk == null) break;
 
                 chunk.Delete();
-                Vector3f chunkPos = new Vector3f(chunk.positionX, chunk.positionY, chunk.positionZ);
+                Vector3d chunkPos = new Vector3d(chunk.positionX, chunk.positionY, chunk.positionZ);
                 loadedChunks.remove(chunkPos);
                 loadedChunksID.remove(chunkPos);
             }
+
+            addChunksToQueue(false);
         }
     }
 
     public void renderChunks() {
-
-        processChunkDeletions();
 
         // Create the list of chunks to render
         List<Chunk> chunksToRender = new ArrayList<>();
 
         // Multithreading to determine the chunks to render
         List<Future<List<Chunk>>> futures = new ArrayList<>();
-        List<Vector3f> chunkList = new ArrayList<>(loadedChunksID.values());
+        List<Vector3d> chunkList = new ArrayList<>(loadedChunksID.values());
         int chunkSize = chunkList.size() / MultiThreading.CHUNK_THREADS;
 
         for (int i = 0; i < MultiThreading.CHUNK_THREADS; i++) {
             int start = i * chunkSize;
             int end = (i == MultiThreading.CHUNK_THREADS - 1) ? chunkList.size() : (i + 1) * chunkSize;
 
-            List<Vector3f> sublist = chunkList.subList(start, end);
+            List<Vector3d> sublist = chunkList.subList(start, end);
             futures.add(MultiThreading.submitChunkTask(() -> {
                 List<Chunk> localChunksToRender = new ArrayList<>();
-                for (Vector3f chunkID : sublist) {
+                for (Vector3d chunkID : sublist) {
 
                     Chunk chunk = loadedChunks.get(chunkID);
                     if (chunk == null) continue;
@@ -686,7 +686,7 @@ public class World {
     }
 
     protected static int shouldRenderFace(long xx, long yy, long zz, Element element, int x, int y, int z, int face) {
-        Chunk actualChunk = loadedChunks.get(new Vector3f(xx, yy, zz));
+        Chunk actualChunk = loadedChunks.get(new Vector3d(xx, yy, zz));
 
         int nx = x, ny = y, nz = z;
 
@@ -719,7 +719,7 @@ public class World {
             nz = (nz + ChunkGen.CHUNK_SIZE) % ChunkGen.CHUNK_SIZE;
 
             // Load the neighborChunk
-            Chunk neighborChunk = loadedChunks.get(new Vector3f(neighborChunkX,neighborChunkY,neighborChunkZ));
+            Chunk neighborChunk = loadedChunks.get(new Vector3d(neighborChunkX,neighborChunkY,neighborChunkZ));
 
             if (neighborChunk == null || neighborChunk.blocks == null || neighborChunk.getBlock(nx,ny,nz) == ChunkGen.BlockType.AIR.getID()) {
                 return 1;

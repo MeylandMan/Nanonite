@@ -25,7 +25,7 @@ public class EntryPoint {
 
             String physicalProcessor = (processor.getLogicalProcessorCount() == processor.getPhysicalProcessorCount())? " " : " " + processor.getPhysicalProcessorCount() + " ";
             Client.processorBrand = "x" + processor.getLogicalProcessorCount() + " " + identifier.getName() + physicalProcessor + "@" + (processor.getMaxFreq() / 1_000_000) + " MHz";
-            Client.GPUBrand = GPU.getName() + " (" + ((GPU.getVRam()/1024) / 1024) + " MB)";
+            Client.GPUBrand =  (GPU.getVRam()/1024) / 1024 + " MB)";
         }
 
         Client.loadModels();

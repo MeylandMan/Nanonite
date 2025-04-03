@@ -358,15 +358,38 @@ public class ChunkGen {
 
     protected static void setupChunk(Chunk chunk) {
 
-        /*
-        if(chunk.positionY <= 5 && chunk.positionY > 0) {
-            chunk.CreateBlocksArray();
-            chunk.blockDrawn = CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE;
-            Arrays.fill(chunk.blocks, BlockType.DIRT.getID());
-        }
-        */
+        if(chunk.positionY <= 5 && chunk.positionY > -128) {
 
-        AddChunkSurface(chunk);
+            FillChunk(chunk);
+            //CheckBoardPattern(chunk);
+        }
+
+        //AddChunkSurface(chunk);
         //ResolveChunk(chunk);
+    }
+
+    private static void FillChunk(Chunk chunk) {
+        for(int x = 0; x < CHUNK_SIZE; x++) {
+            for(int y = 0; y < CHUNK_SIZE; y++) {
+                for(int z = 0; z < CHUNK_SIZE; z++) {
+                    chunk.AddBlock(x, y, z, BlockType.STONE);
+                }
+            }
+        }
+    }
+
+    // Useful for VRAM Optimization
+    private static void CheckBoardPattern(Chunk chunk) {
+
+        for(int x = 0; x < CHUNK_SIZE; x++) {
+            for(int y = 0; y < CHUNK_SIZE; y++) {
+                for(int z = 0; z < CHUNK_SIZE; z++) {
+                    int checkerBoard = (x + y + z) % 2;
+                    if(checkerBoard == 1) continue;
+
+                    chunk.AddBlock(x, y, z, BlockType.STONE);
+                }
+            }
+        }
     }
 }

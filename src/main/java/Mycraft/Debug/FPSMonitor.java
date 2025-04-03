@@ -24,7 +24,8 @@ public class FPSMonitor {
             fpsHistory.add(currentFPS);
             frameCount = 0;
 
-            deltaTime = 1 / currentFPS; // Convert to seconds
+            deltaTime = 1.0 / currentFPS;
+            //deltaTime = ((currentTime - lastTime) / 1_000_000_000.0) -1.0;
             lastTime = currentTime;
         }
     }
