@@ -157,7 +157,7 @@ public class World {
 
         int radius = Client.renderDistance / 2;
 
-        // List of Tasks
+        // List of chunks
         List<Future<?>> futures = new ArrayList<>();
 
         for (int dz = -radius; dz <= radius; dz++) {
@@ -170,40 +170,40 @@ public class World {
 
                     Vector3f chunkID = new Vector3f(localX, localY, localZ);
 
-                    if (loadedChunks.containsKey(chunkID)) continue;
-
-                    /*
-                    || !ChunkGen.isChunkInFrustum(frustumPlanes,
+                    if (loadedChunks.containsKey(chunkID) || !ChunkGen.isChunkInFrustum(frustumPlanes,
                             localX * ChunkGen.CHUNK_SIZE,
                             localY * ChunkGen.CHUNK_SIZE,
                             localZ * ChunkGen.CHUNK_SIZE
-                    )
-                    */
+                    )) continue;
 
                     int finalDx = dx;
                     int finalDy = dy;
                     int finalDz = dz;
 
-                    Chunk chunk = new Chunk(localX, localY, localZ);
-                    ChunkGen.setupChunk(chunk);
-                    synchronized (loadedChunks) {
-                        loadedChunks.put(chunkID, chunk);
-                    }
+                    futures.add(MultiThreading.submitChunkTask(() -> {
 
-                    float distanceSquared = finalDx * finalDx + finalDy * finalDy + finalDz * finalDz;
-                    if(chunk.blocks != null) {
-                        synchronized (chunksPos) {
-                            chunksPos.add(new ChunkDistance(chunk, distanceSquared));
+                        Chunk chunk = new Chunk(localX, localY, localZ);
+                        ChunkGen.setupChunk(chunk);
+                        synchronized (loadedChunks) {
+                            loadedChunks.put(chunkID, chunk);
                         }
 
-                        synchronized (loadedChunksID) {
-                            loadedChunksID.put(chunkID, chunkID);
+                        float distanceSquared = finalDx * finalDx + finalDy * finalDy + finalDz * finalDz;
+                        if(chunk.blocks != null) {
+                            synchronized (chunksPos) {
+                                chunksPos.add(new ChunkDistance(chunk, distanceSquared));
+                            }
+
+                            synchronized (loadedChunksID) {
+                                loadedChunksID.put(chunkID, chunkID);
+                            }
                         }
-                    }
+
+                        return null;
+                    }));
                 }
             }
         }
-
 
         for(Future<?> future : futures) {
             try {
@@ -570,6 +570,48 @@ public class World {
 
         processChunkDeletions();
 
+        // Create the list of chunks to render
+        List<Chunk> chunksToRender = new ArrayList<>();
+
+        // Multithreading to determine the chunks to render
+        List<Future<List<Chunk>>> futures = new ArrayList<>();
+        List<Vector3f> chunkList = new ArrayList<>(loadedChunksID.values());
+        int chunkSize = chunkList.size() / MultiThreading.CHUNK_THREADS;
+
+        for (int i = 0; i < MultiThreading.CHUNK_THREADS; i++) {
+            int start = i * chunkSize;
+            int end = (i == MultiThreading.CHUNK_THREADS - 1) ? chunkList.size() : (i + 1) * chunkSize;
+
+            List<Vector3f> sublist = chunkList.subList(start, end);
+            futures.add(MultiThreading.submitChunkTask(() -> {
+                List<Chunk> localChunksToRender = new ArrayList<>();
+                for (Vector3f chunkID : sublist) {
+
+                    Chunk chunk = loadedChunks.get(chunkID);
+                    if (chunk == null) continue;
+
+                    if(!ChunkGen.isChunkInFrustum(frustumPlanes,
+                            chunk.positionX * ChunkGen.CHUNK_SIZE,
+                            chunk.positionY * ChunkGen.CHUNK_SIZE,
+                            chunk.positionZ * ChunkGen.CHUNK_SIZE))
+                        continue;
+
+                    localChunksToRender.add(chunk);
+                }
+
+                return localChunksToRender;
+            }));
+        }
+
+        // Collect threads results
+        for (Future<List<Chunk>> future : futures) {
+            try {
+                chunksToRender.addAll(future.get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+
         for(int i = 0; i < Client.blockTextures.length; i++) {
             Client.blockTextures[i].Bind(i);
         }
@@ -607,25 +649,12 @@ public class World {
         glEnable(GL_CULL_FACE);
 
         long i = 0;
-        for(int x = (int) min.x; x <= (int) max.x; x++) {
-            for(int y = (int) min.y; y <= (int) max.y; y++){
-                for(int z = (int) min.z; z <= (int) max.z; z++) {
 
-                    if(loadedChunksID.get(new Vector3f(x ,y ,z)) == null) continue;
-
-                    Chunk chunk = loadedChunks.get(loadedChunksID.get(new Vector3f(x ,y ,z)));
-
-                    if(chunk.StaticBlocks == null|| !ChunkGen.isChunkInFrustum(frustumPlanes,
-                            chunk.positionX * ChunkGen.CHUNK_SIZE,
-                            chunk.positionY * ChunkGen.CHUNK_SIZE,
-                            chunk.positionZ * ChunkGen.CHUNK_SIZE))
-                        continue;
-
-                    ChunkShaders[0].Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
-                    chunk.DrawMesh();
-                    i++;
-                }
-            }
+        for(Chunk chunk : chunksToRender) {
+            if(chunk.StaticBlocks == null) continue;
+            ChunkShaders[0].Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
+            chunk.DrawMesh();
+            i++;
         }
         ChunkDrawCalls = i;
 
@@ -642,30 +671,17 @@ public class World {
         ChunkShaders[1].UniformMatrix4x4("view", new Matrix4f(Camera.GetViewMatrix()));
         ChunkShaders[1].UniformMatrix4x4("projection", new Matrix4f(Camera.GetProjectionMatrix()));
 
-        // Draw static blocks
+        // Draw liquid blocks
         glDisable(GL_CULL_FACE);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        for(int x = (int) min.x; x <= (int) max.x; x++) {
-            for(int y = (int) min.y; y <= (int) max.y; y++){
-                for(int z = (int) min.z; z <= (int) max.z; z++) {
+        for(Chunk chunk : chunksToRender) {
+            if(chunk.LiquidBlocks == null) continue;
 
-                    if(loadedChunksID.get(new Vector3f(x ,y ,z)) == null) continue;
-
-                    Chunk chunk = loadedChunks.get(loadedChunksID.get(new Vector3f(x ,y ,z)));
-                    if(chunk.LiquidBlocks == null || !ChunkGen.isChunkInFrustum(frustumPlanes,
-                            chunk.positionX * ChunkGen.CHUNK_SIZE,
-                            chunk.positionY * ChunkGen.CHUNK_SIZE,
-                            chunk.positionZ * ChunkGen.CHUNK_SIZE))
-                        continue;
-
-                    ChunkShaders[1].Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
-                    chunk.DrawLiquidMesh();
-                }
-            }
+            ChunkShaders[1].Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
+            chunk.DrawLiquidMesh();
         }
-
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 

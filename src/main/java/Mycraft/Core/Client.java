@@ -10,13 +10,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Client {
-    public static int renderDistance = 16;
+    public static int renderDistance = 64;
     public static final int MAX_RENDER_DISTANCE = 92;
     public static final int MIN_RENDER_DISTANCE = 8;
 
     public static final int MAX_THREADS = Runtime.getRuntime().availableProcessors();
 
-    public static int Vsync = 1;
+    public static int Vsync = 0;
     public static String EngineName = "Mycraft";
     public static String EngineVersion = "0.0.1";
     public static String name = "GameName";

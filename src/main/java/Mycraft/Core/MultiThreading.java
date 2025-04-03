@@ -5,7 +5,7 @@ import java.util.concurrent.*;
 import static org.joml.Math.min;
 
 public class MultiThreading {
-    public static final int CHUNK_THREADS = min(Client.MAX_THREADS, 3);
+    public static final int CHUNK_THREADS = min(Client.MAX_THREADS, 4);
     private static final ExecutorService executor = Executors.newFixedThreadPool(Client.MAX_THREADS);
     private static final ExecutorService chunksExecutor = Executors.newFixedThreadPool(CHUNK_THREADS);
 
