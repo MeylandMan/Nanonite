@@ -67,7 +67,7 @@ public class World {
 
     // Macros
     private static final int MAX_CHUNKS_TO_REMOVE_PER_FRAME = 256;
-    private static final int MAX_CHUNKS_TO_RENDER_PER_FRAME = 16;
+    private static final int MAX_CHUNKS_TO_RENDER_PER_FRAME = 32;
 
     protected static class ChunkDistance {
         Vector3d chunk;
@@ -153,29 +153,19 @@ public class World {
         long chunkZ = (long) ChunkGen.getLocalChunk(player.position).z;
 
         int radius = Client.renderDistance / 2;
+        int step = 1;
 
         // List of chunks
         List<Future<?>> futures = Collections.synchronizedList(new ArrayList<>());
-        for (int dz = -radius; dz <= radius; dz++) {
-            for (int dx = -radius; dx <= radius; dx++) {
-                for (int dy = -radius; dy <= radius; dy++) {
+        for (int dz = -radius; dz <= radius; dz+=step) {
+            for (int dx = -radius; dx <= radius; dx+=step) {
+                for (int dy = -radius; dy <= radius; dy+=step) {
 
                     long localX = (chunkX + dx);
                     long localY = (chunkY + dy);
                     long localZ = (chunkZ + dz);
 
                     Vector3d chunkID = new Vector3d(localX, localY, localZ);
-
-
-                    /*
-                        ||!ChunkGen.isChunkInFrustum(frustumPlanes,
-                            localX * ChunkGen.CHUNK_SIZE,
-                            localY * ChunkGen.CHUNK_SIZE,
-                            localZ * ChunkGen.CHUNK_SIZE
-                    )
-                     */
-
-                    int finalDx = dx, finalDy = dy, finalDz = dz;
 
                     futures.add(MultiThreading.submitChunkTask(() -> {
 
@@ -185,7 +175,6 @@ public class World {
                             loadedChunks.put(chunkID, chunk);
 
                             if(chunk.blocks != null) {
-                                float distanceSquared = finalDx * finalDx + finalDy * finalDy + finalDz * finalDz;
 
                                 synchronized (loadedChunksID) {
                                     loadedChunksID.put(chunkID, chunkID);
@@ -241,31 +230,62 @@ public class World {
 
     public void loadChunks() {
 
-        for(Vector3d chunkID : loadedChunksID.values()) {
+        // Multithreading to determine the chunks to render
+        List<Future<List<ChunkDistance>>> futures = new ArrayList<>();
+        List<Vector3d> chunkList = new ArrayList<>(loadedChunksID.values());
+        int chunkSize = chunkList.size() / MultiThreading.CHUNK_THREADS;
 
-            if(loadedChunks.get(chunkID).StaticBlocks != null || loadedChunks.get(chunkID).LiquidBlocks != null) continue;
-            if(!ChunkGen.isChunkInFrustum(frustumPlanes,
-                    loadedChunks.get(chunkID).positionX * ChunkGen.CHUNK_SIZE,
-                    loadedChunks.get(chunkID).positionY * ChunkGen.CHUNK_SIZE,
-                    loadedChunks.get(chunkID).positionZ * ChunkGen.CHUNK_SIZE))
-                continue;
+        for (int i = 0; i < MultiThreading.CHUNK_THREADS; i++) {
+            int start = i * chunkSize;
+            int end = (i == MultiThreading.CHUNK_THREADS - 1) ? chunkList.size() : (i + 1) * chunkSize;
 
-            long dx = (int) (loadedChunks.get(chunkID).positionX - player.position.x);
-            long dy = (int) (loadedChunks.get(chunkID).positionY - player.position.y);
-            long dz = (int) (loadedChunks.get(chunkID).positionZ - player.position.z);
-            long distanceSquared = dx * dx + dy * dy + dz * dz;
-            chunksPos.add(new ChunkDistance(chunkID, distanceSquared));
+            List<Vector3d> sublist = chunkList.subList(start, end);
+            futures.add(MultiThreading.submitChunkTask(() -> {
+                List<ChunkDistance> localChunksToQueue = new ArrayList<>();
+                for (Vector3d chunkID : sublist) {
+
+                    Chunk chunk = loadedChunks.get(chunkID);
+                    if (chunk == null || chunk.hasMesh) continue;
+
+                    if(!ChunkGen.isChunkInFrustum(frustumPlanes,
+                            chunk.positionX * ChunkGen.CHUNK_SIZE,
+                            chunk.positionY * ChunkGen.CHUNK_SIZE,
+                            chunk.positionZ * ChunkGen.CHUNK_SIZE))
+                        continue;
+
+                    // Add to the rendering
+                    long dx = (long) (chunk.positionX - player.position.x);
+                    long dy = (long) (chunk.positionY - player.position.y);
+                    long dz = (long) (chunk.positionZ - player.position.z);
+                    long distanceSquared = dx * dx + dy * dy + dz * dz;
+
+                    chunk.hasMesh = true;
+                    localChunksToQueue.add(new ChunkDistance(chunkID, distanceSquared));
+                }
+
+                return localChunksToQueue;
+            }));
         }
 
+        // Collect threads results
+        for (Future<List<ChunkDistance>> future : futures) {
+            try {
+                chunksPos.addAll(future.get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Generating the Mesh
         long chunkX = (long) ChunkGen.getLocalChunk(player.position).x;
         long chunkY = (long) ChunkGen.getLocalChunk(player.position).y;
         long chunkZ = (long) ChunkGen.getLocalChunk(player.position).z;
         int radius = Client.renderDistance / 2;
 
-        for (int i = 0; i < MAX_CHUNKS_TO_RENDER_PER_FRAME && !chunksPos.isEmpty(); i++) {
+        for(int i  = 0; i < MAX_CHUNKS_TO_RENDER_PER_FRAME && !chunksPos.isEmpty(); i++) {
 
             Vector3d getID = chunksPos.poll().chunk;
-            if (getID == null) break;
+            if (getID == null || loadedChunks.get(getID) == null) break;
 
             long chunkDistX = abs(loadedChunks.get(getID).positionX - chunkX);
             long chunkDistY = abs(loadedChunks.get(getID).positionY - chunkY);
@@ -278,9 +298,11 @@ public class World {
             Chunk chunk = loadedChunks.get(chunkID);
 
             if (chunk == null) continue;
+
+            // Trust the process...
             if (chunk.StaticBlocks == null) chunk.Init();
 
-            //updateNearbyChunks(chunkID);
+            updateNearbyChunks(chunkID);
             chunk.updateChunk((long) chunkID.x, (long) chunkID.y, (long) chunkID.z);
         }
 
@@ -307,7 +329,7 @@ public class World {
                     if(type == 1 && chunk.getBlock(x,y,z) != ChunkGen.BlockType.WATER.getID())
                         continue;
 
-                    BlockModel model = Client.modelLoader.getModel(Client.modelPaths[chunk.getBlock(x,y,z)]);
+                    BlockModel model = Client.modelLoader.getModel(Client.modelPaths[chunk.getBlock(x,y,z)-1]);
                     for(Element element : model.getElements()) {
                         Map<String, Face> faces = element.getFaces();
                         for(Map.Entry<String, Face> face : faces.entrySet()) {
@@ -741,7 +763,7 @@ public class World {
             }
 
             // Vérifier l'opacité du bloc adjacent du chunk adjacent
-            BlockModel nextBlock = Client.modelLoader.getModel(Client.modelPaths[neighborChunk.getBlock(nx,ny,nz)]);
+            BlockModel nextBlock = Client.modelLoader.getModel(Client.modelPaths[neighborChunk.getBlock(nx,ny,nz)-1]);
             Element nextBlockFirstElement = nextBlock.getElements().getFirst();
             if (!nextBlockFirstElement.isOpacity()) {
                 return element.isOpacity() ? 1 : 0;
@@ -756,7 +778,7 @@ public class World {
         }
 
         // Vérifier l'opacité du bloc adjacent
-        BlockModel nextBlock = Client.modelLoader.getModel(Client.modelPaths[actualChunk.getBlock(nx,ny,nz)]);
+        BlockModel nextBlock = Client.modelLoader.getModel(Client.modelPaths[actualChunk.getBlock(nx,ny,nz)-1]);
         Element nextBlockFirstElement = nextBlock.getElements().getFirst();
         if (!nextBlockFirstElement.isOpacity()) {
             return element.isOpacity() ? 1 : 0;

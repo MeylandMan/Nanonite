@@ -15,6 +15,7 @@ import static GameLayer.ChunkGen.*;
 
 
 public class Chunk {
+    boolean hasMesh = false;
     boolean updateChunk = true;
     protected FloatBuffer buffer;
 

@@ -41,15 +41,15 @@ public class ChunkGen {
     static ModuleClamp depthClamp = new ModuleClamp();
 
     public enum BlockType {
-        AIR((byte)-1),
-        DIRT((byte)0),
-        GRASS((byte)1),
-        STONE((byte)2),
-        GRAVEL((byte)3),
-        BEDROCK((byte)4),
-        DEEPSLATE((byte)5),
-        WATER((byte)6),
-        SAND((byte)7);
+        AIR((byte)0),
+        DIRT((byte)1),
+        GRASS((byte)2),
+        STONE((byte)3),
+        GRAVEL((byte)4),
+        BEDROCK((byte)5),
+        DEEPSLATE((byte)6),
+        WATER((byte)7),
+        SAND((byte)8);
 
         private final byte id;
 
@@ -360,11 +360,11 @@ public class ChunkGen {
 
         if(chunk.positionY <= 5 && chunk.positionY > -128) {
 
-            FillChunk(chunk);
+            //FillChunk(chunk);
             //CheckBoardPattern(chunk);
         }
 
-        //AddChunkSurface(chunk);
+        AddChunkSurface(chunk);
         //ResolveChunk(chunk);
     }
 
