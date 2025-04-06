@@ -14,7 +14,7 @@ import static org.joml.Math.min;
 public class Client {
 
     /// Game Settings
-    public static int renderDistance = 32;
+    public static int renderDistance = 16;
     public static final int MAX_RENDER_DISTANCE = 256;
     public static final int MIN_RENDER_DISTANCE = 8;
 

@@ -51,8 +51,8 @@ public class World {
     ArrayList<Entity> entities = new ArrayList<>();
 
     // Chunks datas
+    private static boolean firstLoad = true;
     public static final ConcurrentHashMap<Vector3d, Chunk> loadedChunks = new ConcurrentHashMap<>();
-    public static final Map<Vector3d, Vector3d> loadedChunksID = new HashMap<>();
 
     // Frustum Data
     public static Camera.Plane[] frustumPlanes;
@@ -67,7 +67,7 @@ public class World {
 
     // Macros
     private static final int MAX_CHUNKS_TO_REMOVE_PER_FRAME = 256;
-    private static final int MAX_CHUNKS_TO_RENDER_PER_FRAME = 32;
+    private static final int MAX_CHUNKS_TO_RENDER_PER_FRAME = 64;
 
     protected static class ChunkDistance {
         Vector3d chunk;
@@ -133,6 +133,42 @@ public class World {
         entities.add(player);
     }
 
+    public static void addNearbyChunks() {
+
+        long chunkX = (long) ChunkGen.getLocalChunk(player.position).x;
+        long chunkY = (long) ChunkGen.getLocalChunk(player.position).y;
+        long chunkZ = (long) ChunkGen.getLocalChunk(player.position).z;
+
+        int nearestRadius = 1; // 2 / 2
+        int step = 1;
+
+        for(int x = -nearestRadius; x <= nearestRadius; x++) {
+            for(int y = -nearestRadius; y <= nearestRadius; y++) {
+                for(int z = -nearestRadius; z <= nearestRadius; z++) {
+
+                    long localX = (chunkX + x);
+                    long localY = (chunkY + y);
+                    long localZ = (chunkZ + z);
+
+                    Vector3d chunkID = new Vector3d(localX, localY, localZ);
+                    if(loadedChunks.containsKey(chunkID)) continue;
+
+
+                    Chunk chunk = new Chunk(localX, localY, localZ);
+                    ChunkGen.setupChunk(chunk);
+
+                    if(chunk.blocks == null) continue;
+
+                    loadedChunks.put(chunkID, chunk);
+
+                    long distanceSquared = (long) x * x + (long) y * y + (long) z * z;
+                    chunksPos.add(new ChunkDistance(chunkID, distanceSquared));
+                }
+            }
+        }
+
+    }
+
     public static void addChunksToQueue(boolean reset) {
 
         chunkQueueSpeed[0] = System.nanoTime();
@@ -153,13 +189,12 @@ public class World {
         long chunkZ = (long) ChunkGen.getLocalChunk(player.position).z;
 
         int radius = Client.renderDistance / 2;
-        int step = 1;
 
         // List of chunks
         List<Future<?>> futures = Collections.synchronizedList(new ArrayList<>());
-        for (int dz = -radius; dz <= radius; dz+=step) {
-            for (int dx = -radius; dx <= radius; dx+=step) {
-                for (int dy = -radius; dy <= radius; dy+=step) {
+        for (int dz = -radius; dz <= radius; dz++) {
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dy = -radius; dy <= radius; dy++) {
 
                     long localX = (chunkX + dx);
                     long localY = (chunkY + dy);
@@ -172,14 +207,8 @@ public class World {
                         if (!loadedChunks.containsKey(chunkID)) {
                             Chunk chunk = new Chunk(localX, localY, localZ);
                             ChunkGen.setupChunk(chunk);
-                            loadedChunks.put(chunkID, chunk);
-
                             if(chunk.blocks != null) {
-
-                                synchronized (loadedChunksID) {
-                                    loadedChunksID.put(chunkID, chunkID);
-                                }
-
+                                loadedChunks.put(chunkID, chunk);
                             }
                         }
 
@@ -232,7 +261,7 @@ public class World {
 
         // Multithreading to determine the chunks to render
         List<Future<List<ChunkDistance>>> futures = new ArrayList<>();
-        List<Vector3d> chunkList = new ArrayList<>(loadedChunksID.values());
+        List<Vector3d> chunkList = new ArrayList<>(loadedChunks.keySet());
         int chunkSize = chunkList.size() / MultiThreading.CHUNK_THREADS;
 
         for (int i = 0; i < MultiThreading.CHUNK_THREADS; i++) {
@@ -302,7 +331,7 @@ public class World {
             // Trust the process...
             if (chunk.StaticBlocks == null) chunk.Init();
 
-            updateNearbyChunks(chunkID);
+            //updateNearbyChunks(chunkID);
             chunk.updateChunk((long) chunkID.x, (long) chunkID.y, (long) chunkID.z);
         }
 
@@ -511,10 +540,15 @@ public class World {
 
         processChunkDeletions();
         UpdateCameraFrustum();
+        //Always Add the chunks nearby the player no matter what
+        addNearbyChunks();
 
         // Look at the name Damian...
-        if(loadedChunks.isEmpty())
+        if(firstLoad) {
+            firstLoad = false;
             addChunksToQueue(false);
+        }
+
 
         // Yup, the name
         loadChunks();
@@ -565,7 +599,6 @@ public class World {
                     long chunkDistZ = abs(chunk.positionZ - chunkZ);
                     if (chunkDistX > radiusXYZ || chunkDistZ > radiusXYZ || chunkDistY > radiusXYZ) {
                         localChunksToRemove.add(chunk);
-                        //addChunksToQueue(false);
                     }
                 }
                 return localChunksToRemove;
@@ -597,7 +630,6 @@ public class World {
                 chunk.Delete();
                 Vector3d chunkPos = new Vector3d(chunk.positionX, chunk.positionY, chunk.positionZ);
                 loadedChunks.remove(chunkPos);
-                loadedChunksID.remove(chunkPos);
             }
 
             addChunksToQueue(false);
@@ -611,7 +643,7 @@ public class World {
 
         // Multithreading to determine the chunks to render
         List<Future<List<Chunk>>> futures = new ArrayList<>();
-        List<Vector3d> chunkList = new ArrayList<>(loadedChunksID.values());
+        List<Vector3d> chunkList = new ArrayList<>(loadedChunks.keySet());
         int chunkSize = chunkList.size() / MultiThreading.CHUNK_THREADS;
 
         for (int i = 0; i < MultiThreading.CHUNK_THREADS; i++) {
@@ -726,15 +758,13 @@ public class World {
         Chunk actualChunk = loadedChunks.get(new Vector3d(xx, yy, zz));
 
         int nx = x, ny = y, nz = z;
-
-        // 0 -- FRONT, 1 -- BACK, 2 -- RIGHT, 3 -- LEFT, 4 -- TOP, 5 -- BOTTOM
         switch (face) {
-            case 0:   nz += 1; break; // +Z
-            case 1:   nz -= 1; break; // -Z
-            case 2:   nx -= 1; break; // -X
-            case 3:   nx += 1; break; // +X
-            case 4:   ny += 1; break; // +Y
-            case 5:   ny -= 1; break; // -Y
+            case Face.NORTH:   nz += 1; break; // +Z
+            case Face.SOUTH:   nz -= 1; break; // -Z
+            case Face.EAST:   nx -= 1; break; // -X
+            case Face.WEST:   nx += 1; break; // +X
+            case Face.UP:   ny += 1; break; // +Y
+            case Face.DOWN:   ny -= 1; break; // -Y
         }
 
         // Vérifier si le chunk actuel est valide et contient un bloc

@@ -1,5 +1,6 @@
 package Mycraft.Debug;
 
+import GameLayer.Chunk;
 import Mycraft.Core.Client;
 import Mycraft.Core.Input;
 import Mycraft.Rendering.Text.TextRenderer;
@@ -48,7 +49,6 @@ public class Debugger {
                 debug_timestamp = actual_debug_timestamp = 0;
                 Logger.log(Logger.Level.DEBUG,"Reload Chunks");
 
-                World.addChunksToQueue(true);
                 is_combined = true;
             }
 
@@ -192,17 +192,20 @@ public class Debugger {
         Vector3d chunkPosition = ChunkGen.getLocalChunk(World.player.position);
         Vector3d blockPosition = ChunkGen.getLocalBlock(World.player.position);
 
+        Chunk actualChunk = World.loadedChunks.get(chunkPosition);
+        byte ActualBlock = (actualChunk == null)? -1 :
+                actualChunk.getBlock((int)blockPosition.x, (int)blockPosition.y, (int)blockPosition.z);
         String gameInfo = "XYZ: " + df.format(World.player.position.x) +
                 " / " + df.format(World.player.position.y) +
                 " / " + df.format(World.player.position.z) +
-                "\nBlocks: " +
+                "\nBlocks: " + ActualBlock + "(" +
                 df.format(blockPosition.x) + " " +
                 df.format(blockPosition.y) + " " +
-                df.format(blockPosition.z) +
+                df.format(blockPosition.z) + ")" +
                 "\nChunks: " +
                 df.format(chunkPosition.x) + " " +
                 df.format(chunkPosition.y) + " " +
-                df.format(chunkPosition.z) + " (" + World.loadedChunks.size() + ", " + World.loadedChunksID.size() + ")" +
+                df.format(chunkPosition.z) + " (" + World.loadedChunks.size() + ")" +
                 "\nChunks draw calls: " + World.ChunkDrawCalls + " (" + World.chunksPos.size() + ")" +
                 "\nFacing Direction: " +
                 df.format(Camera.getFront().x) + " / " +

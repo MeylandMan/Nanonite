@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Game" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="Mycraft.Core.EntryPoint" />
+    <module name="Nanonite.main" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

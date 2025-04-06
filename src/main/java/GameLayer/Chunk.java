@@ -17,7 +17,7 @@ import static GameLayer.ChunkGen.*;
 public class Chunk {
     boolean hasMesh = false;
     boolean updateChunk = true;
-    protected FloatBuffer buffer;
+    protected FloatBuffer StaticBuffer, LiquidBuffer;
 
     public byte[] blocks;
     public Map<Integer, Integer[]> compressedBlocks;
@@ -42,7 +42,7 @@ public class Chunk {
             StaticBlocks.Delete();
         StaticBlocks = null;
         blocks = null;
-        buffer = null;
+        StaticBuffer = LiquidBuffer = null;
         compressedBlocks = null;
     }
 
@@ -77,22 +77,22 @@ public class Chunk {
         updateChunk = false;
 
         // Updating Static blocks
-        buffer = World.getChunkData(xx, yy, zz, 0);
-        faceDrawn[0] = buffer.limit()/11;
+        StaticBuffer = World.getChunkData(xx, yy, zz, 0);
+        faceDrawn[0] = StaticBuffer.limit()/11;
 
         StaticBlocks.Bind();
-        StaticBlocks.InitSSBO(buffer,0);
+        StaticBlocks.InitSSBO(StaticBuffer,0);
         StaticBlocks.UnBind();
-        MemoryUtil.memFree(buffer);
+        MemoryUtil.memFree(StaticBuffer);
 
         // Updating Liquid blocks
-        buffer = World.getChunkData(xx, yy, zz, 1);
-        faceDrawn[1] = buffer.limit()/11;
+        LiquidBuffer = World.getChunkData(xx, yy, zz, 1);
+        faceDrawn[1] = LiquidBuffer.limit()/11;
 
         LiquidBlocks.Bind();
-        LiquidBlocks.InitSSBO(buffer,0);
+        LiquidBlocks.InitSSBO(LiquidBuffer,0);
         LiquidBlocks.UnBind();
-        MemoryUtil.memFree(buffer);
+        MemoryUtil.memFree(LiquidBuffer);
 
     }
 
