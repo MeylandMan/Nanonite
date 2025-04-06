@@ -8,6 +8,7 @@ import static org.joml.Math.max;
 
 public class FPSMonitor {
     private static long lastTime = System.nanoTime();
+    private static long frameStartTime = System.nanoTime();
     private static double deltaTime = 0.0;
     private static int frameCount = 0;
     private static float currentFPS = 0;
@@ -16,6 +17,9 @@ public class FPSMonitor {
     public static void update() {
 
         long currentTime = System.nanoTime();
+
+        deltaTime = (currentTime - frameStartTime) / 1_000_000_000.0;
+        frameStartTime = currentTime;
 
         frameCount++;
 

@@ -365,7 +365,7 @@ public class ChunkGen {
         }
 
         AddChunkSurface(chunk);
-        //ResolveChunk(chunk);
+        ResolveChunk(chunk);
     }
 
     private static void FillChunk(Chunk chunk) {

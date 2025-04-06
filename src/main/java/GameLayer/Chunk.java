@@ -15,6 +15,7 @@ import static GameLayer.ChunkGen.*;
 
 
 public class Chunk {
+    private volatile boolean valid = true;
     boolean hasMesh = false;
     boolean updateChunk = true;
     protected FloatBuffer StaticBuffer, LiquidBuffer;
@@ -117,6 +118,14 @@ public class Chunk {
 
         StaticBlocks = new VBO(GL_DYNAMIC_DRAW, GL_SHADER_STORAGE_BUFFER);
         LiquidBlocks = new VBO(GL_DYNAMIC_DRAW, GL_SHADER_STORAGE_BUFFER);
+    }
+
+    public boolean isValid() {
+        return valid;
+    }
+
+    public void invalidate() {
+        valid = false;
     }
 
 }

@@ -4,6 +4,7 @@ import Mycraft.Core.Camera;
 import Mycraft.Core.Client;
 import Mycraft.Core.MultiThreading;
 import Mycraft.Debug.Debugger;
+import Mycraft.Debug.FPSMonitor;
 import Mycraft.Debug.Logger;
 import GameLayer.Entities.Entity;
 import Mycraft.Core.Player;
@@ -63,11 +64,13 @@ public class World {
 
     // Chunk Queues
     public static final PriorityQueue<ChunkDistance> chunksPos = new PriorityQueue<>(Comparator.comparingDouble(c -> c.distance));
+    private static final PriorityQueue<Vector4d> chunkGenerationQueue = new PriorityQueue<>(Comparator.comparingDouble( c -> c.w));
     private static final ConcurrentLinkedQueue<Chunk> chunkDeletionQueue = new ConcurrentLinkedQueue<>();
 
     // Macros
-    private static final int MAX_CHUNKS_TO_REMOVE_PER_FRAME = 256;
-    private static final int MAX_CHUNKS_TO_RENDER_PER_FRAME = 64;
+    private static final int CHUNKS_TO_GENERATE_PER_FRAME = 32;
+    private static final int CHUNKS_TO_RENDER_PER_FRAME = 64;
+    private static final int CHUNKS_TO_REMOVE_PER_FRAME = 256;
 
     protected static class ChunkDistance {
         Vector3d chunk;
@@ -190,8 +193,6 @@ public class World {
 
         int radius = Client.renderDistance / 2;
 
-        // List of chunks
-        List<Future<?>> futures = Collections.synchronizedList(new ArrayList<>());
         for (int dz = -radius; dz <= radius; dz++) {
             for (int dx = -radius; dx <= radius; dx++) {
                 for (int dy = -radius; dy <= radius; dy++) {
@@ -202,27 +203,11 @@ public class World {
 
                     Vector3d chunkID = new Vector3d(localX, localY, localZ);
 
-                    futures.add(MultiThreading.submitChunkTask(() -> {
+                    if(loadedChunks.containsKey(chunkID)) continue;
 
-                        if (!loadedChunks.containsKey(chunkID)) {
-                            Chunk chunk = new Chunk(localX, localY, localZ);
-                            ChunkGen.setupChunk(chunk);
-                            if(chunk.blocks != null) {
-                                loadedChunks.put(chunkID, chunk);
-                            }
-                        }
-
-                        return null;
-                    }));
+                    long distanceSquared = (long) dx * dx + (long) dy * dy + (long) dz * dz;
+                    chunkGenerationQueue.add(new Vector4d(chunkID, distanceSquared));
                 }
-            }
-        }
-
-        for(Future<?> future : futures) {
-            try {
-                future.get();
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
             }
         }
 
@@ -235,6 +220,38 @@ public class World {
         }
     }
 
+    public void loadChunks() {
+        long chunkX = (long) ChunkGen.getLocalChunk(player.position).x;
+        long chunkY = (long) ChunkGen.getLocalChunk(player.position).y;
+        long chunkZ = (long) ChunkGen.getLocalChunk(player.position).z;
+        int radius = Client.renderDistance / 2;
+
+        int frequency = (int) (CHUNKS_TO_GENERATE_PER_FRAME * FPSMonitor.getDeltaTime() * 10);
+        for(int i = 0; i < CHUNKS_TO_GENERATE_PER_FRAME && !chunkGenerationQueue.isEmpty(); i++) {
+
+            Vector4d chunkGen = chunkGenerationQueue.poll();
+            if(chunkGen == null) break;
+
+            Vector3d chunkID = new Vector3d(chunkGen.x, chunkGen.y, chunkGen.z);
+
+            long chunkDistX = abs((long)chunkID.x - chunkX);
+            long chunkDistY = abs((long)chunkID.y - chunkY);
+            long chunkDistZ = abs((long)chunkID.z - chunkZ);
+            if (chunkDistX > radius || chunkDistZ > radius || chunkDistY > radius) {
+                continue;
+            }
+
+            Chunk chunk = new Chunk((long)chunkID.x, (long)chunkID.y, (long)chunkID.z);
+            ChunkGen.setupChunk(chunk);
+
+            if(chunk.blocks == null) {
+                continue;
+            }
+
+            loadedChunks.put(chunkID, chunk);
+
+        }
+    }
 
     public static void updateNearbyChunks(Vector3d v) {
 
@@ -257,7 +274,7 @@ public class World {
         }
     }
 
-    public void loadChunks() {
+    public void loadChunksMesh() {
 
         // Multithreading to determine the chunks to render
         List<Future<List<ChunkDistance>>> futures = new ArrayList<>();
@@ -274,7 +291,7 @@ public class World {
                 for (Vector3d chunkID : sublist) {
 
                     Chunk chunk = loadedChunks.get(chunkID);
-                    if (chunk == null || chunk.hasMesh) continue;
+                    if (chunk == null || chunk.hasMesh || !chunk.isValid()) continue;
 
                     if(!ChunkGen.isChunkInFrustum(frustumPlanes,
                             chunk.positionX * ChunkGen.CHUNK_SIZE,
@@ -311,10 +328,10 @@ public class World {
         long chunkZ = (long) ChunkGen.getLocalChunk(player.position).z;
         int radius = Client.renderDistance / 2;
 
-        for(int i  = 0; i < MAX_CHUNKS_TO_RENDER_PER_FRAME && !chunksPos.isEmpty(); i++) {
+        for(int i = 0; i < CHUNKS_TO_RENDER_PER_FRAME && !chunksPos.isEmpty(); i++) {
 
             Vector3d getID = chunksPos.poll().chunk;
-            if (getID == null || loadedChunks.get(getID) == null) break;
+            if (getID == null || loadedChunks.get(getID) == null || !loadedChunks.get(getID).isValid()) break;
 
             long chunkDistX = abs(loadedChunks.get(getID).positionX - chunkX);
             long chunkDistY = abs(loadedChunks.get(getID).positionY - chunkY);
@@ -331,7 +348,7 @@ public class World {
             // Trust the process...
             if (chunk.StaticBlocks == null) chunk.Init();
 
-            //updateNearbyChunks(chunkID);
+            updateNearbyChunks(chunkID);
             chunk.updateChunk((long) chunkID.x, (long) chunkID.y, (long) chunkID.z);
         }
 
@@ -549,9 +566,9 @@ public class World {
             addChunksToQueue(false);
         }
 
-
         // Yup, the name
         loadChunks();
+        loadChunksMesh();
 
         // it may be both clear and unclear
         ResolveChunkRender();
@@ -615,7 +632,7 @@ public class World {
         }
 
         // Ajouter les chunks à la file d'attente pour suppression dans le thread OpenGL
-        for (int i = 0; i < Math.min(MAX_CHUNKS_TO_REMOVE_PER_FRAME, chunksToProcess.size()); i++) {
+        for (int i = 0; i < Math.min(CHUNKS_TO_REMOVE_PER_FRAME, chunksToProcess.size()); i++) {
             chunkDeletionQueue.add(chunksToProcess.get(i));
         }
     }
@@ -623,13 +640,17 @@ public class World {
     public void processChunkDeletions() {
         while (!chunkDeletionQueue.isEmpty()) {
 
-            for(int i = 0; i < MAX_CHUNKS_TO_REMOVE_PER_FRAME; i++) {
+            for(int i = 0; i < CHUNKS_TO_REMOVE_PER_FRAME; i++) {
                 Chunk chunk = chunkDeletionQueue.poll();
                 if(chunk == null) break;
 
-                chunk.Delete();
                 Vector3d chunkPos = new Vector3d(chunk.positionX, chunk.positionY, chunk.positionZ);
-                loadedChunks.remove(chunkPos);
+                Chunk verifyChunk = loadedChunks.remove(chunkPos);
+
+                if(verifyChunk != null) {
+                    chunk.invalidate();
+                    chunk.Delete();
+                }
             }
 
             addChunksToQueue(false);
@@ -656,7 +677,7 @@ public class World {
                 for (Vector3d chunkID : sublist) {
 
                     Chunk chunk = loadedChunks.get(chunkID);
-                    if (chunk == null) continue;
+                    if (chunk == null || !chunk.isValid()) continue;
 
                     if(!ChunkGen.isChunkInFrustum(frustumPlanes,
                             chunk.positionX * ChunkGen.CHUNK_SIZE,
