@@ -1,18 +1,22 @@
-# MyCraft
+# Nanonite
 </br>
-MyCraft is my personal "optimized" version of Minecraft. The project has not the purpose of being commercialize or anything like that. 
-I just want to have fun playing with OpenGL while not dealing too much with all the C++ memory mangement.
+Nanonite is a personnal JAVA project containing a integrated game engine and a Minecraft Clone. While Nanonite provides me anything to abstract from a game engine, the game has just everything essentials to it like assets, scenes, entities code and so on. I decided to take Java just because of "proving" that YOU can make an optmized Voxel game with that language.
 </br>
 </br>
-If you just want to test the project, check out de releases tab to download it an application version.
-</br>
-Howerer, if you're here to inspect the code or anything (you just like peeping through other people's codes) than take a look !
 
 ## Build
 </br>
-The project is basically made using IntelliJ. So as long you start opening it with this IDE, everything should work perfectly fine !
-</br>
-All you have to do is just build the project and test it.
+The build System used in this one is Gradle. You first need to download it, and then following these steps.
+
+### IntelliJ Idea
+IntelliJ comes with a direct support for Gradle. All you have to do is just open the project, create an application, and you're done !
+
+### Eclipse 
+TBA
+
+### Others
+You first need to type this command to build the project ``./gradlew build`` (try to check your Gradle version by typing ``./gradlew --version``
+Then, just use ``./gradlew run`` to run the project.
 
 ## Controls
 </br>
@@ -29,7 +33,7 @@ Use SPACE to go up and LEFT SHIFT to go down
 
 ## Features
 </br>
-In the entire project, the following features will be implemented and improved for better performance or just for fun : 
+In the project, the following features will be the main one implemented and improved for better performance : 
 
 - [ ] Rendering system
   - [ ] Shaders:
@@ -47,13 +51,13 @@ In the entire project, the following features will be implemented and improved f
 	- [ ] Automatic exposure
 	- [ ] Lens flare
 	- [ ] Color grading
-	- [x] Fog
-	- [x] Underwater fog
+	- [x] Fog (not Volumetric)
+	- [ ] Underwater fog
 	- [ ] God rays	
 	- [ ] Fake Shadows for all light types
   	- [ ] Shadows
    	- [ ] Cascaded shadow maps
-  - [ ] Adding ``#include`` in my shader programs
+  - [ ] Adding ``#eva_include`` in my shader programs
 
 - [x] Chunk system
   - [ ] Blocks physics
