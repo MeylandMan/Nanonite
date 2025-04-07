@@ -14,6 +14,7 @@ import Mycraft.Models.Face;
 import Mycraft.Physics.CubeCollision;
 import Mycraft.Rendering.Shader;
 import Mycraft.Rendering.WorldEnvironment;
+import org.jetbrains.annotations.NotNull;
 import org.joml.*;
 import org.lwjgl.system.MemoryUtil;
 
@@ -21,10 +22,7 @@ import java.lang.Math;
 import java.nio.FloatBuffer;
 import java.util.*;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 import com.sudoplay.joise.module.ModuleBasisFunction;
 
@@ -69,7 +67,7 @@ public class World {
 
     // Macros
     private static final int CHUNKS_TO_GENERATE_PER_FRAME = 32;
-    private static final int CHUNKS_TO_RENDER_PER_FRAME = 64;
+    private static final int CHUNKS_TO_RENDER_PER_FRAME = 32;
     private static final int CHUNKS_TO_REMOVE_PER_FRAME = 256;
 
     protected static class ChunkDistance {
@@ -221,36 +219,30 @@ public class World {
     }
 
     public void loadChunks() {
+
         long chunkX = (long) ChunkGen.getLocalChunk(player.position).x;
         long chunkY = (long) ChunkGen.getLocalChunk(player.position).y;
         long chunkZ = (long) ChunkGen.getLocalChunk(player.position).z;
         int radius = Client.renderDistance / 2;
 
-        int frequency = (int) (CHUNKS_TO_GENERATE_PER_FRAME * FPSMonitor.getDeltaTime() * 10);
         for(int i = 0; i < CHUNKS_TO_GENERATE_PER_FRAME && !chunkGenerationQueue.isEmpty(); i++) {
-
             Vector4d chunkGen = chunkGenerationQueue.poll();
             if(chunkGen == null) break;
 
             Vector3d chunkID = new Vector3d(chunkGen.x, chunkGen.y, chunkGen.z);
-
             long chunkDistX = abs((long)chunkID.x - chunkX);
             long chunkDistY = abs((long)chunkID.y - chunkY);
             long chunkDistZ = abs((long)chunkID.z - chunkZ);
-            if (chunkDistX > radius || chunkDistZ > radius || chunkDistY > radius) {
-                continue;
+            if (chunkDistX < radius || chunkDistZ < radius || chunkDistY < radius) {
+                Chunk chunk = new Chunk((long)chunkID.x, (long)chunkID.y, (long)chunkID.z);
+                ChunkGen.setupChunk(chunk);
+
+                if(chunk.blocks != null) {
+                    loadedChunks.putIfAbsent(chunkID, chunk);
+                }
             }
-
-            Chunk chunk = new Chunk((long)chunkID.x, (long)chunkID.y, (long)chunkID.z);
-            ChunkGen.setupChunk(chunk);
-
-            if(chunk.blocks == null) {
-                continue;
-            }
-
-            loadedChunks.put(chunkID, chunk);
-
         }
+
     }
 
     public static void updateNearbyChunks(Vector3d v) {
@@ -557,12 +549,14 @@ public class World {
 
         processChunkDeletions();
         UpdateCameraFrustum();
-        //Always Add the chunks nearby the player no matter what
-        addNearbyChunks();
 
         // Look at the name Damian...
         if(firstLoad) {
             firstLoad = false;
+            //Always Add the chunks nearby the player no matter what
+            addNearbyChunks();
+
+            // Add the other chunks
             addChunksToQueue(false);
         }
 
@@ -653,6 +647,7 @@ public class World {
                 }
             }
 
+            addNearbyChunks();
             addChunksToQueue(false);
         }
     }
