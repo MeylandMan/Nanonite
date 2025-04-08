@@ -35,7 +35,10 @@ layout(std430, binding = 0) buffer FaceMesh {
 
 uniform mat4 projection;
 uniform mat4 view;
-uniform vec3 Position;
+
+// Position
+uniform vec3 chunkOffset;
+uniform vec3 cameraOffset;
 
 #define PROJECTION_VIEW_MATRIX mat4(projection * view)
 
@@ -65,6 +68,13 @@ void main() {
     int z = (index / CHUNK_SIZE) % CHUNK_SIZE;
     vec3 localPosition = vec3(x, y, z);
 
+    vec3 modelPosition = FaceVertices[vertexIndex] + localPosition + (chunkOffset * CHUNK_SIZE);
+
+    gl_Position = PROJECTION_VIEW_MATRIX * vec4(modelPosition, 1.0);
+
+    worldPos = modelPosition;
+    fragPos = FaceVertices[vertexIndex] + localPosition;
+
     // Assigner les coordonnées de texture (UV)
     v_TexCoords = texCoords[vertexIndex % 6];
     v_Normal = getNormal(uint(faces[faceIndex].FaceID));
@@ -73,15 +83,6 @@ void main() {
 
     float AmbientOcclusion[6] = getAOArray(faces[faceIndex].AO);
     AOFactor = AmbientOcclusion[vertexIndex];
-
-    vec3 chunkPosition = Position * CHUNK_SIZE;
-    vec3 worldPosition = vec3(FaceVertices[vertexIndex]+localPosition+chunkPosition);
-
-    fragPos = chunkPosition + FaceVertices[vertexIndex];
-
-    worldPos = worldPosition;
-    gl_Position = PROJECTION_VIEW_MATRIX * vec4(worldPosition, 1.0);
-
 }
 
 float[6] getAOArray(float[4] AmbientOcclusion) {

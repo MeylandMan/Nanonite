@@ -12,9 +12,12 @@ public class Face {
     public static final int UP = 4;
     public static final int DOWN = 5;
 
+    public static final int UNFACE = -1;
+    public static final int UNCULL = -2;
+
     private String texture;
     private byte cullFace = -1;
-    private List<Byte> uv = new ArrayList<>();
+    private List<Byte> uv;
 
     // Basic Constructor
     private Face() {

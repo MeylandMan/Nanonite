@@ -189,8 +189,8 @@ public class Debugger {
                 "\ndelta: " + df.format(delta);
         textRenderer.renderText(stateInfo,10, 10, 0.25f, TextRenderer.TextType.LEFT);
 
-        Vector3d chunkPosition = ChunkGen.getLocalChunk(World.player.position);
-        Vector3d blockPosition = ChunkGen.getLocalBlock(World.player.position);
+        Vector3d chunkPosition = World.getLocalChunk(World.player.position);
+        Vector3d blockPosition = World.getLocalBlock(World.player.position);
 
         Chunk actualChunk = World.loadedChunks.get(chunkPosition);
         byte ActualBlock = (actualChunk == null)? -1 :

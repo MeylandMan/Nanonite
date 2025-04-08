@@ -96,22 +96,6 @@ public class ChunkGen {
 
     }
 
-    public static Vector3d getLocalChunk(Vector3d position) {
-        long x = (long) floor(position.x / CHUNK_SIZE);
-        long y = (long) floor(position.y / CHUNK_SIZE);
-        long z = (long) floor(position.z / CHUNK_SIZE);
-
-        return new Vector3d(x, y, z);
-    }
-
-    public static Vector3d getLocalBlock(Vector3d position) {
-        long x = (long) floor((position.x % CHUNK_SIZE + CHUNK_SIZE) % CHUNK_SIZE);
-        long y = (long) floor((position.y % CHUNK_SIZE + CHUNK_SIZE) % CHUNK_SIZE);
-        long z = (long) floor((position.z % CHUNK_SIZE + CHUNK_SIZE) % CHUNK_SIZE);
-
-        return new Vector3d(x, y, z);
-    }
-
     public static int index(int x , int y, int z, int mod) {
         return x + (z * mod) + (y * mod * mod);
     }

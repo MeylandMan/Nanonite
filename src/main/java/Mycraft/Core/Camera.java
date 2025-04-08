@@ -85,7 +85,7 @@ public class Camera {
         return new Matrix4d().lookAt(Position, playerPos, new Vector3d(WorldUp));
     }
 
-    public static Matrix4d GetProjectionMatrix() { return projection; }
+    public static Matrix4d GetProjectionMatrix() { return new Matrix4d(projection); }
 
     public static void SetProjectionMatrix(int width, int height) {
         projection = new Matrix4d().identity()

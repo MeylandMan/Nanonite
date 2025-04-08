@@ -101,14 +101,14 @@ public class Chunk {
 
         StaticBlocks.BindBase(0);
         glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-        glDrawArrays(GL_TRIANGLES, 0, 6* faceDrawn[0]);
+        glDrawArrays(GL_TRIANGLES, 0, 6 * faceDrawn[0]);
     }
 
     public void DrawLiquidMesh() {
 
         LiquidBlocks.BindBase(0);
         glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-        glDrawArrays(GL_TRIANGLES, 0, 6* faceDrawn[1]);
+        glDrawArrays(GL_TRIANGLES, 0, 6 * faceDrawn[1]);
     }
 
     public void Init() {

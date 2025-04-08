@@ -219,13 +219,13 @@ public class Application {
             World.player.updateCameraVectors(delta);
             Camera.UpdateCameraPosition();
 
-            long chunkX = (long) ChunkGen.getLocalChunk(World.player.position).x;
-            long chunkY = (long) ChunkGen.getLocalChunk(World.player.position).y;
-            long chunkZ = (long) ChunkGen.getLocalChunk(World.player.position).z;
+            long chunkX = (long) World.getLocalChunk(World.player.position).x;
+            long chunkY = (long) World.getLocalChunk(World.player.position).y;
+            long chunkZ = (long) World.getLocalChunk(World.player.position).z;
 
-            int X = (int) ChunkGen.getLocalBlock(Camera.Position).x;
-            int Y = (int) ChunkGen.getLocalBlock(Camera.Position).y;
-            int Z = (int) ChunkGen.getLocalBlock(Camera.Position).z;
+            int X = (int) World.getLocalBlock(Camera.Position).x;
+            int Y = (int) World.getLocalBlock(Camera.Position).y;
+            int Z = (int) World.getLocalBlock(Camera.Position).z;
 
             Chunk actualChunk = World.loadedChunks.get(new Vector3d((float) chunkX, (float)chunkY, (float) chunkZ));
             byte actualBlock = (actualChunk == null)? -1 : actualChunk.getBlock(X,Y,Z);

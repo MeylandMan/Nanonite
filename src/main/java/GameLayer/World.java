@@ -41,7 +41,7 @@ public class World {
     public static long ChunkDrawCalls = 0;
     public static boolean QueueQuery = true;
 
-    public static Vector3d SpawnPoint = new Vector3d(8, 100, 8);
+    public static Vector3d SpawnPoint = new Vector3d(1000000, 100, 8);
     // Procedural generation data's
     static ModuleBasisFunction basis;
     public static long seed;
@@ -66,8 +66,8 @@ public class World {
     private static final ConcurrentLinkedQueue<Chunk> chunkDeletionQueue = new ConcurrentLinkedQueue<>();
 
     // Macros
-    private static final int CHUNKS_TO_GENERATE_PER_FRAME = 32;
-    private static final int CHUNKS_TO_RENDER_PER_FRAME = 32;
+    private static final int CHUNKS_TO_GENERATE_PER_FRAME = 64;
+    private static final int CHUNKS_TO_RENDER_PER_FRAME = 8;
     private static final int CHUNKS_TO_REMOVE_PER_FRAME = 256;
 
     protected static class ChunkDistance {
@@ -136,9 +136,9 @@ public class World {
 
     public static void addNearbyChunks() {
 
-        long chunkX = (long) ChunkGen.getLocalChunk(player.position).x;
-        long chunkY = (long) ChunkGen.getLocalChunk(player.position).y;
-        long chunkZ = (long) ChunkGen.getLocalChunk(player.position).z;
+        long chunkX = (long) getChunkOrigin().x;
+        long chunkY = (long) getChunkOrigin().y;
+        long chunkZ = (long) getChunkOrigin().z;
 
         int nearestRadius = 1; // 2 / 2
         int step = 1;
@@ -185,9 +185,9 @@ public class World {
             Logger.log(Logger.Level.INFO, "Loading chunks...");
         }
 
-        long chunkX = (long) ChunkGen.getLocalChunk(player.position).x;
-        long chunkY = (long) ChunkGen.getLocalChunk(player.position).y;
-        long chunkZ = (long) ChunkGen.getLocalChunk(player.position).z;
+        long chunkX = (long) getChunkOrigin().x;
+        long chunkY = (long) getChunkOrigin().y;
+        long chunkZ = (long) getChunkOrigin().z;
 
         int radius = Client.renderDistance / 2;
 
@@ -220,9 +220,9 @@ public class World {
 
     public void loadChunks() {
 
-        long chunkX = (long) ChunkGen.getLocalChunk(player.position).x;
-        long chunkY = (long) ChunkGen.getLocalChunk(player.position).y;
-        long chunkZ = (long) ChunkGen.getLocalChunk(player.position).z;
+        long chunkX = (long) getChunkOrigin().x;
+        long chunkY = (long) getChunkOrigin().y;
+        long chunkZ = (long) getChunkOrigin().z;
         int radius = Client.renderDistance / 2;
 
         for(int i = 0; i < CHUNKS_TO_GENERATE_PER_FRAME && !chunkGenerationQueue.isEmpty(); i++) {
@@ -315,9 +315,9 @@ public class World {
         }
 
         // Generating the Mesh
-        long chunkX = (long) ChunkGen.getLocalChunk(player.position).x;
-        long chunkY = (long) ChunkGen.getLocalChunk(player.position).y;
-        long chunkZ = (long) ChunkGen.getLocalChunk(player.position).z;
+        long chunkX = (long) getChunkOrigin().x;
+        long chunkY = (long) getChunkOrigin().y;
+        long chunkZ = (long) getChunkOrigin().z;
         int radius = Client.renderDistance / 2;
 
         for(int i = 0; i < CHUNKS_TO_RENDER_PER_FRAME && !chunksPos.isEmpty(); i++) {
@@ -375,7 +375,7 @@ public class World {
                                 continue;
 
                             int FaceID = face.getValue().getCullFace();
-                            if(FaceID == -1) // Check if there's a face
+                            if(FaceID == Face.UNFACE) // Check if there's a face
                                 continue;
 
                             if(shouldRenderFace(xx, yy, zz, element, x,y,z, FaceID) == 0)
@@ -573,16 +573,16 @@ public class World {
         frustumPlanes = Camera.getFrustumPlanes();
 
         // Get the Frsutum AABB
-        min = ChunkGen.getLocalChunk(Camera.getFrustumMin());
-        max = ChunkGen.getLocalChunk(Camera.getFrustumMax());
+        min = getLocalChunk(Camera.getFrustumMin());
+        max = getLocalChunk(Camera.getFrustumMax());
 
     }
 
     public void ResolveChunkRender() {
 
-        long chunkX = (long) ChunkGen.getLocalChunk(player.position).x;
-        long chunkY = (long) ChunkGen.getLocalChunk(player.position).y;
-        long chunkZ = (long) ChunkGen.getLocalChunk(player.position).z;
+        long chunkX = (long) getChunkOrigin().x;
+        long chunkY = (long) getChunkOrigin().y;
+        long chunkZ = (long) getChunkOrigin().z;
         int radiusXYZ = Client.renderDistance / 2;
 
         List<Chunk> chunksToProcess = new ArrayList<>();
@@ -737,7 +737,27 @@ public class World {
 
         for(Chunk chunk : chunksToRender) {
             if(chunk.StaticBlocks == null) continue;
-            ChunkShaders[0].Uniform3f("Position", chunk.positionX, chunk.positionY, chunk.positionZ);
+
+            Vector3L cameraOrigin = new Vector3L(
+                    (int) floor(Camera.Position.x),
+                    (int) floor(Camera.Position.y),
+                    (int) floor(Camera.Position.z)
+            );
+
+            Vector3f cameraOffset = new Vector3f(
+                    (float) (Camera.Position.x - cameraOrigin.x),
+                    (float) (Camera.Position.y - cameraOrigin.y),
+                    (float) (Camera.Position.z - cameraOrigin.z)
+            );
+
+            Vector3f chunkOffset = new Vector3f(
+                    (chunk.positionX - (long)(Camera.Position.x / ChunkGen.CHUNK_SIZE)) * ChunkGen.CHUNK_SIZE,
+                    (chunk.positionY - (long)(Camera.Position.y / ChunkGen.CHUNK_SIZE)) * ChunkGen.CHUNK_SIZE,
+                    (chunk.positionZ - (long)(Camera.Position.z / ChunkGen.CHUNK_SIZE)) * ChunkGen.CHUNK_SIZE
+            );
+
+            ChunkShaders[0].Uniform3f("chunkOffset", chunk.positionX, chunk.positionY, chunk.positionZ);
+            ChunkShaders[0].Uniform3f("cameraOffset", cameraOffset);
             chunk.DrawMesh();
             i++;
         }
@@ -768,6 +788,26 @@ public class World {
             chunk.DrawLiquidMesh();
         }
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+
+    public static Vector3d getChunkOrigin() {
+        return getLocalChunk(player.position);
+    }
+
+    public static Vector3d getLocalChunk(Vector3d position) {
+        long x = (long) floor(position.x / ChunkGen.CHUNK_SIZE);
+        long y = (long) floor(position.y / ChunkGen.CHUNK_SIZE);
+        long z = (long) floor(position.z / ChunkGen.CHUNK_SIZE);
+
+        return new Vector3d(x, y, z);
+    }
+
+    public static Vector3d getLocalBlock(Vector3d position) {
+        long x = (long) floor((position.x % ChunkGen.CHUNK_SIZE + ChunkGen.CHUNK_SIZE) % ChunkGen.CHUNK_SIZE);
+        long y = (long) floor((position.y % ChunkGen.CHUNK_SIZE + ChunkGen.CHUNK_SIZE) % ChunkGen.CHUNK_SIZE);
+        long z = (long) floor((position.z % ChunkGen.CHUNK_SIZE + ChunkGen.CHUNK_SIZE) % ChunkGen.CHUNK_SIZE);
+
+        return new Vector3d(x, y, z);
     }
 
     protected static int shouldRenderFace(long xx, long yy, long zz, Element element, int x, int y, int z, int face) {

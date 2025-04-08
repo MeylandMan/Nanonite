@@ -66,7 +66,7 @@ void main() {
 
     vec4 result = fogResult;
 
-    fragColor = result;
+    fragColor = startingColor * specialColor * lightResult;
     //fragColor = vec4(TextureIndex, TextureIndex, 0.0, 1.0);
     //fragColor = vec4(max(v_Normal, vec3(0.0)), 1.0);
     //fragColor = vec4(v_TexCoords, 1.0, 1.0);
