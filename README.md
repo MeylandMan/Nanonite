@@ -1,22 +1,18 @@
 # Nanonite
 </br>
-Nanonite is a personnal JAVA project containing a integrated game engine and a Minecraft Clone. While Nanonite provides me anything to abstract from a game engine, the game has just everything essentials to it like assets, scenes, entities code and so on. I decided to take Java just because of "proving" that YOU can make an optmized Voxel game with that language.
+Nanonite is a JAVA project containing a integrated game engine and a Minecraft-Based game. While Nanonite provides anything abstract from a game engine, the game has just everything essentials to it like assets, scenes, entities code and so on.
 </br>
 </br>
 
 ## Build
 </br>
-The build System used in this one is Gradle. You first need to download it, and then following these steps.
+This project uses Gradle as its build system. To build the project, follow these steps:
 
-### IntelliJ Idea
-IntelliJ comes with a direct support for Gradle. All you have to do is just open the project, create an application, and you're done !
+1. Install Gradle: Download and install Gradle from https://gradle.org/.
+2. Open a terminal or command prompt: Navigate to the root directory of the project.
+3. Run the build command: Execute the following command: ``./gradlew build``
 
-### Eclipse 
-TBA
-
-### Others
-You first need to type this command to build the project ``./gradlew build`` (try to check your Gradle version by typing ``./gradlew --version``
-Then, just use ``./gradlew run`` to run the project.
+If you're using an IDE that has a Gradle implementation already like IntelliJ, you'll just need to open the project in your IDE without downloading anything !
 
 ## Controls
 </br>
@@ -52,11 +48,9 @@ In the project, the following features will be the main one implemented and impr
 	- [ ] Lens flare
 	- [ ] Color grading
 	- [x] Fog (not Volumetric)
-	- [ ] Underwater fog
+	- [x] Underwater fog
 	- [ ] God rays	
-	- [ ] Fake Shadows for all light types
   	- [ ] Shadows
-   	- [ ] Cascaded shadow maps
   - [ ] Adding ``#eva_include`` in my shader programs
 
 - [x] Chunk system
